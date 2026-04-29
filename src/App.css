@@ -17,6 +17,9 @@ body{
 .auth-left {
   flex: 1;
   background: url('/auth-bg.png') no-repeat center center/cover;
+  background-color: #3a9ad9; 
+  mask-image: linear-gradient(to right, black 100%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, black 65%, transparent 99%);
 }
 
 /* RIGHT SIDE */
@@ -99,7 +102,3 @@ body{
   margin-left: 5px;
 }
 
-.left-panel img {
-  mask-image: linear-gradient(to right, black 60%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to right, black 60%, transparent 100%);
-}
