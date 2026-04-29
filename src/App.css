@@ -98,3 +98,8 @@ body{
   font-weight: bold;
   margin-left: 5px;
 }
+
+.left-panel img {
+  mask-image: linear-gradient(to right, black 60%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, black 60%, transparent 100%);
+}
