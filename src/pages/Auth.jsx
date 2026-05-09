@@ -9,21 +9,23 @@ function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");  // ✅ moved inside
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setSuccess("");
 
     try {
       if (isLogin) {
-        // LOGIN
         await signInWithEmailAndPassword(auth, email, password);
-        navigate("/dashboard"); // ✅ goes to dashboard after login
+        setSuccess("You're logged in!");
+        setTimeout(() => navigate("/dashboard"), 1500);
       } else {
-        // SIGN UP
         await createUserWithEmailAndPassword(auth, email, password);
-        navigate("/dashboard"); // ✅ goes to dashboard after sign up
+        setSuccess("You've signed up!");
+        setTimeout(() => navigate("/dashboard"), 1500);
       }
     } catch (err) {
       setError(err.message);
@@ -32,15 +34,14 @@ function Auth() {
 
   return (
     <div className="auth-wrapper">
-      {/* LEFT SIDE (Image) */}
       <div className="auth-left"></div>
 
-      {/* RIGHT SIDE (Form) */}
       <div className="auth-right">
         <div className="auth-box">
           <h2>{isLogin ? "Login" : "Sign Up"}</h2>
 
           {error && <p className="error">{error}</p>}
+          {success && <p className="success">{success}</p>}  {/* ✅ moved inside */}
 
           <form onSubmit={handleSubmit}>
             <div className="input-group">
