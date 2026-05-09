@@ -9,7 +9,7 @@ function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");  // ✅ moved inside
+  const [success, setSuccess] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -34,14 +34,16 @@ function Auth() {
 
   return (
     <div className="auth-wrapper">
-      <div className="auth-left"></div>
+      <div className="auth-left">
+        <img src="/auth-bg.png" className="auth-bg" /> 
+      </div>
 
       <div className="auth-right">
         <div className="auth-box">
           <h2>{isLogin ? "Login" : "Sign Up"}</h2>
 
           {error && <p className="error">{error}</p>}
-          {success && <p className="success">{success}</p>}  {/* ✅ moved inside */}
+          {success && <p className="success">{success}</p>}
 
           <form onSubmit={handleSubmit}>
             <div className="input-group">
