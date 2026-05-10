@@ -1,13 +1,14 @@
 import { useState } from "react";
 import '../App.css';
 import { useNavigate } from "react-router-dom";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "../firebase";
 
 function Auth() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const navigate = useNavigate();
@@ -20,6 +21,12 @@ function Auth() {
     // Empty fields check
     if (!email || !password) {
       setError("Please complete all required fields.");
+      return;
+    }
+
+    // Username required on sign up
+    if (!isLogin && !username.trim()) {
+      setError("Please enter a username.");
       return;
     }
 
@@ -36,7 +43,8 @@ function Auth() {
         setSuccess("You're logged in!");
         setTimeout(() => navigate("/dashboard"), 1500);
       } else {
-        await createUserWithEmailAndPassword(auth, email, password);
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        await updateProfile(userCredential.user, { displayName: username.trim() });
         setSuccess("You've signed up!");
         setTimeout(() => navigate("/dashboard"), 1500);
       }
@@ -66,6 +74,20 @@ function Auth() {
           {success && <p className="success">{success}</p>}
 
           <form onSubmit={handleSubmit}>
+
+            {/* Username — sign up only */}
+            {!isLogin && (
+              <div className="input-group">
+                <span>👤</span>
+                <input
+                  type="text"
+                  placeholder="Username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                />
+              </div>
+            )}
+
             <div className="input-group">
               <span>📧</span>
               <input

@@ -1,0 +1,30 @@
+/* ── HOURLY STRIP ── */
+.dash-hourly-strip {
+  display: flex; gap: 7px; overflow-x: auto; padding-bottom: 4px;
+}
+.dash-hourly-strip::-webkit-scrollbar { height: 3px; }
+.dash-hourly-strip::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.09); border-radius: 2px; }
+
+.dash-hourly-item {
+  display: flex; flex-direction: column; align-items: center; gap: 5px;
+  padding: 12px 14px 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  min-width: 66px; flex-shrink: 0;
+  cursor: pointer; transition: all 0.15s;
+}
+.dash-hourly-item:hover { background: var(--surface-hover); }
+.dash-hourly-item.active { background: var(--accent-glow); border-color: var(--border-accent); }
+
+.dash-hourly-time { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; }
+.dash-hourly-item.active .dash-hourly-time { color: #a78bfa; }
+.dash-hourly-icon { font-size: 20px; }
+.dash-hourly-temp { font-size: 14px; font-weight: 500; }
+.dash-precip-row  { display: flex; align-items: center; gap: 3px; }
+.dash-precip-track {
+  width: 3px; height: 20px;
+  background: rgba(255,255,255,0.07); border-radius: 2px; overflow: hidden;
+}
+.dash-precip-fill { width: 100%; border-radius: 2px; background: var(--blue); }
+.dash-hourly-pct  { font-size: 10px; color: var(--text-muted); }
