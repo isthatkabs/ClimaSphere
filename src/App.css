@@ -1,19 +1,19 @@
- {
+* {
   box-sizing: border-box;
 }
-
+ 
 body {
   margin: 0;
 }
-
+ 
 /* Layout */
 .auth-wrapper {
   display: flex;
   height: 100vh;
   font-family: sans-serif;
-  background: url('/auth-bluebg.png') no-repeat center center/cover; /* ✅ covers whole page */
+  background: url('/auth-bluebg.png') no-repeat center center/cover;
 }
-
+ 
 /* LEFT SIDE */
 .auth-left {
   flex: 1;
@@ -21,53 +21,53 @@ body {
   justify-content: center;
   align-items: center;
 }
-
+ 
 /* RIGHT SIDE */
 .auth-right {
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: transparent; /* ✅ fully transparent so bg shows through */
+  background: transparent;
 }
-
+ 
 /* FORM BOX */
 .auth-box {
   width: 320px;
-  background: rgba(255, 255, 255, 0.3); /* ✅ frosted glass effect */
+  background: rgba(255, 255, 255, 0.3);
   padding: 2rem;
   border-radius: 12px;
-  backdrop-filter: blur(10px); /* ✅ blurs background behind form */
+  backdrop-filter: blur(10px);
 }
-
+ 
 .auth-box h2 {
   margin-bottom: 1.5rem;
-  color: #fff; /* ✅ white so it shows on blue bg */
+  color: #fff;
 }
-
+ 
 .input-group {
   display: flex;
   align-items: center;
-  background: rgba(255, 255, 255, 0.6); /* ✅ slightly transparent inputs */
+  background: rgba(255, 255, 255, 0.6);
   border: 1px solid #ddd;
   border-radius: 6px;
   padding: 10px;
   margin-bottom: 1rem;
 }
-
+ 
 .input-group span {
   margin-right: 8px;
   opacity: 0.6;
 }
-
+ 
 .input-group input {
   border: none;
   outline: none;
   width: 100%;
   font-size: 14px;
-  background: transparent; /* ✅ so input matches frosted look */
+  background: transparent;
 }
-
+ 
 /* BUTTON */
 .auth-btn {
   width: 100%;
@@ -78,56 +78,58 @@ body {
   border-radius: 6px;
   cursor: pointer;
   margin-top: 10px;
+  font-size: 14px;
 }
-
+ 
 .auth-btn:hover {
   opacity: 0.9;
 }
-
+ 
 .forgot {
   text-align: right;
   font-size: 12px;
-  color: #fff; /* ✅ white so it shows on blue bg */
+  color: #fff;
   cursor: pointer;
   margin-bottom: 10px;
 }
-
+ 
 .toggle-text {
   margin-top: 1rem;
   font-size: 14px;
   text-align: center;
-  color: #fff; /* ✅ white so it shows on blue bg */
+  color: #fff;
 }
-
+ 
 .toggle-text span {
   color: #181819;
   cursor: pointer;
   font-weight: bold;
   margin-left: 5px;
 }
-
+ 
 .error {
   color: #ff4444;
   font-size: 12px;
   margin-bottom: 1rem;
   text-align: center;
 }
-
+ 
 .success {
   color: #22c55e;
   font-size: 12px;
   margin-bottom: 1rem;
   text-align: center;
 }
-
+ 
 .auth-bg {
   width: 350px;
   opacity: 0.8;
   animation: float 3s ease-in-out infinite;
 }
-
+ 
 @keyframes float {
   0%   { transform: translateY(-20px); }
   50%  { transform: translateY(20px); }
   100% { transform: translateY(-20px); }
 }
+ 
