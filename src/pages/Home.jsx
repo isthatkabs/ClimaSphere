@@ -74,7 +74,6 @@ export default function Home() {
           ))}
         </div>
         <div style={styles.navActions}>
-          <a href="/auth" style={styles.navLogin}>Sign In</a>
           <a href="/auth" style={styles.navCta}>Get Started</a>
         </div>
       </nav>

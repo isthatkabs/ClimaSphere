@@ -17,6 +17,19 @@ function Auth() {
     setError("");
     setSuccess("");
 
+    // Empty fields check
+    if (!email || !password) {
+      setError("Please complete all required fields.");
+      return;
+    }
+
+    // Valid email check
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
     try {
       if (isLogin) {
         await signInWithEmailAndPassword(auth, email, password);
@@ -28,14 +41,21 @@ function Auth() {
         setTimeout(() => navigate("/dashboard"), 1500);
       }
     } catch (err) {
-      setError(err.message);
+      const code = err.code;
+      if (code === "auth/email-already-in-use") {
+        setError("An account with this email already exists.");
+      } else if (code === "auth/user-not-found" || code === "auth/invalid-credential") {
+        setError("No account found with this email. Please register first.");
+      } else {
+        setError("Something went wrong. Please try again.");
+      }
     }
   };
 
   return (
     <div className="auth-wrapper">
       <div className="auth-left">
-        <img src="/auth-bg.png" className="auth-bg" /> 
+        <img src="/auth-bg.png" className="auth-bg" />
       </div>
 
       <div className="auth-right">
