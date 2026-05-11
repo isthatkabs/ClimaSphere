@@ -24,7 +24,7 @@ export default function WeeklyForecast() {
             </div>
           </div>
         ))}
-      </div>
+      </div>;
     </div>
   )
 }

@@ -1,4 +1,5 @@
 /* ── mock data ── */
+
 export const HOURLY = [
   { time: 'Now',   icon: '⛅', temp: 18, precip: 10 },
   { time: '2 PM',  icon: '🌤',  temp: 20, precip: 5  },
