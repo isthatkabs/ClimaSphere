@@ -26,13 +26,37 @@ export default function Dashboard() {
   const { logout } = useAuth()
   const navigate   = useNavigate()
 
-  const [location, setLocation] = useState(DEFAULT_LOCATION)
+  const [location, setLocation] = useState(null)
   const [weather,  setWeather]  = useState(null)
   const [forecast, setForecast] = useState(null)
   const [loading,  setLoading]  = useState(true)
   const [error,    setError]    = useState(null)
 
+  // On mount, try to get the user's real location
   useEffect(() => {
+    if (!navigator.geolocation) {
+      setLocation(DEFAULT_LOCATION)
+      return
+    }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setLocation({
+          lat:  pos.coords.latitude,
+          lon:  pos.coords.longitude,
+          name: 'Your Location',
+        })
+      },
+      () => {
+        // denied or failed — fall back to London
+        setLocation(DEFAULT_LOCATION)
+      },
+      { timeout: 8000 }
+    )
+  }, [])
+
+  // Fetch weather whenever location changes
+  useEffect(() => {
+    if (!location) return
     const fetchWeather = async () => {
       try {
         setLoading(true)
@@ -57,12 +81,28 @@ export default function Dashboard() {
     navigate('/')
   }
 
+  const handleReset = () => {
+    if (!navigator.geolocation) {
+      setLocation(DEFAULT_LOCATION)
+      return
+    }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => setLocation({
+        lat:  pos.coords.latitude,
+        lon:  pos.coords.longitude,
+        name: 'Your Location',
+      }),
+      () => setLocation(DEFAULT_LOCATION),
+      { timeout: 8000 }
+    )
+  }
+
   if (loading) {
     return (
       <div className="dash-root">
-        <Sidebar onLogout={handleLogout} />
+        <Sidebar onLogout={handleLogout} forecast={forecast} />
         <div className="dash-main">
-          <DashHeader onSearch={setLocation} onReset={() => setLocation(DEFAULT_LOCATION)} />
+          <DashHeader onSearch={setLocation} onReset={handleReset} />
           <div className="dash-content">
             <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>
               Loading weather data…
@@ -76,9 +116,9 @@ export default function Dashboard() {
   if (error) {
     return (
       <div className="dash-root">
-        <Sidebar onLogout={handleLogout} />
+        <Sidebar onLogout={handleLogout} forecast={forecast} />
         <div className="dash-main">
-          <DashHeader onSearch={setLocation} onReset={() => setLocation(DEFAULT_LOCATION)} />
+          <DashHeader onSearch={setLocation} onReset={handleReset} />
           <div className="dash-content">
             <div style={{ padding: '40px', textAlign: 'center', color: '#f87171' }}>
               <p>Could not load weather for "{location.name}".</p>
@@ -94,10 +134,10 @@ export default function Dashboard() {
 
   return (
     <div className="dash-root">
-      <Sidebar onLogout={handleLogout} />
+      <Sidebar onLogout={handleLogout} forecast={forecast} />
 
       <div className="dash-main">
-        <DashHeader onSearch={setLocation} onReset={() => setLocation(DEFAULT_LOCATION)} />
+        <DashHeader onSearch={setLocation} onReset={handleReset} />
 
         <div className="dash-content">
           <HeroCard weather={weather} />
