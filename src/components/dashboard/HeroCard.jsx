@@ -29,30 +29,31 @@ function getUpdatedText(unixTimestamp) {
   return `Updated ${mins} min ago`
 }
 
+// Helper: convert country code to full name
+function getCountryName(code) {
+  try {
+    return new Intl.DisplayNames(['en'], { type: 'region' }).of(code) || code
+  } catch {
+    return code
+  }
+}
+
 export default function HeroCard({ weather }) {
   if (!weather) return null
 
-  // Destructure the OpenWeatherMap response
   const {
-    name,                                         // "London"
-    sys: { country },                             // "GB"
-    main: {
-      temp,
-      feels_like,
-      temp_min,
-      temp_max,
-      humidity,
-      pressure,
-    },
-    weather: [{ description, icon }],             // "partly cloudy", "02d"
-    wind: { speed, deg },                         // m/s, degrees
-    visibility,                                   // metres
-    dt,                                           // Unix timestamp
+    name,
+    sys: { country },
+    main: { temp, feels_like, temp_min, temp_max, humidity, pressure },
+    weather: [{ description, icon }],
+    wind: { speed, deg },
+    visibility,
+    dt,
   } = weather
 
-  const windKmh = Math.round(speed * 3.6)        // convert m/s → km/h
+  const windKmh = Math.round(speed * 3.6)
   const windDir = getWindDirection(deg)
-  const visKm = (visibility / 1000).toFixed(1)   // convert m → km
+  const visKm   = (visibility / 1000).toFixed(1)
   const condition = description.charAt(0).toUpperCase() + description.slice(1)
 
   return (
@@ -60,7 +61,7 @@ export default function HeroCard({ weather }) {
       <div className="dash-hero-left">
         <div className="dash-hero-location">
           <span className="dash-hero-loc-dot" />
-          {name}, {country}
+          {name}, {getCountryName(country)}
         </div>
 
         <div className="dash-hero-temp-row">

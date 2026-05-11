@@ -3,6 +3,14 @@ import { useAuth } from '../../context/AuthContext'
 import { getInitials, getNow, getGreeting } from '../../data/dashData'
 import { searchCities } from '../../services/weather'
 
+function getCountryName(code) {
+  try {
+    return new Intl.DisplayNames(['en'], { type: 'region' }).of(code) || code
+  } catch {
+    return code
+  }
+}
+
 export default function DashHeader({ onSearch, onReset }) {
   const { user }                        = useAuth()
   const [input, setInput]               = useState('')
@@ -48,7 +56,7 @@ export default function DashHeader({ onSearch, onReset }) {
   }
 
   const handleSelect = (city) => {
-    setInput(`${city.name}, ${city.country}`)
+    setInput(`${city.name}, ${getCountryName(city.country)}`)
     setShowDropdown(false)
     setSuggestions([])
     onSearch({ lat: city.lat, lon: city.lon, name: city.name, country: city.country })
@@ -123,7 +131,7 @@ export default function DashHeader({ onSearch, onReset }) {
                   }}
                 >
                   <span>{city.name}{city.state ? `, ${city.state}` : ''}</span>
-                  <span style={{ opacity: 0.4, fontSize: 11 }}>{city.country}</span>
+                  <span style={{ opacity: 0.4, fontSize: 11 }}>{getCountryName(city.country)}</span>
                 </div>
               ))
             )}

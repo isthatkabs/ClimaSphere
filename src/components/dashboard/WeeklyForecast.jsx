@@ -1,66 +1,49 @@
-function getWeatherEmoji(iconCode) {
-  const map = {
-    '01d': '☀️', '01n': '🌙',
-    '02d': '⛅', '02n': '⛅',
-    '03d': '☁️', '03n': '☁️',
-    '04d': '☁️', '04n': '☁️',
-    '09d': '🌧️', '09n': '🌧️',
-    '10d': '🌦️', '10n': '🌦️',
-    '11d': '⛈️', '11n': '⛈️',
-    '13d': '❄️', '13n': '❄️',
-    '50d': '🌫️', '50n': '🌫️',
-  }
-  return map[iconCode] || '🌡️'
+function getWeatherEmoji(code) {
+  if (code === 0)  return '☀️'
+  if (code <= 2)   return '⛅'
+  if (code <= 3)   return '☁️'
+  if (code <= 48)  return '🌫️'
+  if (code <= 57)  return '🌦️'
+  if (code <= 67)  return '🌧️'
+  if (code <= 77)  return '❄️'
+  if (code <= 82)  return '🌦️'
+  if (code <= 99)  return '⛈️'
+  return '🌡️'
 }
 
-// Group the 3-hour slots by calendar day
-function groupByDay(list) {
-  const days = {}
-
-  list.forEach(slot => {
-    const date = new Date(slot.dt * 1000)
-    const key  = date.toDateString() // e.g. "Mon Jan 01 2024"
-
-    if (!days[key]) {
-      days[key] = { date, slots: [] }
-    }
-    days[key].slots.push(slot)
-  })
-
-  // Convert to array and build one summary per day
-  return Object.values(days).slice(0, 5).map(({ date, slots }, i) => {
-    const temps  = slots.map(s => s.main.temp)
-    const precip = slots.map(s => s.pop ?? 0)
-
-    // Use the midday slot (or nearest) for the icon + condition
-    const midday = slots.find(s => {
-      const h = new Date(s.dt * 1000).getHours()
-      return h >= 11 && h <= 14
-    }) ?? slots[Math.floor(slots.length / 2)]
-
-    const dayLabel = i === 0
-      ? 'Today'
-      : date.toLocaleDateString([], { weekday: 'short' }) // "Mon", "Tue"…
-
-    return {
-      day:    dayLabel,
-      today:  i === 0,
-      icon:   getWeatherEmoji(midday.weather[0].icon),
-      cond:   midday.weather[0].description
-                .split(' ')
-                .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-                .join(' '),
-      hi:     Math.round(Math.max(...temps)),
-      lo:     Math.round(Math.min(...temps)),
-      precip: `${Math.round(Math.max(...precip) * 100)}%`, // worst-case rain chance
-    }
-  })
+function getCondition(code) {
+  if (code === 0)  return 'Clear sky'
+  if (code <= 2)   return 'Partly cloudy'
+  if (code <= 3)   return 'Overcast'
+  if (code <= 48)  return 'Foggy'
+  if (code <= 57)  return 'Drizzle'
+  if (code <= 67)  return 'Rain'
+  if (code <= 77)  return 'Snow'
+  if (code <= 82)  return 'Showers'
+  if (code <= 99)  return 'Thunderstorm'
+  return 'Unknown'
 }
 
 export default function WeeklyForecast({ forecast }) {
-  if (!forecast?.list) return null
+  if (!forecast?.daily) return null
 
-  const days = groupByDay(forecast.list)
+  const {
+    time,
+    weathercode,
+    temperature_2m_max,
+    temperature_2m_min,
+    precipitation_probability_max,
+  } = forecast.daily
+
+  const days = time.map((t, i) => ({
+    day:    i === 0 ? 'Today' : new Date(t).toLocaleDateString('en-GB', { weekday: 'short' }),
+    today:  i === 0,
+    icon:   getWeatherEmoji(weathercode[i]),
+    cond:   getCondition(weathercode[i]),
+    hi:     Math.round(temperature_2m_max[i]),
+    lo:     Math.round(temperature_2m_min[i]),
+    precip: `${precipitation_probability_max[i] ?? 0}%`,
+  }))
 
   return (
     <div className="dash-section">
