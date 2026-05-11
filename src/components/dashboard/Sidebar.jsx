@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
-import { NAV } from '../data/dashData'
+import { NAV } from '../../data/dashData'
 
 export default function Sidebar({ onLogout }) {
   const { user } = useAuth()

@@ -1,5 +1,4 @@
 /* ── mock data ── */
-
 export const HOURLY = [
   { time: 'Now',   icon: '⛅', temp: 18, precip: 10 },
   { time: '2 PM',  icon: '🌤',  temp: 20, precip: 5  },
@@ -71,20 +70,16 @@ export function getGreeting(user) {
     const h = new Date().getHours()
     let name = 'there'
 
-    // Safety check: ensure user exists
     if (!user) {
       const part = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening'
       return `${part} 👋`
     }
 
-    // Try displayName first
     if (user.displayName) {
       if (typeof user.displayName === 'string' && user.displayName.trim()) {
         name = user.displayName
       }
-    }
-    // Otherwise try email
-    else if (user.email) {
+    } else if (user.email) {
       if (typeof user.email === 'string' && user.email.includes('@')) {
         const emailParts = user.email.split('@')
         if (emailParts[0]) {
