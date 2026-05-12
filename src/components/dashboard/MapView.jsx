@@ -1,320 +1,528 @@
-import { useState, useEffect } from 'react'
-
-// WMO weather code → label
-function getCondition(code) {
-  if (code === 0)  return 'Clear'
-  if (code <= 2)   return 'Partly cloudy'
-  if (code <= 3)   return 'Overcast'
-  if (code <= 48)  return 'Foggy'
-  if (code <= 57)  return 'Drizzle'
-  if (code <= 67)  return 'Rain'
-  if (code <= 77)  return 'Snow'
-  if (code <= 82)  return 'Showers'
-  if (code <= 99)  return 'Thunderstorm'
-  return 'Unknown'
-}
-
-function getWeatherEmoji(code) {
-  if (code === 0)  return '☀️'
-  if (code <= 2)   return '⛅'
-  if (code <= 3)   return '☁️'
-  if (code <= 48)  return '🌫️'
-  if (code <= 57)  return '🌦️'
-  if (code <= 67)  return '🌧️'
-  if (code <= 77)  return '❄️'
-  if (code <= 82)  return '🌦️'
-  if (code <= 99)  return '⛈️'
-  return '🌡️'
-}
-
-// A handful of world cities to dot the map
-const CITIES = [
-  { name: 'London',     lat: 51.51,  lon: -0.13,   x: 47.5, y: 26 },
-  { name: 'New York',   lat: 40.71,  lon: -74.01,  x: 21,   y: 32 },
-  { name: 'Paris',      lat: 48.86,  lon:  2.35,   x: 49,   y: 24 },
-  { name: 'Tokyo',      lat: 35.68,  lon: 139.69,  x: 79,   y: 31 },
-  { name: 'Sydney',     lat: -33.87, lon: 151.21,  x: 82,   y: 68 },
-  { name: 'Dubai',      lat: 25.20,  lon: 55.27,   x: 59,   y: 37 },
-  { name: 'São Paulo',  lat: -23.55, lon: -46.63,  x: 30,   y: 64 },
-  { name: 'Mumbai',     lat: 19.08,  lon: 72.88,   x: 63.5, y: 40 },
-  { name: 'Cairo',      lat: 30.04,  lon: 31.24,   x: 53,   y: 35 },
-  { name: 'Toronto',    lat: 43.65,  lon: -79.38,  x: 22,   y: 28 },
-  { name: 'Berlin',     lat: 52.52,  lon: 13.40,   x: 51,   y: 22 },
-  { name: 'Singapore',  lat:  1.35,  lon: 103.82,  x: 74,   y: 49 },
-]
-
-const LAYERS = [
-  { id: 'temp',    label: 'Temperature',   icon: '🌡️' },
-  { id: 'precip',  label: 'Precipitation', icon: '🌧️' },
-  { id: 'wind',    label: 'Wind',          icon: '💨' },
-  { id: 'cloud',   label: 'Cloud Cover',   icon: '☁️' },
-]
+import { useEffect, useRef, useState } from 'react'
 
 const API_KEY = 'cb1b50442a576efad21fb25f1ea232fa'
 
-export default function MapView({ weather: currentWeather }) {
-  const [activeLayer, setActiveLayer] = useState('temp')
-  const [cityData, setCityData]       = useState({})
-  const [loading, setLoading]         = useState(true)
-  const [hoveredCity, setHoveredCity] = useState(null)
-  const [selectedCity, setSelectedCity] = useState(null)
+/* ── helpers ─────────────────────────────────────────────── */
+function weatherEmoji(id) {
+  if (!id) return '🌡️'
+  if (id === 800)              return '☀️'
+  if (id >= 801 && id <= 804)  return '☁️'
+  if (id >= 700)               return '🌫️'
+  if (id >= 600)               return '❄️'
+  if (id >= 500)               return '🌧️'
+  if (id >= 300)               return '🌦️'
+  if (id >= 200)               return '⛈️'
+  return '🌡️'
+}
 
+function capitalize(str = '') {
+  return str.charAt(0).toUpperCase() + str.slice(1)
+}
+
+async function fetchWeather(lat, lon) {
+  const res  = await fetch(
+    `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`
+  )
+  return res.json()
+}
+
+/* ── predefined city markers ─────────────────────────────── */
+const CITIES = [
+  { name: 'London',    lat: 51.51,  lon: -0.13  },
+  { name: 'New York',  lat: 40.71,  lon: -74.01 },
+  { name: 'Paris',     lat: 48.86,  lon:  2.35  },
+  { name: 'Tokyo',     lat: 35.68,  lon: 139.69 },
+  { name: 'Sydney',    lat: -33.87, lon: 151.21 },
+  { name: 'Dubai',     lat: 25.20,  lon:  55.27 },
+  { name: 'São Paulo', lat: -23.55, lon: -46.63 },
+  { name: 'Mumbai',    lat:  19.08, lon:  72.88 },
+  { name: 'Cairo',     lat:  30.04, lon:  31.24 },
+  { name: 'Toronto',   lat:  43.65, lon: -79.38 },
+  { name: 'Berlin',    lat:  52.52, lon:  13.40 },
+  { name: 'Singapore', lat:   1.35, lon: 103.82 },
+]
+
+/* ── leaflet CSS injected once ───────────────────────────── */
+const LEAFLET_CSS = `https://unpkg.com/leaflet@1.9.4/dist/leaflet.css`
+
+function injectLeafletCSS() {
+  if (document.querySelector('#leaflet-css-climasphere')) return
+  const link = document.createElement('link')
+  link.id   = 'leaflet-css-climasphere'
+  link.rel  = 'stylesheet'
+  link.href = LEAFLET_CSS
+  document.head.appendChild(link)
+}
+
+/* Custom dark overrides for Leaflet chrome */
+const LEAFLET_OVERRIDES = `
+  .cs-map-wrap .leaflet-control-zoom a {
+    background: rgba(8,14,34,0.92) !important;
+    color: rgba(226,234,252,0.7) !important;
+    border: 1px solid rgba(124,58,237,0.3) !important;
+    width: 32px !important; height: 32px !important;
+    line-height: 30px !important;
+    font-size: 16px !important;
+    backdrop-filter: blur(12px);
+    transition: all 0.15s;
+  }
+  .cs-map-wrap .leaflet-control-zoom a:hover {
+    background: rgba(124,58,237,0.2) !important;
+    color: #a78bfa !important;
+    border-color: rgba(124,58,237,0.6) !important;
+  }
+  .cs-map-wrap .leaflet-control-zoom {
+    border: none !important;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.4) !important;
+    border-radius: 10px !important;
+    overflow: hidden;
+  }
+  .cs-map-wrap .leaflet-control-zoom-in  { border-radius: 0 !important; }
+  .cs-map-wrap .leaflet-control-zoom-out { border-radius: 0 !important; }
+  .cs-map-wrap .leaflet-bar { border: none !important; }
+  .cs-map-wrap .leaflet-control-attribution { display: none; }
+  .cs-map-wrap .leaflet-pane { z-index: 1 !important; }
+  .cs-map-wrap .leaflet-top,
+  .cs-map-wrap .leaflet-bottom { z-index: 2 !important; }
+
+  /* pulse ring animation on city dots */
+  @keyframes cs-pulse {
+    0%   { transform: scale(1);   opacity: 0.8; }
+    70%  { transform: scale(2.2); opacity: 0; }
+    100% { transform: scale(2.2); opacity: 0; }
+  }
+  @keyframes cs-panel-in {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes cs-spin {
+    to { transform: rotate(360deg); }
+  }
+`
+
+/* ── city dot div-icon factory ───────────────────────────── */
+function makeCityIcon(L, selected = false, clicked = false) {
+  const color  = clicked  ? '#f87171'
+               : selected ? '#a78bfa'
+               : '#7c3aed'
+  const glow   = clicked  ? 'rgba(248,113,113,0.6)'
+               : selected ? 'rgba(167,139,250,0.5)'
+               : 'rgba(124,58,237,0.5)'
+  const size   = selected || clicked ? 13 : 9
+
+  return L.divIcon({
+    className: '',
+    html: `
+      <div style="position:relative;width:${size}px;height:${size}px;cursor:pointer">
+        <div style="
+          position:absolute;inset:0;border-radius:50%;
+          background:${color};
+          border:2px solid rgba(255,255,255,0.25);
+          box-shadow:0 0 10px ${glow},0 0 20px ${glow};
+        "></div>
+        ${selected || clicked ? `<div style="
+          position:absolute;inset:0;border-radius:50%;
+          background:${color};
+          animation:cs-pulse 1.8s ease-out infinite;
+        "></div>` : ''}
+      </div>`,
+    iconSize:   [size, size],
+    iconAnchor: [size / 2, size / 2],
+  })
+}
+
+/* ── click-pin icon ──────────────────────────────────────── */
+function makeClickIcon(L) {
+  return L.divIcon({
+    className: '',
+    html: `
+      <div style="position:relative;width:18px;height:18px">
+        <div style="
+          position:absolute;inset:0;border-radius:50%;
+          background:#f87171;border:2px solid rgba(255,255,255,0.3);
+          box-shadow:0 0 12px rgba(248,113,113,0.7),0 0 28px rgba(248,113,113,0.4);
+        "></div>
+        <div style="
+          position:absolute;inset:0;border-radius:50%;
+          background:#f87171;
+          animation:cs-pulse 1.5s ease-out infinite;
+        "></div>
+      </div>`,
+    iconSize:   [18, 18],
+    iconAnchor: [9, 9],
+  })
+}
+
+/* ── weather side-panel component ────────────────────────── */
+function WeatherPanel({ data, onClose }) {
+  if (!data) return null
+
+  const id      = data.weather?.[0]?.id
+  const emoji   = weatherEmoji(id)
+  const temp    = Math.round(data.main?.temp ?? 0)
+  const feels   = Math.round(data.main?.feels_like ?? 0)
+  const humidity= data.main?.humidity ?? 0
+  const wind    = Math.round((data.wind?.speed ?? 0) * 3.6)
+  const clouds  = data.clouds?.all ?? 0
+  const pressure= data.main?.pressure ?? 1013
+  const desc    = capitalize(data.weather?.[0]?.description ?? '')
+  const city    = data.name
+    ? `${data.name}${data.sys?.country ? `, ${data.sys.country}` : ''}`
+    : `${data._lat?.toFixed(3)}°, ${data._lon?.toFixed(3)}°`
+
+  const stats = [
+    { icon: '💧', label: 'Humidity',   val: `${humidity}%`   },
+    { icon: '💨', label: 'Wind',       val: `${wind} km/h`   },
+    { icon: '🌡', label: 'Feels like', val: `${feels}°C`     },
+    { icon: '☁️', label: 'Cloud',      val: `${clouds}%`     },
+    { icon: '📊', label: 'Pressure',   val: `${pressure} hPa`},
+    { icon: '👁', label: 'Visibility', val: data.visibility
+        ? `${(data.visibility / 1000).toFixed(1)} km` : '–'   },
+  ]
+
+  return (
+    <div style={{
+      position: 'absolute', bottom: 20, left: 20, zIndex: 999,
+      width: 280,
+      background: 'rgba(6,11,26,0.94)',
+      border: '1px solid rgba(124,58,237,0.4)',
+      borderRadius: 18,
+      padding: '20px 22px 18px',
+      backdropFilter: 'blur(24px)',
+      boxShadow: '0 12px 48px rgba(0,0,0,0.6), 0 0 0 1px rgba(124,58,237,0.1) inset',
+      animation: 'cs-panel-in 0.25s ease',
+    }}>
+      {/* close */}
+      <button
+        onClick={onClose}
+        style={{
+          position: 'absolute', top: 14, right: 16,
+          background: 'none', border: 'none', cursor: 'pointer',
+          color: 'rgba(226,234,252,0.35)', fontSize: 15,
+          lineHeight: 1, transition: 'color 0.15s', padding: 0,
+        }}
+        onMouseEnter={e => e.currentTarget.style.color = 'rgba(226,234,252,0.8)'}
+        onMouseLeave={e => e.currentTarget.style.color = 'rgba(226,234,252,0.35)'}
+      >✕</button>
+
+      {/* location */}
+      <div style={{
+        fontSize: 11, color: 'rgba(167,139,250,0.8)',
+        letterSpacing: '0.04em', textTransform: 'uppercase',
+        marginBottom: 10, display: 'flex', alignItems: 'center', gap: 5,
+      }}>
+        <span>📍</span> {city}
+      </div>
+
+      {/* temp + emoji */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 6 }}>
+        <span style={{ fontSize: 52, lineHeight: 1 }}>{emoji}</span>
+        <div>
+          <div style={{
+            fontSize: 46, fontWeight: 300, lineHeight: 1,
+            letterSpacing: -2, color: '#f0ecff',
+          }}>
+            {temp}<span style={{ fontSize: 22, color: 'rgba(226,234,252,0.4)' }}>°C</span>
+          </div>
+        </div>
+      </div>
+
+      {/* condition */}
+      <div style={{
+        fontSize: 13, color: 'rgba(200,190,240,0.65)',
+        marginBottom: 16, paddingLeft: 2,
+      }}>
+        {desc}
+      </div>
+
+      {/* stats grid */}
+      <div style={{
+        display: 'grid', gridTemplateColumns: '1fr 1fr 1fr',
+        gap: 6,
+      }}>
+        {stats.map(({ icon, label, val }) => (
+          <div key={label} style={{
+            background: 'rgba(255,255,255,0.04)',
+            border: '1px solid rgba(255,255,255,0.07)',
+            borderRadius: 10, padding: '8px 10px',
+          }}>
+            <div style={{ fontSize: 10, color: 'rgba(226,234,252,0.38)', marginBottom: 3 }}>
+              {icon} {label}
+            </div>
+            <div style={{ fontSize: 12, fontWeight: 500, color: '#e2eafc' }}>{val}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/* ── loading spinner overlay ─────────────────────────────── */
+function Spinner() {
+  return (
+    <div style={{
+      position: 'absolute', inset: 0, zIndex: 998,
+      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+      background: 'rgba(7,12,26,0.55)', backdropFilter: 'blur(4px)',
+      gap: 12, pointerEvents: 'none',
+    }}>
+      <div style={{
+        width: 26, height: 26,
+        border: '2.5px solid rgba(124,58,237,0.2)',
+        borderTopColor: '#7c3aed',
+        borderRadius: '50%',
+        animation: 'cs-spin 0.7s linear infinite',
+      }} />
+      <span style={{ fontSize: 12, color: 'rgba(226,234,252,0.5)' }}>
+        Fetching weather…
+      </span>
+    </div>
+  )
+}
+
+/* ── hint tooltip ────────────────────────────────────────── */
+function HintBadge() {
+  const [visible, setVisible] = useState(true)
   useEffect(() => {
-    const fetchAll = async () => {
-      setLoading(true)
-      const results = {}
-      await Promise.allSettled(
-        CITIES.map(async (city) => {
-          try {
-            const res  = await fetch(
-              `https://api.openweathermap.org/data/2.5/weather?lat=${city.lat}&lon=${city.lon}&appid=${API_KEY}&units=metric`
-            )
-            const data = await res.json()
-            if (data.main) results[city.name] = data
-          } catch (_) {}
-        })
-      )
-      setCityData(results)
-      setLoading(false)
+    const t = setTimeout(() => setVisible(false), 5000)
+    return () => clearTimeout(t)
+  }, [])
+  if (!visible) return null
+  return (
+    <div style={{
+      position: 'absolute', top: 14, left: '50%', transform: 'translateX(-50%)',
+      zIndex: 999, pointerEvents: 'none',
+      background: 'rgba(8,14,34,0.88)',
+      border: '1px solid rgba(124,58,237,0.3)',
+      borderRadius: 100, padding: '6px 14px',
+      fontSize: 12, color: 'rgba(226,234,252,0.6)',
+      backdropFilter: 'blur(12px)',
+      display: 'flex', alignItems: 'center', gap: 6,
+      whiteSpace: 'nowrap',
+      animation: 'cs-panel-in 0.3s ease',
+    }}>
+      <span>🖱️</span> Click anywhere on the map to get live weather
+    </div>
+  )
+}
+
+/* ── main MapView ────────────────────────────────────────── */
+export default function MapView({ weather: currentWeather }) {
+  const containerRef  = useRef(null)
+  const mapRef        = useRef(null)
+  const cityMarkersRef= useRef([])   // { marker, city, L }
+  const clickMarkerRef= useRef(null)
+  const styleRef      = useRef(null)
+
+  const [panel,   setPanel]   = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [selectedCityName, setSelectedCityName] = useState(null)
+
+  /* inject global leaflet overrides once */
+  useEffect(() => {
+    if (!styleRef.current) {
+      const el = document.createElement('style')
+      el.textContent = LEAFLET_OVERRIDES
+      document.head.appendChild(el)
+      styleRef.current = el
     }
-    fetchAll()
+    return () => {
+      styleRef.current?.remove()
+      styleRef.current = null
+    }
   }, [])
 
-  // Derive a colour for each city dot based on active layer
-  function getDotColor(cityName) {
-    const d = cityData[cityName]
-    if (!d) return 'rgba(255,255,255,0.25)'
-    switch (activeLayer) {
-      case 'temp': {
-        const t = d.main.temp
-        if (t < 0)  return '#38bdf8'
-        if (t < 10) return '#7dd3fc'
-        if (t < 20) return '#86efac'
-        if (t < 30) return '#fbbf24'
-        return '#f87171'
-      }
-      case 'precip': {
-        const p = d.clouds?.all ?? 0
-        if (p < 20)  return '#22c55e'
-        if (p < 50)  return '#a3e635'
-        if (p < 75)  return '#38bdf8'
-        return '#818cf8'
-      }
-      case 'wind': {
-        const w = (d.wind?.speed ?? 0) * 3.6
-        if (w < 10) return '#22c55e'
-        if (w < 30) return '#fbbf24'
-        if (w < 50) return '#f97316'
-        return '#f87171'
-      }
-      case 'cloud': {
-        const c = d.clouds?.all ?? 0
-        if (c < 20)  return '#fbbf24'
-        if (c < 50)  return '#94a3b8'
-        if (c < 85)  return '#64748b'
-        return '#475569'
-      }
-      default: return 'rgba(255,255,255,0.35)'
+  /* build map */
+  useEffect(() => {
+    if (mapRef.current) return
+    injectLeafletCSS()
+
+    /* dynamic import so Leaflet (browser-only) is loaded safely */
+    import('leaflet').then(({ default: L }) => {
+      /* kill default icon url resolution so Vite doesn't choke */
+      delete L.Icon.Default.prototype._getIconUrl
+      L.Icon.Default.mergeOptions({ iconUrl: '', shadowUrl: '', iconRetinaUrl: '' })
+
+      const map = L.map(containerRef.current, {
+        center: [20, 0],
+        zoom: 2,
+        minZoom: 2,
+        maxZoom: 18,
+        zoomControl: false,
+        attributionControl: false,
+        worldCopyJump: true,
+      })
+
+      /* dark tile layer – CartoDB dark matter */
+      L.tileLayer(
+        'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+        { subdomains: 'abcd', maxZoom: 19 }
+      ).addTo(map)
+
+      /* zoom control – bottom-right */
+      L.control.zoom({ position: 'bottomright' }).addTo(map)
+
+      /* city markers */
+      cityMarkersRef.current = CITIES.map(city => {
+        const icon   = makeCityIcon(L)
+        const marker = L.marker([city.lat, city.lon], { icon, title: city.name })
+          .addTo(map)
+          .on('click', async () => {
+            /* remove stale click pin */
+            if (clickMarkerRef.current) {
+              clickMarkerRef.current.remove()
+              clickMarkerRef.current = null
+            }
+            setSelectedCityName(city.name)
+            setLoading(true)
+            try {
+              const data = await fetchWeather(city.lat, city.lon)
+              setPanel({ ...data, _lat: city.lat, _lon: city.lon })
+            } catch (_) {}
+            setLoading(false)
+          })
+        return { marker, city, L }
+      })
+
+      /* map click → weather for arbitrary location */
+      map.on('click', async (e) => {
+        const { lat, lng } = e.latlng
+
+        /* clear selected city highlight */
+        setSelectedCityName(null)
+
+        /* drop/move click pin */
+        if (clickMarkerRef.current) {
+          clickMarkerRef.current.remove()
+        }
+        const pin = L.marker([lat, lng], { icon: makeClickIcon(L) }).addTo(map)
+        clickMarkerRef.current = pin
+
+        setLoading(true)
+        try {
+          const data = await fetchWeather(lat, lng)
+          setPanel({ ...data, _lat: lat, _lon: lng })
+        } catch (_) {}
+        setLoading(false)
+      })
+
+      mapRef.current = map
+    })
+
+    return () => {
+      mapRef.current?.remove()
+      mapRef.current = null
+    }
+  }, [])
+
+  /* update city icon style when selection changes */
+  useEffect(() => {
+    cityMarkersRef.current.forEach(({ marker, city, L: leaflet }) => {
+      if (!leaflet) return
+      const selected = city.name === selectedCityName
+      marker.setIcon(makeCityIcon(leaflet, selected))
+    })
+  }, [selectedCityName])
+
+  const handleClose = () => {
+    setPanel(null)
+    setSelectedCityName(null)
+    if (clickMarkerRef.current) {
+      clickMarkerRef.current.remove()
+      clickMarkerRef.current = null
     }
   }
-
-  function getLayerValue(cityName) {
-    const d = cityData[cityName]
-    if (!d) return '–'
-    switch (activeLayer) {
-      case 'temp':   return `${Math.round(d.main.temp)}°C`
-      case 'precip': return `${d.clouds?.all ?? 0}%`
-      case 'wind':   return `${Math.round((d.wind?.speed ?? 0) * 3.6)} km/h`
-      case 'cloud':  return `${d.clouds?.all ?? 0}%`
-      default:       return ''
-    }
-  }
-
-  const hovered  = hoveredCity  && cityData[hoveredCity.name]
-  const selected = selectedCity && cityData[selectedCity.name]
-  const detail   = selected || hovered
-  const detailCity = selected ? selectedCity : hoveredCity
 
   return (
     <div className="dash-section dash-map-root">
       <div className="dash-section-header">
         <span className="dash-section-title">🗺️ World Weather Map</span>
-        <span className="dash-section-sub">Live conditions across major cities</span>
+        <span className="dash-section-sub">
+          Click any city dot or anywhere on the map for live conditions
+        </span>
       </div>
 
-      {/* Layer selector */}
-      <div className="map-layer-bar">
-        {LAYERS.map(l => (
-          <button
-            key={l.id}
-            className={`map-layer-btn${activeLayer === l.id ? ' active' : ''}`}
-            onClick={() => setActiveLayer(l.id)}
-          >
-            <span>{l.icon}</span> {l.label}
-          </button>
-        ))}
+      {/* map wrapper */}
+      <div
+        className="cs-map-wrap"
+        style={{
+          position: 'relative',
+          height: 520,
+          borderRadius: 18,
+          overflow: 'hidden',
+          border: '1px solid rgba(124,58,237,0.22)',
+          boxShadow: '0 8px 48px rgba(0,0,0,0.5), 0 0 0 1px rgba(124,58,237,0.06) inset',
+        }}
+      >
+        {/* leaflet mount point */}
+        <div ref={containerRef} style={{ width: '100%', height: '100%' }} />
+
+        {/* overlays */}
+        <HintBadge />
+        {loading && <Spinner />}
+        {panel && !loading && <WeatherPanel data={panel} onClose={handleClose} />}
       </div>
 
-      <div className="map-canvas-wrap">
-        {/* SVG world map silhouette (simplified continents) */}
-        <svg
-          className="map-svg"
-          viewBox="0 0 100 75"
-          preserveAspectRatio="xMidYMid meet"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          {/* Simple continent blobs – stylised, not geo-accurate */}
-          {/* North America */}
-          <path d="M5 15 Q8 10 14 12 Q22 8 26 14 Q28 20 24 28 Q20 36 18 40 Q14 42 10 38 Q4 32 5 22 Z"
-            fill="rgba(124,58,237,0.12)" stroke="rgba(124,58,237,0.25)" strokeWidth="0.3"/>
-          {/* South America */}
-          <path d="M20 44 Q26 40 32 44 Q36 50 34 60 Q30 70 26 70 Q20 68 18 60 Q16 52 20 44 Z"
-            fill="rgba(124,58,237,0.12)" stroke="rgba(124,58,237,0.25)" strokeWidth="0.3"/>
-          {/* Europe */}
-          <path d="M44 14 Q50 10 56 14 Q58 18 54 24 Q50 28 46 24 Q42 20 44 14 Z"
-            fill="rgba(124,58,237,0.12)" stroke="rgba(124,58,237,0.25)" strokeWidth="0.3"/>
-          {/* Africa */}
-          <path d="M46 28 Q54 26 58 32 Q62 40 60 52 Q56 62 50 62 Q44 60 42 50 Q40 38 46 28 Z"
-            fill="rgba(124,58,237,0.12)" stroke="rgba(124,58,237,0.25)" strokeWidth="0.3"/>
-          {/* Asia */}
-          <path d="M56 10 Q70 6 80 10 Q88 14 88 22 Q86 30 80 34 Q72 36 62 32 Q54 26 54 18 Q54 12 56 10 Z"
-            fill="rgba(124,58,237,0.12)" stroke="rgba(124,58,237,0.25)" strokeWidth="0.3"/>
-          {/* Australia */}
-          <path d="M76 56 Q84 52 90 58 Q92 64 88 70 Q82 74 76 70 Q70 64 76 56 Z"
-            fill="rgba(124,58,237,0.12)" stroke="rgba(124,58,237,0.25)" strokeWidth="0.3"/>
-
-          {/* Latitude grid lines */}
-          {[15, 25, 35, 45, 55, 65].map(y => (
-            <line key={y} x1="0" y1={y} x2="100" y2={y}
-              stroke="rgba(255,255,255,0.04)" strokeWidth="0.3"/>
-          ))}
-          {/* Longitude grid lines */}
-          {[10, 20, 30, 40, 50, 60, 70, 80, 90].map(x => (
-            <line key={x} x1={x} y1="0" x2={x} y2="75"
-              stroke="rgba(255,255,255,0.04)" strokeWidth="0.3"/>
-          ))}
-
-          {/* City dots */}
-          {CITIES.map(city => {
-            const color   = getDotColor(city.name)
-            const isHover = hoveredCity?.name === city.name
-            const isSel   = selectedCity?.name === city.name
-            return (
-              <g key={city.name}
-                style={{ cursor: 'pointer' }}
-                onMouseEnter={() => setHoveredCity(city)}
-                onMouseLeave={() => setHoveredCity(null)}
-                onClick={() => setSelectedCity(prev => prev?.name === city.name ? null : city)}
-              >
-                {/* Pulse ring */}
-                {(isHover || isSel) && (
-                  <circle cx={city.x} cy={city.y} r="2.4"
-                    fill="none" stroke={color} strokeWidth="0.5" opacity="0.5">
-                  </circle>
-                )}
-                <circle cx={city.x} cy={city.y} r={isHover || isSel ? 1.4 : 1.0}
-                  fill={color}
-                  style={{ filter: `drop-shadow(0 0 2px ${color})`, transition: 'r 0.2s' }}
-                />
-                {/* City label on hover/select */}
-                {(isHover || isSel) && (
-                  <text x={city.x + 2} y={city.y - 1.5}
-                    fontSize="2.2" fill="#e2eafc" fontFamily="Outfit, sans-serif"
-                    style={{ pointerEvents: 'none', userSelect: 'none' }}
-                  >
-                    {city.name}
-                  </text>
-                )}
-              </g>
-            )
-          })}
-        </svg>
-
-        {/* Detail popup */}
-        {detail && detailCity && (
-          <div className="map-detail-card">
-            <div className="map-detail-top">
-              <span className="map-detail-city">{detailCity.name}</span>
-              <span className="map-detail-emoji">
-                {getWeatherEmoji(detail.weather?.[0]?.id ?? 0)}
-              </span>
-            </div>
-            <div className="map-detail-temp">
-              {Math.round(detail.main?.temp ?? 0)}°C
-            </div>
-            <div className="map-detail-cond">
-              {detail.weather?.[0]?.description
-                ? detail.weather[0].description.charAt(0).toUpperCase() + detail.weather[0].description.slice(1)
-                : getCondition(0)}
-            </div>
-            <div className="map-detail-stats">
-              <div className="map-ds"><span>💧</span>{detail.main?.humidity}%</div>
-              <div className="map-ds"><span>💨</span>{Math.round((detail.wind?.speed ?? 0) * 3.6)} km/h</div>
-              <div className="map-ds"><span>☁️</span>{detail.clouds?.all}%</div>
-            </div>
-          </div>
-        )}
-
-        {loading && (
-          <div className="map-loading">Loading city data…</div>
-        )}
-      </div>
-
-      {/* Legend */}
-      <div className="map-legend">
-        {activeLayer === 'temp' && (
-          <>
-            <span className="map-legend-title">Temperature</span>
-            {[['#38bdf8','< 0°C'],['#7dd3fc','0–10°C'],['#86efac','10–20°C'],['#fbbf24','20–30°C'],['#f87171','> 30°C']].map(([c,l]) => (
-              <div key={l} className="map-legend-item">
-                <span className="map-legend-dot" style={{ background: c }}/>
-                <span>{l}</span>
-              </div>
-            ))}
-          </>
-        )}
-        {activeLayer === 'wind' && (
-          <>
-            <span className="map-legend-title">Wind Speed</span>
-            {[['#22c55e','< 10 km/h'],['#fbbf24','10–30'],['#f97316','30–50'],['#f87171','> 50']].map(([c,l]) => (
-              <div key={l} className="map-legend-item">
-                <span className="map-legend-dot" style={{ background: c }}/>
-                <span>{l}</span>
-              </div>
-            ))}
-          </>
-        )}
-        {(activeLayer === 'precip' || activeLayer === 'cloud') && (
-          <>
-            <span className="map-legend-title">{activeLayer === 'precip' ? 'Cloud %' : 'Cloud Cover'}</span>
-            {[['#22c55e','< 20%'],['#a3e635','20–50%'],['#38bdf8','50–75%'],['#818cf8','> 75%']].map(([c,l]) => (
-              <div key={l} className="map-legend-item">
-                <span className="map-legend-dot" style={{ background: c }}/>
-                <span>{l}</span>
-              </div>
-            ))}
-          </>
-        )}
-      </div>
-
-      {/* City grid */}
-      <div className="map-city-grid">
+      {/* city quick-access chips */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(4, 1fr)',
+        gap: 7,
+        marginTop: 4,
+      }}>
         {CITIES.map(city => {
-          const d     = cityData[city.name]
-          const color = getDotColor(city.name)
-          const val   = getLayerValue(city.name)
+          const isSelected = selectedCityName === city.name
           return (
-            <div
+            <button
               key={city.name}
-              className={`map-city-chip${selectedCity?.name === city.name ? ' selected' : ''}`}
-              onClick={() => setSelectedCity(prev => prev?.name === city.name ? null : city)}
-              style={{ '--dot-color': color }}
+              onClick={async () => {
+                /* fly map to city */
+                if (mapRef.current) {
+                  mapRef.current.flyTo([city.lat, city.lon], 8, { duration: 1.2 })
+                }
+                /* remove click pin */
+                if (clickMarkerRef.current) {
+                  clickMarkerRef.current.remove()
+                  clickMarkerRef.current = null
+                }
+                setSelectedCityName(city.name)
+                setLoading(true)
+                try {
+                  const data = await fetchWeather(city.lat, city.lon)
+                  setPanel({ ...data, _lat: city.lat, _lon: city.lon })
+                } catch (_) {}
+                setLoading(false)
+              }}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 7,
+                padding: '8px 11px',
+                background: isSelected ? 'rgba(124,58,237,0.12)' : 'rgba(255,255,255,0.03)',
+                border: `1px solid ${isSelected ? 'rgba(124,58,237,0.45)' : 'rgba(255,255,255,0.07)'}`,
+                borderRadius: 9, cursor: 'pointer',
+                color: 'inherit', fontFamily: 'inherit',
+                transition: 'all 0.15s',
+              }}
+              onMouseEnter={e => {
+                if (!isSelected) e.currentTarget.style.background = 'rgba(255,255,255,0.06)'
+              }}
+              onMouseLeave={e => {
+                if (!isSelected) e.currentTarget.style.background = 'rgba(255,255,255,0.03)'
+              }}
             >
-              <span className="map-chip-dot" style={{ background: color }} />
-              <span className="map-chip-name">{city.name}</span>
-              <span className="map-chip-val">{loading ? '…' : val}</span>
-              {d && <span className="map-chip-icon">{getWeatherEmoji(d.weather?.[0]?.id ?? 0)}</span>}
-            </div>
+              <span style={{
+                width: 7, height: 7, borderRadius: '50%', flexShrink: 0,
+                background: isSelected ? '#a78bfa' : '#7c3aed',
+                boxShadow: isSelected ? '0 0 6px rgba(167,139,250,0.6)' : 'none',
+              }} />
+              <span style={{
+                fontSize: 11, fontWeight: 500,
+                flex: 1, textAlign: 'left',
+                overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                color: isSelected ? '#e2eafc' : 'rgba(226,234,252,0.6)',
+              }}>
+                {city.name}
+              </span>
+            </button>
           )
         })}
       </div>
