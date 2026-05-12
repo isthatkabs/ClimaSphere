@@ -23,7 +23,7 @@ const days = [
 
 const features = [
   { icon: '⏱', title: 'Hourly Breakdown',   desc: 'Temperature, precipitation chance, and wind speed for every hour of the day.' },
-  { icon: '📅', title: '7-Day Forecast',     desc: 'Plan your week with high/low temps, conditions, and rain probability each day.' },
+  { icon: '📅', title: '5-Day Forecast',     desc: 'Plan your week with high/low temps, conditions, and rain probability each day.' },
   { icon: '🎯', title: '95% Accuracy',       desc: 'Powered by OpenWeatherMap and Open-Meteo for the most reliable predictions.' },
   { icon: '🌍', title: '200,000+ Cities',    desc: 'Search any city worldwide and get a full local forecast instantly.' },
   { icon: '💨', title: 'Wind & Pressure',    desc: 'Full atmospheric data including wind direction, gusts, and barometric pressure.' },
@@ -73,7 +73,7 @@ export default function ForecastPage() {
             <span style={{
               background: 'linear-gradient(135deg, #a06bff 0%, #6fa8ff 100%)',
               WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontStyle: 'italic',
-            }}>Up to 7 Days Ahead</span>
+            }}>Up to 5 Days Ahead</span>
           </h1>
           <p style={{ fontSize: 17, color: 'rgba(200,190,240,0.7)', maxWidth: 520, margin: '0 auto 40px', lineHeight: 1.7 }}>
             Hourly breakdowns, daily summaries, and real-time atmospheric data — all in one place.

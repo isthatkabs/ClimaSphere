@@ -19,6 +19,7 @@ import HourlyForecast from '../components/dashboard/HourlyForecast'
 import MetricsGrid    from '../components/dashboard/MetricsGrid'
 import WeeklyForecast from '../components/dashboard/WeeklyForecast'
 import SideCards      from '../components/dashboard/SideCards'
+import FloatingAlert  from '../components/dashboard/FloatingAlert'
 
 const DEFAULT_LOCATION = { lat: 51.5074, lon: -0.1278, name: 'London' }
 
@@ -153,6 +154,9 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+
+      {/* Floating Alert Notification */}
+      <FloatingAlert forecast={forecast} />
     </div>
   )
 }
