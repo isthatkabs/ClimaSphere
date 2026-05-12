@@ -88,7 +88,7 @@ export default function MapsPage() {
           <p style={{ fontSize: 17, color: 'rgba(200,190,240,0.7)', maxWidth: 520, margin: '0 auto 40px', lineHeight: 1.7 }}>
             Interactive weather maps with live radar, satellite imagery, wind flow, and more — layered over any location on Earth.
           </p>
-          <Link to="/auth" style={{
+          <Link to="/auth?redirect=map" style={{
             display: 'inline-flex', alignItems: 'center', gap: 8,
             background: 'linear-gradient(135deg, #0ea5e9 0%, #7c3aff 100%)',
             color: '#fff', fontWeight: 600, fontSize: 15,
@@ -135,7 +135,7 @@ export default function MapsPage() {
               <div style={{ position: 'relative', zIndex: 1, textAlign: 'center' }}>
                 <div style={{ fontSize: 48, marginBottom: 12 }}>🗺</div>
                 <div style={{ fontSize: 14, color: 'rgba(56,189,248,0.7)', fontWeight: 500 }}>Interactive map available in dashboard</div>
-                <Link to="/auth" style={{
+                <Link to="/auth?redirect=map" style={{
                   display: 'inline-block', marginTop: 14,
                   background: 'rgba(56,189,248,0.15)', border: '1px solid rgba(56,189,248,0.3)',
                   color: '#7dd3fc', fontSize: 13, fontWeight: 500,

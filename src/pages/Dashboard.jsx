@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { getCurrentWeather, getForecast } from '../services/weather'
 
@@ -21,15 +21,16 @@ import MetricsGrid    from '../components/dashboard/MetricsGrid'
 import WeeklyForecast from '../components/dashboard/WeeklyForecast'
 import SideCards      from '../components/dashboard/SideCards'
 import FloatingAlert  from '../components/dashboard/FloatingAlert'
-import MapView from '../components/dashboard/map/MapView'
+import MapView        from '../components/dashboard/map/MapView'
 
 const DEFAULT_LOCATION = { lat: 51.5074, lon: -0.1278, name: 'London' }
 
 export default function Dashboard() {
   const { logout } = useAuth()
   const navigate   = useNavigate()
+  const location   = useLocation()
 
-  const [location,     setLocation]     = useState(null)
+  const [loc,          setLoc]          = useState(null)
   const [weather,      setWeather]      = useState(null)
   const [forecast,     setForecast]     = useState(null)
   const [loading,      setLoading]      = useState(true)
@@ -37,33 +38,38 @@ export default function Dashboard() {
   const [activePage,   setActivePage]   = useState('Overview')
   const [selectedHour, setSelectedHour] = useState(null)
 
+  // Read ?page=Map from URL on mount
+  useEffect(() => {
+    const params = new URLSearchParams(location.search)
+    if (params.get('page') === 'Map') setActivePage('Map')
+  }, [location.search])
+
   useEffect(() => {
     if (!navigator.geolocation) {
-      setLocation(DEFAULT_LOCATION)
+      setLoc(DEFAULT_LOCATION)
       return
     }
     navigator.geolocation.getCurrentPosition(
-      (pos) => setLocation({
+      (pos) => setLoc({
         lat:  pos.coords.latitude,
         lon:  pos.coords.longitude,
         name: 'Your Location',
       }),
-      () => setLocation(DEFAULT_LOCATION),
+      () => setLoc(DEFAULT_LOCATION),
       { timeout: 8000 }
     )
   }, [])
 
   useEffect(() => {
-    if (!location) return
+    if (!loc) return
     const fetchWeather = async () => {
       try {
         setLoading(true)
         setError(null)
-        // Reset selected hour when location changes
         setSelectedHour(null)
         const [currentData, forecastData] = await Promise.all([
-          getCurrentWeather(location.lat, location.lon),
-          getForecast(location.lat, location.lon),
+          getCurrentWeather(loc.lat, loc.lon),
+          getForecast(loc.lat, loc.lon),
         ])
         setWeather(currentData)
         setForecast(forecastData)
@@ -74,7 +80,7 @@ export default function Dashboard() {
       }
     }
     fetchWeather()
-  }, [location])
+  }, [loc])
 
   const handleLogout = async () => {
     await logout()
@@ -83,16 +89,16 @@ export default function Dashboard() {
 
   const handleReset = () => {
     if (!navigator.geolocation) {
-      setLocation(DEFAULT_LOCATION)
+      setLoc(DEFAULT_LOCATION)
       return
     }
     navigator.geolocation.getCurrentPosition(
-      (pos) => setLocation({
+      (pos) => setLoc({
         lat:  pos.coords.latitude,
         lon:  pos.coords.longitude,
         name: 'Your Location',
       }),
-      () => setLocation(DEFAULT_LOCATION),
+      () => setLoc(DEFAULT_LOCATION),
       { timeout: 8000 }
     )
   }
@@ -102,7 +108,7 @@ export default function Dashboard() {
       <div className="dash-root">
         <Sidebar onLogout={handleLogout} forecast={forecast} activePage={activePage} onNav={setActivePage} />
         <div className="dash-main">
-          <DashHeader onSearch={setLocation} onReset={handleReset} />
+          <DashHeader onSearch={setLoc} onReset={handleReset} />
           <div className="dash-content">
             <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>
               Loading weather data…
@@ -118,10 +124,10 @@ export default function Dashboard() {
       <div className="dash-root">
         <Sidebar onLogout={handleLogout} forecast={forecast} activePage={activePage} onNav={setActivePage} />
         <div className="dash-main">
-          <DashHeader onSearch={setLocation} onReset={handleReset} />
+          <DashHeader onSearch={setLoc} onReset={handleReset} />
           <div className="dash-content">
             <div style={{ padding: '40px', textAlign: 'center', color: '#f87171' }}>
-              <p>Could not load weather for "{location.name}".</p>
+              <p>Could not load weather for "{loc.name}".</p>
               <p style={{ marginTop: 8, fontSize: 13, opacity: 0.6 }}>
                 Check the city name and try again.
               </p>
@@ -137,7 +143,7 @@ export default function Dashboard() {
       <Sidebar onLogout={handleLogout} forecast={forecast} activePage={activePage} onNav={setActivePage} />
 
       <div className="dash-main">
-        <DashHeader onSearch={setLocation} onReset={handleReset} />
+        <DashHeader onSearch={setLoc} onReset={handleReset} />
 
         <div className="dash-content">
           {activePage === 'Map' ? (

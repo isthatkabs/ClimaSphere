@@ -1,6 +1,6 @@
 import { useState } from "react";
 import '../App.css';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "../firebase";
 
@@ -12,6 +12,8 @@ function Auth() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
+  const redirect = new URLSearchParams(location.search).get('redirect');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -41,12 +43,12 @@ function Auth() {
       if (isLogin) {
         await signInWithEmailAndPassword(auth, email, password);
         setSuccess("You're logged in!");
-        setTimeout(() => navigate("/dashboard"), 1500);
+        setTimeout(() => navigate(redirect === 'map' ? '/dashboard?page=Map' : '/dashboard'), 1500);
       } else {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         await updateProfile(userCredential.user, { displayName: username.trim() });
         setSuccess("You've signed up!");
-        setTimeout(() => navigate("/dashboard"), 1500);
+        setTimeout(() => navigate(redirect === 'map' ? '/dashboard?page=Map' : '/dashboard'), 1500);
       }
     } catch (err) {
       const code = err.code;
