@@ -8,29 +8,53 @@ const tiers = [
     name: 'Free', price: '$0', period: 'forever',
     color: '#22c55e', border: 'rgba(34,197,94,0.25)', bg: 'rgba(34,197,94,0.05)',
     features: ['1,000 calls/day', '5-day forecast', 'Current conditions', 'City search', 'Community support'],
-    cta: 'Get API Key', ctaStyle: { background: 'rgba(34,197,94,0.15)', color: '#22c55e', border: '1px solid rgba(34,197,94,0.3)' },
+    url: 'https://openweathermap.org/api',
   },
   {
     name: 'Pro', price: '$12', period: 'per month',
     color: '#a78bfa', border: 'rgba(167,139,250,0.35)', bg: 'rgba(167,139,250,0.07)',
     badge: 'Most popular',
     features: ['100,000 calls/day', '14-day forecast', 'Hourly data', 'Air quality index', 'Radar & satellite', 'Email support'],
-    cta: 'Start Free Trial', ctaStyle: { background: 'linear-gradient(135deg, #7c3aff, #5a7cff)', color: '#fff', border: 'none' },
+    cta: 'Start Free Trial',
+    ctaStyle: { background: 'linear-gradient(135deg, #7c3aff, #5a7cff)', color: '#fff', border: 'none' },
+    url: 'https://openweathermap.org/price',
   },
   {
     name: 'Enterprise', price: 'Custom', period: 'contact us',
     color: '#fbbf24', border: 'rgba(251,191,36,0.25)', bg: 'rgba(251,191,36,0.05)',
     features: ['Unlimited calls', 'All forecast models', 'Webhooks & streaming', 'SLA guarantee', 'Dedicated support', 'Custom endpoints'],
-    cta: 'Contact Sales', ctaStyle: { background: 'rgba(251,191,36,0.15)', color: '#fbbf24', border: '1px solid rgba(251,191,36,0.3)' },
+    cta: 'Contact Sales',
+    ctaStyle: { background: 'rgba(251,191,36,0.15)', color: '#fbbf24', border: '1px solid rgba(251,191,36,0.3)' },
+    url: 'https://openweathermap.org/enterprise',
   },
 ]
 
 const endpoints = [
-  { method: 'GET', path: '/v1/current',  desc: 'Current conditions for any lat/lon'  },
-  { method: 'GET', path: '/v1/forecast', desc: 'Hourly & daily forecast up to 5 days' },
-  { method: 'GET', path: '/v1/alerts',   desc: 'Active weather alerts for a location' },
-  { method: 'GET', path: '/v1/air',      desc: 'Air quality index and pollutants'     },
-  { method: 'GET', path: '/v1/search',   desc: 'Geocode a city name to coordinates'   },
+  {
+    method: 'GET', path: '/v1/current',
+    desc: 'Returns real-time weather for any lat/lon — temperature, humidity, wind, pressure, and conditions.',
+    url: 'https://openweathermap.org/current',
+  },
+  {
+    method: 'GET', path: '/v1/forecast',
+    desc: 'Hourly and daily forecasts up to 5 days. Includes precipitation probability and weather codes.',
+    url: 'https://open-meteo.com/en/docs',
+  },
+  {
+    method: 'GET', path: '/v1/alerts',
+    desc: 'Active severe weather alerts (storms, snow, fog, extreme heat) for a given location.',
+    url: 'https://openweathermap.org/triggers',
+  },
+  {
+    method: 'GET', path: '/v1/air',
+    desc: 'Air Quality Index (1–5 scale) plus individual pollutant readings: CO, NO₂, O₃, PM2.5, PM10.',
+    url: 'https://openweathermap.org/api/air-pollution',
+  },
+  {
+    method: 'GET', path: '/v1/search',
+    desc: 'Geocode a city name into coordinates. Returns up to 5 matching cities with country and state.',
+    url: 'https://openweathermap.org/api/geocoding-api',
+  },
 ]
 
 const codeExample = `fetch('https://api.climasphere.io/v1/current?lat=51.5&lon=-0.12', {
@@ -146,23 +170,32 @@ export default function ApiPage() {
           </h2>
           <div style={{ maxWidth: 760, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 6 }}>
             {endpoints.map(e => (
-              <div key={e.path} style={{
-                display: 'flex', alignItems: 'center', gap: 16,
-                padding: '14px 20px',
-                background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)',
-                borderRadius: 12,
-              }}>
+              <div
+                key={e.path}
+                onClick={() => window.open(e.url, '_blank')}
+                style={{
+                  display: 'flex', alignItems: 'flex-start', gap: 16,
+                  padding: '16px 20px',
+                  background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)',
+                  borderRadius: 12, cursor: 'pointer', transition: 'background 0.15s',
+                }}
+                onMouseEnter={ev => ev.currentTarget.style.background = 'rgba(255,255,255,0.06)'}
+                onMouseLeave={ev => ev.currentTarget.style.background = 'rgba(255,255,255,0.03)'}
+              >
                 <span style={{
                   fontSize: 11, fontWeight: 700, color: '#22c55e',
                   background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.25)',
-                  padding: '3px 8px', borderRadius: 6, flexShrink: 0,
+                  padding: '3px 8px', borderRadius: 6, flexShrink: 0, marginTop: 2,
                 }}>
                   {e.method}
                 </span>
-                <code style={{ fontSize: 13, color: '#a78bfa', fontFamily: "'Fira Code', monospace", flex: 1 }}>
-                  {e.path}
-                </code>
-                <span style={{ fontSize: 13, color: 'rgba(226,234,252,0.45)' }}>{e.desc}</span>
+                <div style={{ flex: 1 }}>
+                  <code style={{ fontSize: 13, color: '#a78bfa', fontFamily: "'Fira Code', monospace", display: 'block', marginBottom: 4 }}>
+                    {e.path}
+                  </code>
+                  <span style={{ fontSize: 12, color: 'rgba(226,234,252,0.5)', lineHeight: 1.5 }}>{e.desc}</span>
+                </div>
+                <span style={{ fontSize: 12, color: 'rgba(167,139,250,0.5)', flexShrink: 0, marginTop: 2 }}>↗</span>
               </div>
             ))}
           </div>
@@ -178,10 +211,24 @@ export default function ApiPage() {
           </h2>
           <div style={{ display: 'flex', gap: 20, maxWidth: 900, margin: '0 auto', alignItems: 'flex-start' }}>
             {tiers.map(t => (
-              <div key={t.name} style={{
-                flex: 1, background: t.bg, border: `1px solid ${t.border}`,
-                borderRadius: 20, padding: '32px 26px', textAlign: 'left', position: 'relative',
-              }}>
+              <div
+                key={t.name}
+                onClick={() => window.open(t.url, '_blank')}
+                style={{
+                  flex: 1, background: t.bg, border: `1px solid ${t.border}`,
+                  borderRadius: 20, padding: '32px 26px', textAlign: 'left',
+                  position: 'relative', cursor: 'pointer',
+                  transition: 'transform 0.15s, box-shadow 0.15s',
+                }}
+                onMouseEnter={ev => {
+                  ev.currentTarget.style.transform = 'translateY(-4px)'
+                  ev.currentTarget.style.boxShadow = '0 16px 48px rgba(0,0,0,0.4)'
+                }}
+                onMouseLeave={ev => {
+                  ev.currentTarget.style.transform = 'translateY(0)'
+                  ev.currentTarget.style.boxShadow = 'none'
+                }}
+              >
                 {t.badge && (
                   <div style={{
                     position: 'absolute', top: -12, left: '50%', transform: 'translateX(-50%)',
@@ -198,7 +245,7 @@ export default function ApiPage() {
                   <span style={{ fontSize: 13, color: 'rgba(226,234,252,0.4)' }}>/ {t.period}</span>
                 </div>
                 <div style={{ height: 1, background: 'rgba(255,255,255,0.07)', margin: '20px 0' }} />
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 24 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: t.cta ? 24 : 0 }}>
                   {t.features.map(f => (
                     <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}>
                       <span style={{ color: t.color, fontSize: 14 }}>✓</span>
@@ -206,13 +253,16 @@ export default function ApiPage() {
                     </div>
                   ))}
                 </div>
-                <Link to="/auth" style={{
-                  display: 'block', textAlign: 'center', padding: '11px 0',
-                  borderRadius: 10, fontSize: 14, fontWeight: 600, textDecoration: 'none',
-                  cursor: 'pointer', ...t.ctaStyle,
-                }}>
-                  {t.cta}
-                </Link>
+                {t.cta && (
+                  <div style={{
+                    marginTop: 24,
+                    display: 'block', textAlign: 'center', padding: '11px 0',
+                    borderRadius: 10, fontSize: 14, fontWeight: 600,
+                    ...t.ctaStyle,
+                  }}>
+                    {t.cta}
+                  </div>
+                )}
               </div>
             ))}
           </div>
