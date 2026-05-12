@@ -27,7 +27,7 @@ const tiers = [
 
 const endpoints = [
   { method: 'GET', path: '/v1/current',  desc: 'Current conditions for any lat/lon'  },
-  { method: 'GET', path: '/v1/forecast', desc: 'Hourly & daily forecast up to 14 days' },
+  { method: 'GET', path: '/v1/forecast', desc: 'Hourly & daily forecast up to 5 days' },
   { method: 'GET', path: '/v1/alerts',   desc: 'Active weather alerts for a location' },
   { method: 'GET', path: '/v1/air',      desc: 'Air quality index and pollutants'     },
   { method: 'GET', path: '/v1/search',   desc: 'Geocode a city name to coordinates'   },
@@ -87,7 +87,7 @@ export default function ApiPage() {
             }}>with Weather Data</span>
           </h1>
           <p style={{ fontSize: 17, color: 'rgba(200,190,240,0.7)', maxWidth: 520, margin: '0 auto 40px', lineHeight: 1.7 }}>
-            A clean REST API giving you current conditions, multi-day forecasts, alerts, and air quality for any location on Earth.
+            A clean API giving you current conditions, multi-day forecasts, alerts, and much more for any location on Earth!
           </p>
           <div style={{ display: 'flex', gap: 14, justifyContent: 'center' }}>
             <Link to="/auth" style={{
