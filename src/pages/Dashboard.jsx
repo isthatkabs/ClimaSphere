@@ -21,7 +21,7 @@ import MetricsGrid    from '../components/dashboard/MetricsGrid'
 import WeeklyForecast from '../components/dashboard/WeeklyForecast'
 import SideCards      from '../components/dashboard/SideCards'
 import FloatingAlert  from '../components/dashboard/FloatingAlert'
-import MapView        from '../components/dashboard/MapView'
+import MapView from '../components/dashboard/map/MapView'
 
 const DEFAULT_LOCATION = { lat: 51.5074, lon: -0.1278, name: 'London' }
 
