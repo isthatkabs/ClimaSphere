@@ -1,5 +1,13 @@
 import { weatherEmoji, capitalize } from './mapHelpers'
 
+function getCountryName(code) {
+  try {
+    return new Intl.DisplayNames(['en'], { type: 'region' }).of(code) || code
+  } catch {
+    return code
+  }
+}
+
 export default function WeatherPanel({ data, onClose }) {
   if (!data) return null
 
@@ -13,7 +21,7 @@ export default function WeatherPanel({ data, onClose }) {
   const pressure = data.main?.pressure ?? 1013
   const desc     = capitalize(data.weather?.[0]?.description ?? '')
   const city     = data.name
-    ? `${data.name}${data.sys?.country ? `, ${data.sys.country}` : ''}`
+    ? `${data.name}${data.sys?.country ? `, ${getCountryName(data.sys.country)}` : ''}`
     : `${data._lat?.toFixed(3)}°, ${data._lon?.toFixed(3)}°`
 
   const stats = [
