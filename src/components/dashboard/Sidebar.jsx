@@ -49,7 +49,7 @@ function getAlert(forecast) {
   return null
 }
 
-export default function Sidebar({ onLogout, forecast }) {
+export default function Sidebar({ onLogout, forecast, activePage, onNav }) {
   const { user } = useAuth()
   const navigate = useNavigate()
   const alert    = getAlert(forecast)
@@ -64,10 +64,11 @@ export default function Sidebar({ onLogout, forecast }) {
       </div>
 
       <nav className="dash-nav">
-        {NAV.map(({ icon, label, active }) => (
+        {NAV.map(({ icon, label }) => (
           <button
             key={label}
-            className={`dash-nav-item${active ? ' active' : ''}`}
+            className={`dash-nav-item${activePage === label ? ' active' : ''}`}
+            onClick={() => onNav(label)}
           >
             <span className="dash-nav-icon">{icon}</span>
             {label}

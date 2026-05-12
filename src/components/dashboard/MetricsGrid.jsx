@@ -3,7 +3,6 @@ function toPercent(value, min, max) {
   return Math.round(Math.min(100, Math.max(0, ((value - min) / (max - min)) * 100)))
 }
 
-// Helper: descriptive sub-label for each metric
 function humidityLabel(h) {
   if (h < 30) return 'Dry air'
   if (h < 60) return 'Comfortable'
@@ -47,27 +46,50 @@ function feelsLikeLabel(temp) {
   return 'Warm'
 }
 
-export default function MetricsGrid({ weather }) {
-  if (!weather) return null
+export default function MetricsGrid({ weather, selectedHour }) {
+  // If a forecast hour is selected AND it has the fields we need, use it.
+  // Otherwise fall back to live weather.
+  const useForecast = selectedHour &&
+    selectedHour.humidity   != null &&
+    selectedHour.windspeed  != null &&
+    selectedHour.feelsLike  != null
 
-  const {
-    main: { humidity, pressure, feels_like },
-    wind: { speed },
-    visibility,
-    clouds: { all: cloudiness },
-  } = weather
+  let humidity, windKmh, visKm, pressure, cloudiness, feelsLike, isForecasted
 
-  const windKmh   = Math.round(speed * 3.6)       // m/s → km/h
-  const visKm     = (visibility / 1000).toFixed(1) // m → km
+  if (useForecast) {
+    humidity    = selectedHour.humidity
+    windKmh     = Math.round(selectedHour.windspeed)          // open-meteo already in km/h
+    visKm       = selectedHour.visibilityM != null
+                    ? (selectedHour.visibilityM / 1000).toFixed(1)
+                    : '–'
+    pressure    = Math.round(selectedHour.pressure ?? 1013)
+    cloudiness  = selectedHour.cloudcover ?? 0
+    feelsLike   = Math.round(selectedHour.feelsLike)
+    isForecasted = true
+  } else {
+    if (!weather) return null
+    const {
+      main: { humidity: h, pressure: p, feels_like: fl },
+      wind: { speed },
+      visibility,
+      clouds: { all: cl },
+    } = weather
+    humidity   = h
+    windKmh    = Math.round(speed * 3.6)
+    visKm      = (visibility / 1000).toFixed(1)
+    pressure   = p
+    cloudiness = cl
+    feelsLike  = Math.round(fl)
+    isForecasted = false
+  }
 
-  // Build the same shape your original METRICS array had
   const metrics = [
     {
       icon:  '💧',
       label: 'Humidity',
       val:   `${humidity}%`,
       sub:   humidityLabel(humidity),
-      fill:  humidity,                              // already 0–100
+      fill:  humidity,
       color: '#4fc3f7',
     },
     {
@@ -75,7 +97,7 @@ export default function MetricsGrid({ weather }) {
       label: 'Wind speed',
       val:   `${windKmh} km/h`,
       sub:   windLabel(windKmh),
-      fill:  toPercent(windKmh, 0, 100),            // 0–100 km/h scale
+      fill:  toPercent(windKmh, 0, 100),
       color: '#81c784',
     },
     {
@@ -83,7 +105,7 @@ export default function MetricsGrid({ weather }) {
       label: 'Visibility',
       val:   `${visKm} km`,
       sub:   visibilityLabel(parseFloat(visKm)),
-      fill:  toPercent(visibility, 0, 10000),       // 0–10,000 m scale
+      fill:  toPercent(parseFloat(visKm) * 1000, 0, 10000),
       color: '#ce93d8',
     },
     {
@@ -91,7 +113,7 @@ export default function MetricsGrid({ weather }) {
       label: 'Pressure',
       val:   `${pressure} hPa`,
       sub:   pressureLabel(pressure),
-      fill:  toPercent(pressure, 960, 1060),        // typical hPa range
+      fill:  toPercent(pressure, 960, 1060),
       color: '#ffb74d',
     },
     {
@@ -99,15 +121,15 @@ export default function MetricsGrid({ weather }) {
       label: 'Cloud cover',
       val:   `${cloudiness}%`,
       sub:   cloudLabel(cloudiness),
-      fill:  cloudiness,                            // already 0–100
+      fill:  cloudiness,
       color: '#90a4ae',
     },
     {
       icon:  '🤔',
       label: 'Feels like',
-      val:   `${Math.round(feels_like)}°C`,
-      sub:   feelsLikeLabel(feels_like),
-      fill:  toPercent(feels_like, -10, 40),        // -10°C to 40°C scale
+      val:   `${feelsLike}°C`,
+      sub:   feelsLikeLabel(feelsLike),
+      fill:  toPercent(feelsLike, -10, 40),
       color: '#ef9a9a',
     },
   ]
@@ -116,6 +138,11 @@ export default function MetricsGrid({ weather }) {
     <div className="dash-section">
       <div className="dash-section-header">
         <span className="dash-section-title">Conditions</span>
+        {isForecasted && (
+          <span className="dash-section-sub" style={{ color: '#a78bfa' }}>
+            📅 Forecast · {selectedHour.time}
+          </span>
+        )}
       </div>
       <div className="dash-metrics-grid">
         {metrics.map(m => (

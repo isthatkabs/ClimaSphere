@@ -11,6 +11,7 @@ import '../styles/dash-metrics.css'
 import '../styles/dash-forecast.css'
 import '../styles/dash-sidebar.css'
 import '../styles/dash-sidecards.css'
+import '../styles/dash-map.css'
 
 import Sidebar        from '../components/dashboard/Sidebar'
 import DashHeader     from '../components/dashboard/DashHeader'
@@ -20,6 +21,7 @@ import MetricsGrid    from '../components/dashboard/MetricsGrid'
 import WeeklyForecast from '../components/dashboard/WeeklyForecast'
 import SideCards      from '../components/dashboard/SideCards'
 import FloatingAlert  from '../components/dashboard/FloatingAlert'
+import MapView        from '../components/dashboard/MapView'
 
 const DEFAULT_LOCATION = { lat: 51.5074, lon: -0.1278, name: 'London' }
 
@@ -27,41 +29,38 @@ export default function Dashboard() {
   const { logout } = useAuth()
   const navigate   = useNavigate()
 
-  const [location, setLocation] = useState(null)
-  const [weather,  setWeather]  = useState(null)
-  const [forecast, setForecast] = useState(null)
-  const [loading,  setLoading]  = useState(true)
-  const [error,    setError]    = useState(null)
+  const [location,     setLocation]     = useState(null)
+  const [weather,      setWeather]      = useState(null)
+  const [forecast,     setForecast]     = useState(null)
+  const [loading,      setLoading]      = useState(true)
+  const [error,        setError]        = useState(null)
+  const [activePage,   setActivePage]   = useState('Overview')
+  const [selectedHour, setSelectedHour] = useState(null)
 
-  // On mount, try to get the user's real location
   useEffect(() => {
     if (!navigator.geolocation) {
       setLocation(DEFAULT_LOCATION)
       return
     }
     navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setLocation({
-          lat:  pos.coords.latitude,
-          lon:  pos.coords.longitude,
-          name: 'Your Location',
-        })
-      },
-      () => {
-        // denied or failed — fall back to London
-        setLocation(DEFAULT_LOCATION)
-      },
+      (pos) => setLocation({
+        lat:  pos.coords.latitude,
+        lon:  pos.coords.longitude,
+        name: 'Your Location',
+      }),
+      () => setLocation(DEFAULT_LOCATION),
       { timeout: 8000 }
     )
   }, [])
 
-  // Fetch weather whenever location changes
   useEffect(() => {
     if (!location) return
     const fetchWeather = async () => {
       try {
         setLoading(true)
         setError(null)
+        // Reset selected hour when location changes
+        setSelectedHour(null)
         const [currentData, forecastData] = await Promise.all([
           getCurrentWeather(location.lat, location.lon),
           getForecast(location.lat, location.lon),
@@ -101,7 +100,7 @@ export default function Dashboard() {
   if (loading) {
     return (
       <div className="dash-root">
-        <Sidebar onLogout={handleLogout} forecast={forecast} />
+        <Sidebar onLogout={handleLogout} forecast={forecast} activePage={activePage} onNav={setActivePage} />
         <div className="dash-main">
           <DashHeader onSearch={setLocation} onReset={handleReset} />
           <div className="dash-content">
@@ -117,7 +116,7 @@ export default function Dashboard() {
   if (error) {
     return (
       <div className="dash-root">
-        <Sidebar onLogout={handleLogout} forecast={forecast} />
+        <Sidebar onLogout={handleLogout} forecast={forecast} activePage={activePage} onNav={setActivePage} />
         <div className="dash-main">
           <DashHeader onSearch={setLocation} onReset={handleReset} />
           <div className="dash-content">
@@ -135,27 +134,38 @@ export default function Dashboard() {
 
   return (
     <div className="dash-root">
-      <Sidebar onLogout={handleLogout} forecast={forecast} />
+      <Sidebar onLogout={handleLogout} forecast={forecast} activePage={activePage} onNav={setActivePage} />
 
       <div className="dash-main">
         <DashHeader onSearch={setLocation} onReset={handleReset} />
 
         <div className="dash-content">
-          <HeroCard weather={weather} />
-          <HourlyForecast forecast={forecast} />
-          <div className="dash-bottom-grid">
-            <div className="dash-bottom-left">
-              <MetricsGrid weather={weather} />
-              <WeeklyForecast forecast={forecast} />
-            </div>
-            <div className="dash-bottom-right">
-              <SideCards weather={weather} />
-            </div>
-          </div>
+          {activePage === 'Map' ? (
+            <MapView weather={weather} />
+          ) : (
+            <>
+              <HeroCard weather={weather} />
+              <HourlyForecast
+                forecast={forecast}
+                onHourSelect={setSelectedHour}
+              />
+              <div className="dash-bottom-grid">
+                <div className="dash-bottom-left">
+                  <MetricsGrid
+                    weather={weather}
+                    selectedHour={selectedHour}
+                  />
+                  <WeeklyForecast forecast={forecast} />
+                </div>
+                <div className="dash-bottom-right">
+                  <SideCards weather={weather} />
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
-      {/* Floating Alert Notification */}
       <FloatingAlert forecast={forecast} />
     </div>
   )
