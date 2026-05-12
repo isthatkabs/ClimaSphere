@@ -1,9 +1,13 @@
 export const API_KEY = 'cb1b50442a576efad21fb25f1ea232fa'
 
 export const TILE_URL =
-  'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}'
+  'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
 
-export const TILE_OPTIONS = { maxZoom: 16, attribution: '' }
+export const TILE_OPTIONS = {
+  maxZoom: 19,
+  subdomains: 'abcd',
+  attribution: '',
+}
 
 export const MAP_OPTIONS = {
   center: [20, 0],

@@ -19,6 +19,7 @@ export default function DashHeader({ onSearch, onReset }) {
   const [noResults, setNoResults]       = useState(false)
   const debounceRef                     = useRef(null)
   const wrapRef                         = useRef(null)
+  const inputRef                        = useRef(null)           // ← new
 
   useEffect(() => {
     const handleClick = (e) => {
@@ -69,6 +70,12 @@ export default function DashHeader({ onSearch, onReset }) {
     setNoResults(false)
   }
 
+  // ← new: clicking 🔍 clears the input and focuses it
+  const handleSearchIconClick = () => {
+    handleClear()
+    inputRef.current?.focus()
+  }
+
   const handleReset = () => {
     handleClear()
     onReset()
@@ -85,12 +92,23 @@ export default function DashHeader({ onSearch, onReset }) {
 
       <div style={{ position: 'relative' }} ref={wrapRef}>
         <div className="dash-search-wrap">
-          <span className="dash-search-icon">🔍</span>
+          {/* ← changed: now clickable */}
+          <span
+            className="dash-search-icon"
+            onClick={handleSearchIconClick}
+            style={{ cursor: 'pointer' }}
+            title="Clear search"
+          >
+            🔍
+          </span>
+          {/* ← changed: added ref */}
           <input
+            ref={inputRef}
             className="dash-search"
             placeholder="Search a city…"
             value={input}
             onChange={handleChange}
+            onFocus={handleClear}
             autoComplete="off"
           />
           {input && (
