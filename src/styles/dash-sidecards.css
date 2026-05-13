@@ -1,0 +1,52 @@
+/* ── SIDE CARDS ── */
+.dash-side-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 16px 18px;
+}
+.dash-side-card-title {
+  font-size: 12px; font-weight: 500; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.5px;
+  margin-bottom: 14px;
+}
+
+/* ── SUN ARC ── */
+.dash-sun-arc {
+  position: relative; height: 40px;
+  border-top: 1.5px solid rgba(251,191,36,0.2);
+  border-radius: 100px 100px 0 0;
+  margin: 0 4px 8px;
+}
+.dash-sun-dot {
+  position: absolute; top: -14px;
+  font-size: 18px; line-height: 1;
+  transition: left 0.5s ease;
+}
+.dash-sun-times { display: flex; justify-content: space-between; margin-top: 4px; }
+.dash-sun-item  { display: flex; flex-direction: column; gap: 2px; }
+.dash-sun-item:last-child { text-align: right; }
+.dash-sun-lbl { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+.dash-sun-val { font-size: 14px; font-weight: 500; }
+.dash-sun-pct { text-align: center; font-size: 12px; color: var(--warm); margin-top: 6px; }
+
+/* ── AQI ── */
+.dash-aqi-row  { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.dash-aqi-val  { font-size: 32px; font-weight: 500; letter-spacing: -1px; }
+.dash-aqi-badge { padding: 3px 10px; border-radius: 100px; font-size: 12px; font-weight: 500; }
+.dash-aqi-track {
+  height: 6px; border-radius: 3px; overflow: hidden;
+  background: linear-gradient(to right, #22c55e 0%, #eab308 40%, #f97316 70%, #ef4444 100%);
+  position: relative; margin-bottom: 6px;
+}
+.dash-aqi-cursor {
+  position: absolute; top: -3px; width: 2px; height: 12px;
+  background: #fff; border-radius: 1px;
+}
+.dash-aqi-labels { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-muted); }
+
+/* ── MOON ── */
+.dash-moon-row { display: flex; align-items: center; justify-content: space-between; }
+.dash-moon-phase { font-size: 14px; font-weight: 500; }
+.dash-moon-sub   { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.dash-moon-icon  { font-size: 34px; }

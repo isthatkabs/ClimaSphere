@@ -1,0 +1,22 @@
+/* ── METRICS GRID ── */
+.dash-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 9px;
+}
+.dash-metric-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 14px 15px;
+  display: flex; flex-direction: column; gap: 6px;
+  transition: all 0.15s;
+}
+.dash-metric-card:hover { background: var(--surface-hover); }
+.dash-metric-header { display: flex; align-items: center; gap: 6px; }
+.dash-metric-icon  { font-size: 13px; }
+.dash-metric-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+.dash-metric-val   { font-size: 20px; font-weight: 500; letter-spacing: -0.5px; }
+.dash-metric-sub   { font-size: 11px; color: var(--text-muted); }
+.dash-metric-track { height: 3px; background: rgba(255,255,255,0.07); border-radius: 2px; overflow: hidden; margin-top: 2px; }
+.dash-metric-fill  { height: 100%; border-radius: 2px; }

@@ -1,21 +1,28 @@
-// App.jsx
 import { Routes, Route, Navigate } from 'react-router-dom'
+import Home from './pages/Home'
 import Auth from './pages/Auth'
-import { AuthProvider } from './context/AuthContext'
-import { useAuth } from './context/AuthContext'
 import Dashboard from './pages/Dashboard'
+import ForecastPage from './pages/ForecastPage'
+import MapsPage from './pages/MapsPage'
+import AlertsPage from './pages/AlertsPage'
+import ApiPage from './pages/ApiPage'
+import { AuthProvider, useAuth } from './context/AuthContext'
 
-// Protects /dashboard from logged-out users
 function PrivateRoute({ children }) {
   const { user } = useAuth()
-  return user ? children : <Navigate to="/" />
+  return user ? children : <Navigate to="/auth" />
 }
 
 function App() {
   return (
     <AuthProvider>
       <Routes>
-        <Route path="/" element={<Auth />} />
+        <Route path="/"          element={<Home />}         />
+        <Route path="/auth"      element={<Auth />}         />
+        <Route path="/forecast"  element={<ForecastPage />} />
+        <Route path="/maps"      element={<MapsPage />}     />
+        <Route path="/alerts"    element={<AlertsPage />}   />
+        <Route path="/api"       element={<ApiPage />}      />
         <Route
           path="/dashboard"
           element={

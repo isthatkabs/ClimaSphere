@@ -1,0 +1,76 @@
+/* ── SIDEBAR ── */
+.dash-sidebar {
+  width: var(--sidebar-w);
+  min-width: var(--sidebar-w);
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 24px 14px;
+}
+
+.dash-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 8px 28px;
+  font-size: 17px;
+  letter-spacing: -0.3px;
+}
+
+.dash-logo-icon {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+
+.dash-logo-text { font-weight: 400; }
+.dash-logo-text strong { font-weight: 600; color: #a78bfa; }
+
+.dash-nav { display: flex; flex-direction: column; gap: 3px; flex: 1; }
+
+.dash-nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 12px;
+  border-radius: var(--r-sm);
+  color: var(--text-muted);
+  font-size: 14px; font-weight: 400;
+  transition: all 0.15s ease;
+  width: 100%; text-align: left;
+}
+.dash-nav-item:hover { background: var(--surface-hover); color: var(--text); }
+.dash-nav-item.active {
+  background: var(--accent-glow);
+  color: var(--text);
+  border: 1px solid var(--border-accent);
+}
+.dash-nav-icon { font-size: 16px; width: 20px; text-align: center; flex-shrink: 0; }
+
+.dash-sidebar-divider { height: 1px; background: var(--border); margin: 16px 0; }
+
+.dash-sidebar-bottom { display: flex; flex-direction: column; gap: 10px; }
+
+.dash-alert-chip {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 12px;
+  background: rgba(34,197,94,0.07);
+  border: 1px solid rgba(34,197,94,0.18);
+  border-radius: var(--r-sm);
+}
+.dash-alert-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+.dash-alert-text .dash-alert-title { font-size: 12px; font-weight: 500; color: var(--green); }
+.dash-alert-text .dash-alert-sub   { font-size: 11px; color: var(--text-muted); }
+
+.dash-logout-btn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 12px;
+  border-radius: var(--r-sm);
+  color: var(--text-muted);
+  font-size: 13px;
+  border: 1px solid var(--border);
+  transition: all 0.15s ease;
+  width: 100%;
+}
+.dash-logout-btn:hover { background: rgba(239,68,68,0.07); border-color: rgba(239,68,68,0.28); color: #f87171; }
