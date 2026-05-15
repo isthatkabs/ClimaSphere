@@ -1,11 +1,15 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
-import Home from './pages/Home'
-import Auth from './pages/Auth'
-import Dashboard from './pages/Dashboard'
+import Home         from './pages/Home'
+import Auth         from './pages/Auth'
+import Dashboard    from './pages/Dashboard'
 import ForecastPage from './pages/ForecastPage'
-import MapsPage from './pages/MapsPage'
-import AlertsPage from './pages/AlertsPage'
-import ApiPage from './pages/ApiPage'
+import MapsPage     from './pages/MapsPage'
+import AlertsPage   from './pages/AlertsPage'
+import ApiPage      from './pages/ApiPage'
+import Privacy      from './pages/Privacy'   // new
+import Terms        from './pages/Terms'     // new
+import Status       from './pages/Status'    // new
+import Contact      from './pages/Contact'   // new
 import { AuthProvider, useAuth } from './context/AuthContext'
 
 function PrivateRoute({ children }) {
@@ -17,12 +21,16 @@ function App() {
   return (
     <AuthProvider>
       <Routes>
-        <Route path="/"          element={<Home />}         />
-        <Route path="/auth"      element={<Auth />}         />
-        <Route path="/forecast"  element={<ForecastPage />} />
-        <Route path="/maps"      element={<MapsPage />}     />
-        <Route path="/alerts"    element={<AlertsPage />}   />
-        <Route path="/api"       element={<ApiPage />}      />
+        <Route path="/"         element={<Home />}         />
+        <Route path="/auth"     element={<Auth />}         />
+        <Route path="/forecast" element={<ForecastPage />} />
+        <Route path="/maps"     element={<MapsPage />}     />
+        <Route path="/alerts"   element={<AlertsPage />}   />
+        <Route path="/api"      element={<ApiPage />}      />
+        <Route path="/privacy"  element={<Privacy />}      />
+        <Route path="/terms"    element={<Terms />}        />
+        <Route path="/status"   element={<Status />}       />
+        <Route path="/contact"  element={<Contact />}      />
         <Route
           path="/dashboard"
           element={

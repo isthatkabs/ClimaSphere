@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { styles } from '../../styles/homeStyles'
 
 export default function HomeFooter() {
@@ -11,8 +12,13 @@ export default function HomeFooter() {
       </div>
 
       <div style={styles.footerLinks}>
-        {['Privacy', 'Terms', 'Status', 'Contact'].map((l) => (
-          <a key={l} href="#" style={styles.footerLink}>{l}</a>
+        {[
+          { label: 'Privacy', to: '/privacy' },
+          { label: 'Terms',   to: '/terms'   },
+          { label: 'Status',  to: '/status'  },
+          { label: 'Contact', to: '/contact' },
+        ].map(({ label, to }) => (
+          <Link key={label} to={to} style={styles.footerLink}>{label}</Link>
         ))}
       </div>
 
