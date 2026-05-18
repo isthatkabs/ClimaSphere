@@ -4,7 +4,7 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBZh72ec7IBUDrLvl3dKPDgu0PCRpIl4r8M",
+  apiKey: "AIzaSyBZh72ec7IBUDrLvl3dPDgu0PCRpIl4r8M",
   authDomain: "climasphere-48k9.firebaseapp.com",
   projectId: "climasphere-48k9",
   storageBucket: "climasphere-48k9.firebasestorage.app",
