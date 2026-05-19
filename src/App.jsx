@@ -6,10 +6,11 @@ import ForecastPage from './pages/ForecastPage'
 import MapsPage     from './pages/MapsPage'
 import AlertsPage   from './pages/AlertsPage'
 import ApiPage      from './pages/ApiPage'
-import Privacy      from './pages/Privacy'   // new
-import Terms        from './pages/Terms'     // new
-import Status       from './pages/Status'    // new
-import Contact      from './pages/Contact'   // new
+import Privacy      from './pages/Privacy'
+import Terms        from './pages/Terms'
+import Status       from './pages/Status'
+import Contact      from './pages/Contact'
+import ProfilePage  from './pages/ProfilePage'
 import { AuthProvider, useAuth } from './context/AuthContext'
 
 function PrivateRoute({ children }) {
@@ -36,6 +37,14 @@ function App() {
           element={
             <PrivateRoute>
               <Dashboard />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <PrivateRoute>
+              <ProfilePage />
             </PrivateRoute>
           }
         />
