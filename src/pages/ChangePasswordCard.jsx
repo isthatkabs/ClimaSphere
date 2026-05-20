@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { updatePassword } from "firebase/auth";
 import { auth } from "../firebase";
-import { profileStyles as s } from "./profileStyles";
+import { profileStyles as s } from "../styles/profileStyles";
 
 export default function ChangePasswordCard() {
   const [newPassword, setNewPassword] = useState("");

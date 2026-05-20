@@ -2,7 +2,7 @@ import { useState } from "react";
 import { updateProfile } from "firebase/auth";
 import { auth } from "../firebase";
 import ProfileAvatar from "./ProfileAvatar";
-import { profileStyles as s } from "./profileStyles";
+import { profileStyles } from "../styles/profileStyles";
 
 export default function ProfileCard({ user, avatarURL, setAvatarURL }) {
   const [displayName, setDisplayName] = useState(user?.displayName || "");
