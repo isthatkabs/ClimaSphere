@@ -1,8 +1,16 @@
 import { useState } from "react";
 import '../App.css';
 import { useNavigate, useLocation } from "react-router-dom";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+  updateProfile,
+} from "firebase/auth";
 import { auth } from "../firebase";
+
+const googleProvider = new GoogleAuthProvider();
 
 function Auth() {
   const [isLogin, setIsLogin] = useState(true);
@@ -20,19 +28,16 @@ function Auth() {
     setError("");
     setSuccess("");
 
-    // Empty fields check
     if (!email || !password) {
       setError("Please complete all required fields.");
       return;
     }
 
-    // Username required on sign up
     if (!isLogin && !username.trim()) {
       setError("Please enter a username.");
       return;
     }
 
-    // Valid email check
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       setError("Please enter a valid email address.");
@@ -62,6 +67,20 @@ function Auth() {
     }
   };
 
+  const handleGoogle = async () => {
+    setError("");
+    setSuccess("");
+    try {
+      await signInWithPopup(auth, googleProvider);
+      setSuccess("Signed in with Google!");
+      setTimeout(() => navigate(redirect === 'map' ? '/dashboard?page=Map' : '/dashboard'), 1200);
+    } catch (err) {
+      if (err.code !== "auth/popup-closed-by-user") {
+        setError("Google sign-in failed. Please try again.");
+      }
+    }
+  };
+
   return (
     <div className="auth-wrapper">
       <div className="auth-left">
@@ -76,8 +95,6 @@ function Auth() {
           {success && <p className="success">{success}</p>}
 
           <form onSubmit={handleSubmit}>
-
-            {/* Username — sign up only */}
             {!isLogin && (
               <div className="input-group">
                 <span>👤</span>
@@ -118,6 +135,22 @@ function Auth() {
               {isLogin ? "Log In" : "Create Account"}
             </button>
           </form>
+
+          <div className="auth-divider">
+            <span className="auth-divider-line" />
+            <span className="auth-divider-text">or</span>
+            <span className="auth-divider-line" />
+          </div>
+
+          <button className="google-btn" onClick={handleGoogle}>
+            <svg width="18" height="18" viewBox="0 0 48 48" style={{ flexShrink: 0 }}>
+              <path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.6 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.5 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.6-.4-3.9z"/>
+              <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 16 19 13 24 13c3.1 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.5 29.3 4 24 4 12.9 4 4 12.9 4 24c0 3.2.6 6.2 1.7 9l.6-1 4-7.3z"/>
+              <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.5 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8H6.2C9.7 37.1 16.3 44 24 44z"/>
+              <path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.9 2.4-2.5 4.5-4.5 6l6.2 5.2C40.5 36.2 44 30.5 44 24c0-1.3-.1-2.6-.4-3.9z"/>
+            </svg>
+            Continue with Google
+          </button>
 
           <p className="toggle-text">
             {isLogin

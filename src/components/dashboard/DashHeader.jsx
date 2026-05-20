@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { getInitials, getNow, getGreeting } from '../../data/dashData'
 import { searchCities } from '../../services/weather'
@@ -13,13 +14,14 @@ function getCountryName(code) {
 
 export default function DashHeader({ onSearch, onReset }) {
   const { user }                        = useAuth()
+  const navigate                        = useNavigate()
   const [input, setInput]               = useState('')
   const [suggestions, setSuggestions]   = useState([])
   const [showDropdown, setShowDropdown] = useState(false)
   const [noResults, setNoResults]       = useState(false)
   const debounceRef                     = useRef(null)
   const wrapRef                         = useRef(null)
-  const inputRef                        = useRef(null)           // ← new
+  const inputRef                        = useRef(null)
 
   useEffect(() => {
     const handleClick = (e) => {
@@ -70,7 +72,6 @@ export default function DashHeader({ onSearch, onReset }) {
     setNoResults(false)
   }
 
-  // ← new: clicking 🔍 clears the input and focuses it
   const handleSearchIconClick = () => {
     handleClear()
     inputRef.current?.focus()
@@ -92,7 +93,6 @@ export default function DashHeader({ onSearch, onReset }) {
 
       <div style={{ position: 'relative' }} ref={wrapRef}>
         <div className="dash-search-wrap">
-          {/* ← changed: now clickable */}
           <span
             className="dash-search-icon"
             onClick={handleSearchIconClick}
@@ -101,7 +101,6 @@ export default function DashHeader({ onSearch, onReset }) {
           >
             🔍
           </span>
-          {/* ← changed: added ref */}
           <input
             ref={inputRef}
             className="dash-search"
@@ -166,8 +165,23 @@ export default function DashHeader({ onSearch, onReset }) {
         >
           🏠
         </button>
-        <div className="dash-avatar" title={user?.email}>
-          {getInitials(user?.email)}
+
+        <div
+          className="dash-avatar"
+          title={user?.email}
+          onClick={() => navigate('/profile')}
+          style={{ cursor: 'pointer', padding: 0, overflow: 'hidden' }}
+        >
+          {user?.photoURL ? (
+            <img
+              src={user.photoURL}
+              alt="avatar"
+              referrerPolicy="no-referrer"
+              style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%', display: 'block' }}
+            />
+          ) : (
+            getInitials(user?.email)
+          )}
         </div>
       </div>
     </header>
