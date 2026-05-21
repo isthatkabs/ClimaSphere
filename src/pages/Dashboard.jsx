@@ -128,9 +128,7 @@ export default function Dashboard() {
           <div className="dash-content">
             <div style={{ padding: '40px', textAlign: 'center', color: '#f87171' }}>
               <p>Could not load weather for "{loc.name}".</p>
-              <p style={{ marginTop: 8, fontSize: 13, opacity: 0.6 }}>
-                Check the city name and try again.
-              </p>
+              <p style={{ marginTop: 8, fontSize: 13, opacity: 0.6 }}>{error}</p>
             </div>
           </div>
         </div>
