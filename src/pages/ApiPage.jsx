@@ -129,7 +129,7 @@ export default function ApiPage() {
               padding: '13px 24px', borderRadius: 10, textDecoration: 'none',
               border: '1px solid rgba(138,60,255,0.3)',
             }}>
-              View Endpoints
+              View More API Information
             </a>
           </div>
         </section>
@@ -166,7 +166,7 @@ export default function ApiPage() {
             fontFamily: "'DM Serif Display', serif", fontSize: 'clamp(26px, 3vw, 38px)',
             color: '#f0ecff', marginBottom: 32, letterSpacing: '-0.5px', textAlign: 'center',
           }}>
-            Endpoints
+            More Information
           </h2>
           <div style={{ maxWidth: 760, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 6 }}>
             {endpoints.map(e => (
