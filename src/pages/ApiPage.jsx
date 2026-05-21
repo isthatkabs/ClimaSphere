@@ -31,27 +31,27 @@ const tiers = [
 
 const endpoints = [
   {
-    method: 'GET', path: '/v1/current',
+    method: 'GET', path: 'Real-time Weather',
     desc: 'Returns real-time weather for any lat/lon — temperature, humidity, wind, pressure, and conditions.',
     url: 'https://openweathermap.org/current',
   },
   {
-    method: 'GET', path: '/v1/forecast',
+    method: 'GET', path: 'Forecast',
     desc: 'Hourly and daily forecasts up to 5 days. Includes precipitation probability and weather codes.',
     url: 'https://open-meteo.com/en/docs',
   },
   {
-    method: 'GET', path: '/v1/alerts',
+    method: 'GET', path: 'Alerts',
     desc: 'Active severe weather alerts (storms, snow, fog, extreme heat) for a given location.',
     url: 'https://openweathermap.org/triggers',
   },
   {
-    method: 'GET', path: '/v1/air',
+    method: 'GET', path: 'Air Quality',
     desc: 'Air Quality Index (1–5 scale) plus individual pollutant readings: CO, NO₂, O₃, PM2.5, PM10.',
     url: 'https://openweathermap.org/api/air-pollution',
   },
   {
-    method: 'GET', path: '/v1/search',
+    method: 'GET', path: 'Location Search',
     desc: 'Geocode a city name into coordinates. Returns up to 5 matching cities with country and state.',
     url: 'https://openweathermap.org/api/geocoding-api',
   },
