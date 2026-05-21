@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import ProfileCard      from "./ProfileCard";
 import ChangePasswordCard from "./ChangePasswordCard";
 import AccountCard      from "./AccountCard";
-import { profileStyles } from "../styles/profileStyles";
+import { profileStyles as s } from "../styles/profileStyles";
 
 export default function ProfilePage() {
   const { user }  = useAuth();

@@ -1,4 +1,4 @@
-import { API_KEY } from './mapConstants'
+const API = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
 export function weatherEmoji(id) {
   if (!id) return '🌡️'
@@ -17,8 +17,7 @@ export function capitalize(str = '') {
 }
 
 export async function fetchWeather(lat, lon) {
-  const res = await fetch(
-    `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`
-  )
+  const res = await fetch(`${API}/api/weather/current?lat=${lat}&lon=${lon}`, { credentials: 'include' })
+  if (res.status === 401) throw new Error('Session expired')
   return res.json()
 }

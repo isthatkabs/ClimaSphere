@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import '../App.css';
 import { useNavigate, useLocation } from "react-router-dom";
 import {
@@ -9,6 +9,7 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { auth } from "../firebase";
+import { useAuth } from "../context/AuthContext";
 
 const googleProvider = new GoogleAuthProvider();
 
@@ -22,6 +23,11 @@ function Auth() {
   const navigate = useNavigate();
   const location = useLocation();
   const redirect = new URLSearchParams(location.search).get('redirect');
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (user) navigate(redirect === 'map' ? '/dashboard?page=Map' : '/dashboard', { replace: true });
+  }, [user, navigate, redirect]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
