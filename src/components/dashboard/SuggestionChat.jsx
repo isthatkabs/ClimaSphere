@@ -2,11 +2,14 @@ import { useState, useRef, useEffect } from 'react'
 import { chatWithAI } from '../../services/ai'
 
 const STARTERS = [
+  'Where in the UK is warm this weekend?',
   'What should I wear to a wedding today?',
   'Is it a good day to go running?',
-  'What\'s the best outdoor activity right now?',
+  'Where should I go for a day trip right now?',
   'Should I carry an umbrella?',
   'What\'s good to do with kids today?',
+  'Plan a picnic — is the weather suitable?',
+  'Where\'s hot abroad right now?',
 ]
 
 export default function SuggestionChat({ weatherSummary }) {
@@ -61,7 +64,7 @@ export default function SuggestionChat({ weatherSummary }) {
           <span>
             <span className="cs-chat-toggle-title">Ask the AI</span>
             <span className="cs-chat-toggle-sub">
-              Not sure what to wear or do? Ask a follow-up question
+              Where to go, what to wear, travel ideas, event planning — ask anything
             </span>
           </span>
         </span>
@@ -77,7 +80,7 @@ export default function SuggestionChat({ weatherSummary }) {
               <div className="cs-chat-empty">
                 <div className="cs-chat-empty-icon">🤖</div>
                 <div className="cs-chat-empty-text">
-                  Ask me anything about what to wear or do given today's weather.
+                  Ask me anything — what to wear, where to go, travel ideas, event planning, or anything else weather and lifestyle related.
                 </div>
                 {/* Starter chips */}
                 <div className="cs-chat-starters">
@@ -120,7 +123,7 @@ export default function SuggestionChat({ weatherSummary }) {
             <input
               ref={inputRef}
               className="cs-chat-input"
-              placeholder="e.g. Should I bring a jacket tonight?"
+              placeholder="e.g. Where in the UK is warm this weekend?"
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={handleKey}
