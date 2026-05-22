@@ -42,7 +42,7 @@ export default function HourlyForecast({ forecast, onHourSelect }) {
 
   const now    = new Date()
   const startI = time.findIndex(t => new Date(t) >= now)
-  const hours  = Array.from({ length: 12 }, (_, i) => startI + i)
+  const hours  = Array.from({ length: 24 }, (_, i) => startI + i)
     .filter(i => i < time.length)
     .map((i, arrIndex) => ({
       time:        arrIndex === 0 ? 'Now' : fmtHourLabel(time[i], timeFormat),
@@ -71,7 +71,7 @@ export default function HourlyForecast({ forecast, onHourSelect }) {
     <div className="dash-section">
       <div className="dash-section-header">
         <span className="dash-section-title">Hourly forecast</span>
-        <span className="dash-section-sub">Next 12 hours · click a card to see conditions</span>
+        <span className="dash-section-sub">Next 24 hours · click a card to see conditions</span>
       </div>
       <div className="dash-hourly-strip">
         {hours.map((h, i) => (
