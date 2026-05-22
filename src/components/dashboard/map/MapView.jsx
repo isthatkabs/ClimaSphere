@@ -9,6 +9,7 @@ import { makeCityIcon, makeClickIcon } from './mapIcons'
 import WeatherPanel                    from './WeatherPanel'
 import { Spinner, HintBadge }          from './MapOverlays'
 import CityChips                       from './CityChips'
+import MapSearch                       from './MapSearch'
 
 /* ── inject Leaflet CSS once ─────────────────────────────── */
 function injectLeafletCSS() {
@@ -136,6 +137,18 @@ export default function MapView() {
     setLoading(false)
   }
 
+  async function handleSearchSelect(result) {
+    clearClickPin()
+    setSelectedCityName(null)
+    mapRef.current?.flyTo([result.lat, result.lon], 10, { duration: 1.4 })
+    setLoading(true)
+    try {
+      const data = await fetchWeather(result.lat, result.lon)
+      setPanel({ ...data, _lat: result.lat, _lon: result.lon })
+    } catch (_) {}
+    setLoading(false)
+  }
+
   function handlePanelClose() {
     setPanel(null)
     setSelectedCityName(null)
@@ -148,7 +161,7 @@ export default function MapView() {
       <div className="dash-section-header">
         <span className="dash-section-title">🗺️ World Weather Map</span>
         <span className="dash-section-sub">
-          Click any city dot or anywhere on the map for live conditions
+          Search a city, click a dot, or tap anywhere on the map for live conditions
         </span>
       </div>
 
@@ -166,6 +179,7 @@ export default function MapView() {
       >
         <div ref={containerRef} style={{ width: '100%', height: '100%' }} />
 
+        <MapSearch onSelect={handleSearchSelect} />
         <HintBadge />
         {loading && <Spinner />}
         {panel && !loading && (

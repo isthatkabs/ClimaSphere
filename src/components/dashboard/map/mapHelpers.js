@@ -21,3 +21,13 @@ export async function fetchWeather(lat, lon) {
   if (res.status === 401) throw new Error('Session expired')
   return res.json()
 }
+
+export async function searchCities(query) {
+  if (!query || query.trim().length < 2) return []
+  const res = await fetch(
+    `${API}/api/weather/search?q=${encodeURIComponent(query.trim())}`,
+    { credentials: 'include' }
+  )
+  if (!res.ok) return []
+  return res.json()
+}
