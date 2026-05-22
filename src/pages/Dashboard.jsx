@@ -14,6 +14,7 @@ import '../styles/dash-sidebar.css'
 import '../styles/dash-sidecards.css'
 import '../styles/dash-map.css'
 import '../styles/dash-settings.css'
+import '../styles/dash-alerts.css'
 
 import Settings         from './Settings'
 import ManageLocations  from './ManageLocations'
@@ -26,6 +27,7 @@ import WeeklyForecast from '../components/dashboard/WeeklyForecast'
 import SideCards      from '../components/dashboard/SideCards'
 import FloatingAlert  from '../components/dashboard/FloatingAlert'
 import MapView        from '../components/dashboard/map/MapView'
+import AlertsView    from '../components/dashboard/AlertsView'
 
 const DEFAULT_LOCATION = { lat: 51.5074, lon: -0.1278, name: 'London' }
 
@@ -157,6 +159,8 @@ export default function Dashboard() {
             <ManageLocations onSwitch={(loc) => { setLoc(loc); setActivePage('Overview') }} />
           ) : activePage === 'Map' ? (
             <MapView weather={weather} />
+          ) : activePage === 'Alerts' ? (
+            <AlertsView forecast={forecast} weather={weather} />
           ) : (
             <>
               <HeroCard weather={weather} />

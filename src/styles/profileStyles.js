@@ -22,10 +22,15 @@ export const profileStyles = {
     transition: "background 0.15s",
   },
   container: {
-    maxWidth: 680,
+    maxWidth: 920,
     margin: "0 auto",
     display: "flex",
     flexDirection: "column",
+    gap: "1rem",
+  },
+  twoCol: {
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
     gap: "1rem",
   },
   card: {

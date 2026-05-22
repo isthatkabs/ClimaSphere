@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import ProfileCard      from "./ProfileCard";
+import ProfileCard        from "./ProfileCard";
 import ChangePasswordCard from "./ChangePasswordCard";
-import AccountCard      from "./AccountCard";
+import AccountCard        from "./AccountCard";
+import SavedLocationsCard from "./SavedLocationsCard";
+import PreferencesCard    from "./PreferencesCard";
 import { profileStyles as s } from "../styles/profileStyles";
 
 export default function ProfilePage() {
@@ -28,7 +30,12 @@ export default function ProfilePage() {
           setAvatarURL={setAvatarURL}
         />
 
-        <div style={s.grid}>
+        <div style={s.twoCol}>
+          <SavedLocationsCard />
+          <PreferencesCard />
+        </div>
+
+        <div style={s.twoCol}>
           <ChangePasswordCard />
           <AccountCard />
         </div>

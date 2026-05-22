@@ -2,13 +2,40 @@ import { useState } from "react";
 import { updateProfile } from "firebase/auth";
 import { auth } from "../firebase";
 import ProfileAvatar from "./ProfileAvatar";
+import { useLocations } from "../context/LocationsContext";
 import { profileStyles as s } from "../styles/profileStyles";
+
+function memberSince(creationTime) {
+  if (!creationTime) return "—";
+  return new Date(creationTime).toLocaleDateString(undefined, { month: "short", year: "numeric" });
+}
+
+function getProvider(user) {
+  const id = user?.providerData?.[0]?.providerId;
+  if (id === "google.com") return "Google";
+  if (id === "password") return "Email";
+  return id || "—";
+}
+
+function MetaItem({ label, value }) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+      <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.07em", color: "rgba(255,255,255,0.38)", textTransform: "uppercase" }}>
+        {label}
+      </span>
+      <span style={{ fontSize: 13, fontWeight: 500, color: "rgba(255,255,255,0.82)" }}>
+        {value}
+      </span>
+    </div>
+  );
+}
 
 export default function ProfileCard({ user, avatarURL, setAvatarURL }) {
   const [displayName, setDisplayName] = useState(user?.displayName || "");
   const [editing,     setEditing]     = useState(false);
   const [uploading,   setUploading]   = useState(false);
   const [feedback,    setFeedback]    = useState({ msg: "", type: "" });
+  const { locations } = useLocations();
 
   const showFeedback = (msg, type = "success") => {
     setFeedback({ msg, type });
@@ -88,6 +115,30 @@ export default function ProfileCard({ user, avatarURL, setAvatarURL }) {
             {user?.email}
           </p>
         </div>
+      </div>
+
+      <div style={{
+        marginTop: "1.1rem",
+        paddingTop: "1rem",
+        borderTop: "1px solid rgba(255,255,255,0.12)",
+        display: "flex",
+        gap: "1.5rem",
+        flexWrap: "wrap",
+      }}>
+        <MetaItem label="Member since" value={memberSince(user?.metadata?.creationTime)} />
+        <MetaItem label="Sign-in" value={getProvider(user)} />
+        <MetaItem
+          label="Email"
+          value={
+            user?.emailVerified
+              ? <span style={{ color: "#4ade80", display: "flex", alignItems: "center", gap: 4 }}>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  Verified
+                </span>
+              : <span style={{ color: "#fbbf24" }}>Unverified</span>
+          }
+        />
+        <MetaItem label="Saved locations" value={locations.length} />
       </div>
 
       {feedback.msg && (
