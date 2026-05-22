@@ -3,7 +3,12 @@ import Anthropic         from '@anthropic-ai/sdk'
 import { requireSession } from '../middleware/requireSession.js'
 
 const router = Router()
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+
+function getClient() {
+  const key = process.env.ANTHROPIC_API_KEY
+  if (!key || key.startsWith('your_')) throw new Error('ANTHROPIC_API_KEY not set in server/.env')
+  return new Anthropic({ apiKey: key })
+}
 
 router.use(requireSession)
 
@@ -32,7 +37,7 @@ router.post('/suggestions', async (req, res) => {
   ].join('\n')
 
   try {
-    const message = await client.messages.create({
+    const message = await getClient().messages.create({
       model: 'claude-haiku-4-5-20251001',
       max_tokens: 180,
       messages: [{
@@ -48,7 +53,8 @@ router.post('/suggestions', async (req, res) => {
     res.json({ insight: message.content[0].text })
   } catch (err) {
     console.error('AI suggestions error:', err.message)
-    res.status(500).json({ error: 'AI service temporarily unavailable' })
+    const status = err.message.includes('not set') ? 503 : 500
+    res.status(status).json({ error: err.message })
   }
 })
 
