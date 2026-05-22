@@ -79,6 +79,29 @@ export default function Settings() {
         <Row icon="🗺" label="Weather Radar" sub="Live precipitation radar" onClick={() => navigate('/dashboard?page=Map')} showChevron />
       </Section>
 
+      <Section title="SUGGESTIONS">
+        <Row
+          icon="💡"
+          label="Activity &amp; Clothing Tips"
+          sub="Show personalised suggestions on the Suggestions page"
+        >
+          <Toggle
+            on={settings.activitySuggestions}
+            onToggle={() => updateSetting('activitySuggestions', !settings.activitySuggestions)}
+          />
+        </Row>
+        <Row
+          icon="🚨"
+          label="Alert Safety Tips"
+          sub="Show clothing and safety advice inside active weather alerts"
+        >
+          <Toggle
+            on={settings.alertSuggestions}
+            onToggle={() => updateSetting('alertSuggestions', !settings.alertSuggestions)}
+          />
+        </Row>
+      </Section>
+
       <Section title="UNITS">
         <Row icon="🌡" label="Temperature" sub="Display scale for temperature">
           <SegmentPicker

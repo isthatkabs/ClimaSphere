@@ -206,3 +206,43 @@
   color: var(--green);
   opacity: 0.5;
 }
+
+/* ── Alert suggestion tips ── */
+.cs-alert-tips {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  margin-top: 2px;
+}
+
+.cs-alert-tips-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cs-alert-tips-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  opacity: 0.8;
+}
+
+.cs-alert-tips-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.cs-alert-tip-chip {
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  white-space: nowrap;
+}

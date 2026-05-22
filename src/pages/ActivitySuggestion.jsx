@@ -1,9 +1,11 @@
 import { useEffect, useState, useRef } from 'react'
 import { getWeatherSuggestions, buildSuggestionInputs, buildWeatherSummary } from '../data/suggestions'
 import { getAISuggestions } from '../services/ai'
+import { useSettings } from '../context/SettingsContext'
 import SuggestionChat from '../components/dashboard/SuggestionChat'
 
 export default function ActivitySuggestion({ weather, forecast, locationName }) {
+  const { settings } = useSettings()
   const [suggestions,   setSuggestions]   = useState(null)
   const [inputs,        setInputs]        = useState(null)
   const [weatherSummary, setWeatherSummary] = useState('')
@@ -48,6 +50,22 @@ export default function ActivitySuggestion({ weather, forecast, locationName }) 
       .catch(() => setAiError(true))
       .finally(() => setAiLoading(false))
   }, [weather, forecast, locationName])
+
+  if (!settings.activitySuggestions) {
+    return (
+      <div className="cs-activity">
+        <div className="cs-activity-header">
+          <div>
+            <div className="cs-activity-title">Suggestions</div>
+            <div className="cs-activity-sub">
+              Activity and clothing suggestions are turned off. Enable them in{' '}
+              <span style={{ color: '#a78bfa', cursor: 'default' }}>Settings → Suggestions</span>.
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   if (!suggestions || !inputs) {
     return (

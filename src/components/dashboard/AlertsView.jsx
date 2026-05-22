@@ -65,6 +65,34 @@ const ALERT_DEFS = [
   },
 ]
 
+// ── Per-alert clothing & activity tips ───────────────────────────
+const ALERT_TIPS = {
+  storm: {
+    clothing:   ['🧥 Waterproof jacket', '☂ Sturdy umbrella', '👟 Waterproof shoes', '🌂 Raincoat with hood'],
+    activities: ['🏠 Stay indoors — dangerous outside', '🎬 Watch a film or series', '🍳 Cook comfort food', '🚗 Avoid driving if possible'],
+  },
+  snow: {
+    clothing:   ['🧥 Insulated winter coat', '🥾 Waterproof insulated boots', '🧤 Waterproof gloves', '🧦 Thermal socks', '🧢 Woolly hat'],
+    activities: ['⚠️ Walk slowly on icy surfaces', '🏋️ Gym session indoors', '🏠 Stay cosy indoors', '🚗 Avoid driving in heavy snow'],
+  },
+  rain: {
+    clothing:   ['🧥 Waterproof jacket', '☂ Umbrella', '🥾 Wellington boots', '👖 Waterproof trousers'],
+    activities: ['☕ Visit a café or coffee shop', '🏛 Museum, gallery, or library', '🏋️ Indoor gym session', '📚 Read or listen to podcasts indoors'],
+  },
+  wind: {
+    clothing:   ['💨 Wind-resistant outer layer', '🧢 Close-fitting hat', '🧣 Scarf to protect your face', '👖 Long trousers'],
+    activities: ['⚠️ Avoid exposed hilltops and open areas', '🏬 Shopping centres or indoor markets', '🧗 Indoor climbing wall', '🚲 Avoid cycling outdoors'],
+  },
+  fog: {
+    clothing:   ['🦺 Bright or reflective clothing', '🧥 Warm layers', '👟 Grippy shoes for wet ground'],
+    activities: ['🚗 Drive slowly — reduce speed significantly', '🚲 Avoid cycling in fog', '⏰ Allow extra travel time', '💡 Use headlights if driving'],
+  },
+  heat: {
+    clothing:   ['👕 Light breathable clothing', '🧴 Sunscreen SPF 50+', '🕶 UV-protective sunglasses', '🧢 Wide-brim hat'],
+    activities: ['🏠 Stay indoors between 11am–3pm', '💧 Stay hydrated — drink water regularly', '🌊 Swimming or paddling pools', '🌳 Seek shade if going out'],
+  },
+}
+
 // ── Helpers ───────────────────────────────────────────────────────
 function fmtSlotTime(date, timeFormat) {
   if (timeFormat === '12') return date.toLocaleTimeString([], { hour: 'numeric', hour12: true })
@@ -136,10 +164,11 @@ function getDesc(alert, settings) {
 }
 
 // ── Sub-components ────────────────────────────────────────────────
-function AlertCard({ alert, settings }) {
+function AlertCard({ alert, settings, showTips }) {
   const window = getTimeWindow(alert.first, alert.last, settings.timeFormat)
   const desc   = getDesc(alert, settings)
   const pct    = Math.min(100, Math.round((alert.count / 24) * 100))
+  const tips   = ALERT_TIPS[alert.id]
 
   return (
     <div className="cs-alert-card" style={{ borderColor: alert.border, background: alert.bg }}>
@@ -172,6 +201,31 @@ function AlertCard({ alert, settings }) {
           {desc}
         </span>
       </div>
+
+      {showTips && tips && (
+        <div className="cs-alert-tips">
+          <div className="cs-alert-tips-row">
+            <span className="cs-alert-tips-label" style={{ color: alert.color }}>👔 What to wear</span>
+            <div className="cs-alert-tips-chips">
+              {tips.clothing.map((t, i) => (
+                <span key={i} className="cs-alert-tip-chip" style={{ borderColor: alert.border }}>
+                  {t}
+                </span>
+              ))}
+            </div>
+          </div>
+          <div className="cs-alert-tips-row">
+            <span className="cs-alert-tips-label" style={{ color: alert.color }}>🎯 What to do</span>
+            <div className="cs-alert-tips-chips">
+              {tips.activities.map((t, i) => (
+                <span key={i} className="cs-alert-tip-chip" style={{ borderColor: alert.border }}>
+                  {t}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
@@ -221,7 +275,7 @@ export default function AlertsView({ forecast, weather }) {
       ) : (
         <div className="cs-alerts-grid">
           {alerts.map(alert => (
-            <AlertCard key={alert.id} alert={alert} settings={settings} />
+            <AlertCard key={alert.id} alert={alert} settings={settings} showTips={settings.alertSuggestions} />
           ))}
         </div>
       )}

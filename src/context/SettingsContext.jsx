@@ -1,11 +1,13 @@
 import { createContext, useContext, useState, useCallback } from 'react'
 
 const DEFAULTS = {
-  tempUnit:     'C',   // 'C' | 'F'
-  distanceUnit: 'km',  // 'km' | 'mi'
-  timeFormat:   '24',  // '12' | '24'
-  notifications: false,
-  weatherRadar:  false,
+  tempUnit:             'C',   // 'C' | 'F'
+  distanceUnit:         'km',  // 'km' | 'mi'
+  timeFormat:           '24',  // '12' | '24'
+  notifications:        false,
+  weatherRadar:         false,
+  activitySuggestions:  true,  // show clothing/activity tips on Suggestions page
+  alertSuggestions:     true,  // show safety tips inside Alerts cards
 }
 
 function loadSettings() {
