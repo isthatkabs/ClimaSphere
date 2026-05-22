@@ -134,7 +134,7 @@ export default function Dashboard() {
       <div className="dash-root">
         <Sidebar onLogout={handleLogout} forecast={forecast} activePage={activePage} onNav={setActivePage} />
         <div className="dash-main">
-          <DashHeader onSearch={(loc) => { setLoc(loc); setActivePage('Overview') }} onReset={handleReset} />
+          <DashHeader onSearch={(loc) => { setLoc(loc); setActivePage('Overview') }} onReset={handleReset} forecast={forecast} onNav={setActivePage} />
           <div className="dash-content">
             <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>
               Loading weather data…
@@ -150,7 +150,7 @@ export default function Dashboard() {
       <div className="dash-root">
         <Sidebar onLogout={handleLogout} forecast={forecast} activePage={activePage} onNav={setActivePage} />
         <div className="dash-main">
-          <DashHeader onSearch={(loc) => { setLoc(loc); setActivePage('Overview') }} onReset={handleReset} />
+          <DashHeader onSearch={(loc) => { setLoc(loc); setActivePage('Overview') }} onReset={handleReset} forecast={forecast} onNav={setActivePage} />
           <div className="dash-content">
             <div style={{ padding: '40px', textAlign: 'center', color: '#f87171' }}>
               <p>Could not load weather for "{loc.name}".</p>

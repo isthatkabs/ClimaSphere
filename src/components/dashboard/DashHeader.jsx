@@ -1,8 +1,36 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import { useSettings } from '../../context/SettingsContext'
 import { getInitials, getNow, getGreeting } from '../../data/dashData'
 import { searchCities } from '../../services/weather'
+
+const NOTIF_ALERT_DEFS = [
+  { id: 'storm', icon: '⛈',  title: 'Thunderstorm Warning', color: '#f87171', check: h => h.code >= 95 },
+  { id: 'snow',  icon: '❄️', title: 'Snow & Ice Warning',    color: '#93c5fd', check: h => h.code >= 71 && h.code <= 77 },
+  { id: 'rain',  icon: '🌧',  title: 'Heavy Rain Alert',     color: '#38bdf8', check: h => h.precip >= 60 },
+  { id: 'wind',  icon: '💨',  title: 'Strong Wind Advisory', color: '#a78bfa', check: h => h.wind > 50 },
+  { id: 'fog',   icon: '🌫',  title: 'Dense Fog Advisory',   color: '#94a3b8', check: h => h.visibility < 1000 },
+  { id: 'heat',  icon: '🌡',  title: 'Extreme Heat Warning', color: '#fb923c', check: h => h.apparent_temp > 35 },
+]
+
+function parseActiveAlerts(forecast) {
+  if (!forecast?.hourly) return []
+  const { time, weathercode, precipitation_probability, windspeed_10m, visibility, apparent_temperature } = forecast.hourly
+  const now    = new Date()
+  const cutoff = new Date(now.getTime() + 48 * 60 * 60 * 1000)
+  const hours  = time
+    .map((t, i) => ({
+      time:          new Date(t),
+      code:          weathercode?.[i]              ?? 0,
+      precip:        precipitation_probability?.[i] ?? 0,
+      wind:          windspeed_10m?.[i]             ?? 0,
+      visibility:    visibility?.[i]                ?? 99999,
+      apparent_temp: apparent_temperature?.[i]       ?? 0,
+    }))
+    .filter(h => h.time >= now && h.time <= cutoff)
+  return NOTIF_ALERT_DEFS.filter(def => hours.some(h => def.check(h)))
+}
 
 function getCountryName(code) {
   try {
@@ -12,21 +40,29 @@ function getCountryName(code) {
   }
 }
 
-export default function DashHeader({ onSearch, onReset }) {
+export default function DashHeader({ onSearch, onReset, forecast, onNav }) {
   const { user }                        = useAuth()
+  const { settings }                    = useSettings()
   const navigate                        = useNavigate()
   const [input, setInput]               = useState('')
   const [suggestions, setSuggestions]   = useState([])
   const [showDropdown, setShowDropdown] = useState(false)
   const [noResults, setNoResults]       = useState(false)
+  const [notifOpen, setNotifOpen]       = useState(false)
   const debounceRef                     = useRef(null)
   const wrapRef                         = useRef(null)
   const inputRef                        = useRef(null)
+  const notifRef                        = useRef(null)
+
+  const activeAlerts = useMemo(() => parseActiveAlerts(forecast), [forecast])
 
   useEffect(() => {
     const handleClick = (e) => {
       if (wrapRef.current && !wrapRef.current.contains(e.target)) {
         setShowDropdown(false)
+      }
+      if (notifRef.current && !notifRef.current.contains(e.target)) {
+        setNotifOpen(false)
       }
     }
     document.addEventListener('mousedown', handleClick)
@@ -157,7 +193,67 @@ export default function DashHeader({ onSearch, onReset }) {
       </div>
 
       <div className="dash-header-right">
-        <button className="dash-icon-btn" title="Notifications">🔔</button>
+        {/* ── Notification Bell ── */}
+        <div style={{ position: 'relative' }} ref={notifRef}>
+          <button
+            className={`dash-icon-btn${notifOpen ? ' active' : ''}`}
+            title="Notifications"
+            onClick={() => setNotifOpen(o => !o)}
+            style={{ position: 'relative' }}
+          >
+            🔔
+            {settings.notifications && activeAlerts.length > 0 && (
+              <span className="dash-notif-badge">{activeAlerts.length}</span>
+            )}
+          </button>
+
+          {notifOpen && (
+            <div className="dash-notif-panel">
+              <div className="dash-notif-header">
+                <span className="dash-notif-title">Notifications</span>
+                <button className="dash-notif-close" onClick={() => setNotifOpen(false)}>✕</button>
+              </div>
+
+              {!settings.notifications ? (
+                <div className="dash-notif-off">
+                  Notifications are off. Enable them in{' '}
+                  <button
+                    className="dash-notif-link"
+                    onClick={() => { setNotifOpen(false); onNav?.('Settings') }}
+                  >
+                    Settings
+                  </button>.
+                </div>
+              ) : activeAlerts.length === 0 ? (
+                <div className="dash-notif-clear">
+                  <span className="dash-notif-clear-icon">✅</span>
+                  <div className="dash-notif-clear-text">No active alerts</div>
+                  <div className="dash-notif-clear-sub">Conditions look safe for the next 48 hours</div>
+                </div>
+              ) : (
+                <>
+                  <div className="dash-notif-list">
+                    {activeAlerts.map(alert => (
+                      <div key={alert.id} className="dash-notif-item">
+                        <span className="dash-notif-item-icon">{alert.icon}</span>
+                        <span className="dash-notif-item-title" style={{ color: alert.color }}>
+                          {alert.title}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                  <button
+                    className="dash-notif-view-all"
+                    onClick={() => { setNotifOpen(false); onNav?.('Alerts') }}
+                  >
+                    View All Alerts →
+                  </button>
+                </>
+              )}
+            </div>
+          )}
+        </div>
+
         <button
           className="dash-icon-btn"
           title="Back to home"
