@@ -11,18 +11,27 @@
 
 const HOT_ACTIVITIES = [
   { icon: '🧺', text: 'Picnic under the shade' },
-  { icon: '🏖',  text: 'Chill by the beach' },
+  { icon: '🏖',  text: 'Chill by the beach or lido' },
   { icon: '⚽', text: 'Outdoor sports — football or cricket' },
-  { icon: '🏊', text: 'Go swimming' },
-  { icon: '🍦', text: 'Ice cream and enjoy the outdoors' },
+  { icon: '🏊', text: 'Go swimming outdoors or at a pool' },
+  { icon: '🍦', text: 'Get ice cream and enjoy the outdoors' },
   { icon: '🌅', text: 'Walk during sunset when it cools down' },
+  { icon: '🥾', text: 'Hike on a shaded trail early morning' },
+  { icon: '🌿', text: 'Visit a botanical garden' },
+  { icon: '🎾', text: 'Early morning tennis before the heat peaks' },
+  { icon: '🏕',  text: 'Evening BBQ or garden party' },
+  { icon: '🌟', text: 'Stargazing after dark when it\'s cooler' },
+  { icon: '🚴', text: 'Cycle early morning or evening' },
 ]
 const HOT_CLOTHING = [
-  { icon: '👕', text: 'T-shirt' },
+  { icon: '👕', text: 'T-shirt or vest top' },
   { icon: '🩳', text: 'Shorts' },
-  { icon: '👗', text: 'Light dress' },
+  { icon: '👗', text: 'Light summer dress or linen trousers' },
   { icon: '🕶',  text: 'Sunglasses' },
-  { icon: '🧢', text: 'Sun hat' },
+  { icon: '🧢', text: 'Sun hat or cap' },
+  { icon: '👡', text: 'Sandals or flip-flops' },
+  { icon: '🧴', text: 'Sunscreen (at least SPF 30)' },
+  { icon: '👚', text: 'Light breathable shirt (linen or cotton)' },
 ]
 
 const WARM_ACTIVITIES = [
@@ -33,12 +42,22 @@ const WARM_ACTIVITIES = [
   { icon: '👫', text: 'Meet up with friends' },
   { icon: '📸', text: 'Photography of any scenery' },
   { icon: '🎨', text: 'Drawing or painting outdoors' },
+  { icon: '🥾', text: 'Go for a hike on a local trail' },
+  { icon: '🏃', text: 'Morning run or jog' },
+  { icon: '🛒', text: 'Visit a farmers market or street market' },
+  { icon: '🐦', text: 'Birdwatching in a local park' },
+  { icon: '🌳', text: 'Explore a nature reserve or woodland' },
+  { icon: '🛹', text: 'Skateboarding or rollerblading' },
+  { icon: '🧘', text: 'Outdoor yoga or stretching in the park' },
+  { icon: '🎾', text: 'Tennis or badminton outdoors' },
 ]
 const WARM_CLOTHING = [
-  { icon: '🧥', text: 'Light jacket' },
-  { icon: '👚', text: 'Long sleeve top' },
-  { icon: '👖', text: 'Jeans' },
-  { icon: '🧣', text: 'Light accessories' },
+  { icon: '🧥', text: 'Light jacket (take it off if it warms up)' },
+  { icon: '👚', text: 'Long sleeve top or lightweight jumper' },
+  { icon: '👖', text: 'Jeans or chinos' },
+  { icon: '👟', text: 'Comfortable trainers' },
+  { icon: '🧣', text: 'Light scarf for the breeze' },
+  { icon: '🧥', text: 'Light hoodie for the evening' },
 ]
 
 const COLD_ACTIVITIES = [
@@ -47,15 +66,26 @@ const COLD_ACTIVITIES = [
   { icon: '🎮', text: 'Board games or card games' },
   { icon: '🍳', text: 'Cooking or baking at home' },
   { icon: '🏋️', text: 'Gym session or indoor sports' },
-  { icon: '🚶', text: 'Go for a walk if you\'re dressed warmly enough' },
+  { icon: '🚶', text: 'Go for a walk if dressed warmly enough' },
+  { icon: '🎨', text: 'Visit a museum or art gallery' },
+  { icon: '⛸',  text: 'Ice skating at a local rink' },
+  { icon: '🛁', text: 'Spa or self-care day at home' },
+  { icon: '🍲', text: 'Cook a hearty soup or stew' },
+  { icon: '📱', text: 'Video call friends or family' },
+  { icon: '🎭', text: 'See a show, theatre, or comedy night' },
+  { icon: '📚', text: 'Catch up on reading or start a new book' },
+  { icon: '🎵', text: 'Discover new music or listen to a podcast' },
 ]
 const COLD_CLOTHING = [
   { icon: '🧥', text: 'Warm coat' },
-  { icon: '👚', text: 'Jumper' },
+  { icon: '👚', text: 'Jumper or thick knit' },
   { icon: '🧣', text: 'Scarf' },
   { icon: '🧤', text: 'Gloves' },
-  { icon: '🔥', text: 'Thermal layers' },
-  { icon: '🧢', text: 'Hat' },
+  { icon: '🔥', text: 'Thermal base layer' },
+  { icon: '🧢', text: 'Woolly hat' },
+  { icon: '🥾', text: 'Insulated boots' },
+  { icon: '🧦', text: 'Thick thermal socks' },
+  { icon: '🧶', text: 'Fleece or gilet for extra warmth' },
 ]
 
 const RAIN_ACTIVITIES = [
@@ -63,14 +93,24 @@ const RAIN_ACTIVITIES = [
   { icon: '📚', text: 'Read a book or listen to podcasts indoors' },
   { icon: '🎬', text: 'Watch movies or a series' },
   { icon: '🏛',  text: 'Go to a museum, gallery, or library' },
-  { icon: '🏋️', text: 'Light indoor exercises' },
+  { icon: '🏋️', text: 'Gym session or indoor workout' },
   { icon: '🎮', text: 'Video games or board games' },
+  { icon: '🧗', text: 'Indoor climbing wall' },
+  { icon: '🎭', text: 'See a show, theatre, or comedy night' },
+  { icon: '🍳', text: 'Try a new recipe or do some meal prep' },
+  { icon: '🐟', text: 'Visit an aquarium or indoor attraction' },
+  { icon: '🎨', text: 'Art, pottery, or a creative class' },
+  { icon: '📓', text: 'Journaling or planning your week ahead' },
+  { icon: '🛀', text: 'Self-care — bath, skincare, relax at home' },
+  { icon: '📖', text: 'Start a new book or finish one you\'ve been meaning to' },
 ]
 const RAIN_CLOTHING = [
   { icon: '🧥', text: 'Waterproof jacket' },
   { icon: '🌂', text: 'Raincoat' },
   { icon: '☂',  text: 'Umbrella' },
-  { icon: '👟', text: 'Waterproof shoes' },
+  { icon: '👟', text: 'Waterproof shoes or trainers' },
+  { icon: '🥾', text: 'Wellington boots (if outdoors)' },
+  { icon: '👖', text: 'Waterproof trousers (if outdoors)' },
 ]
 
 const SNOW_ACTIVITIES = [
@@ -81,52 +121,74 @@ const SNOW_ACTIVITIES = [
   { icon: '🍳', text: 'Cooking or baking comfort food' },
   { icon: '☕', text: 'Visit a café or coffee shop' },
   { icon: '🏋️', text: 'Gym session indoors' },
+  { icon: '🛷', text: 'Go sledding on a nearby hill' },
+  { icon: '⛷',  text: 'Skiing or snowboarding if accessible' },
+  { icon: '🍲', text: 'Make a hearty soup or stew' },
+  { icon: '📖', text: 'Curl up with a good book' },
+  { icon: '🎨', text: 'Indoor crafts, drawing, or art' },
 ]
 const SNOW_CLOTHING = [
-  { icon: '🧥', text: 'Winter coat' },
-  { icon: '👖', text: 'Thermal trousers' },
-  { icon: '🧤', text: 'Gloves' },
-  { icon: '🧣', text: 'Scarf' },
-  { icon: '🧢', text: 'Hat' },
-  { icon: '👟', text: 'Snow-suitable shoes' },
+  { icon: '🧥', text: 'Winter coat (insulated)' },
+  { icon: '👖', text: 'Thermal trousers or waterproof over-trousers' },
+  { icon: '🧤', text: 'Waterproof gloves' },
+  { icon: '🧣', text: 'Scarf or neck gaiter' },
+  { icon: '🧢', text: 'Woolly hat covering the ears' },
+  { icon: '🥾', text: 'Insulated waterproof boots' },
+  { icon: '🧦', text: 'Thermal socks' },
+  { icon: '🔥', text: 'Thermal base layer top and bottom' },
 ]
 
 const STORM_ACTIVITIES = [
   { icon: '🏠', text: 'Stay indoors — it\'s dangerous outside' },
-  { icon: '🎬', text: 'Watch movies or a series' },
+  { icon: '🎬', text: 'Watch movies or binge a series' },
   { icon: '📚', text: 'Read a book or catch up on podcasts' },
   { icon: '🎮', text: 'Video games or board games' },
   { icon: '🍳', text: 'Cooking or baking comfort food' },
+  { icon: '📓', text: 'Journaling, planning, or goal-setting' },
+  { icon: '📱', text: 'Video call friends or family' },
+  { icon: '🎨', text: 'Draw, sketch, or do arts and crafts' },
+  { icon: '🧘', text: 'Home yoga or stretching session' },
+  { icon: '🎵', text: 'Listen to music or make a new playlist' },
 ]
 const STORM_CLOTHING = [
-  { icon: '🧥', text: 'Waterproof jacket' },
-  { icon: '☂',  text: 'Umbrella' },
+  { icon: '🧥', text: 'Waterproof jacket — stay inside if possible' },
+  { icon: '☂',  text: 'Sturdy umbrella' },
   { icon: '👟', text: 'Waterproof shoes' },
-  { icon: '🌂', text: 'Raincoat' },
+  { icon: '🌂', text: 'Raincoat with hood' },
 ]
 
 const WINDY_EXTRAS_ACTIVITIES = [
   { icon: '📸', text: 'Photography of dramatic clouds and skies' },
   { icon: '🏬', text: 'Visit shopping centres or indoor markets' },
   { icon: '📚', text: 'Reading indoors' },
-  { icon: '📺', text: 'Watch live sports or documentaries' },
+  { icon: '📺', text: 'Watch live sports or a documentary' },
+  { icon: '🪁', text: 'Fly a kite (if wind isn\'t dangerously strong)' },
+  { icon: '🧗', text: 'Indoor rock climbing' },
+  { icon: '📖', text: 'Visit a library or bookshop' },
+  { icon: '🎭', text: 'Catch an indoor show or event' },
 ]
 const WINDY_EXTRAS_CLOTHING = [
-  { icon: '💨', text: 'Wind-suitable jacket' },
+  { icon: '💨', text: 'Wind-resistant jacket or outer layer' },
   { icon: '👖', text: 'Long trousers' },
+  { icon: '🧢', text: 'Close-fitting hat that won\'t blow off' },
+  { icon: '🧣', text: 'Scarf to protect your face' },
 ]
 
 const HIGH_UV_ACTIVITIES = [
   { icon: '🌳', text: 'Relax in a park under shade' },
   { icon: '📖', text: 'Reading outdoors with protective clothing' },
-  { icon: '☕', text: 'Outdoor cafés (seek shade)' },
-  { icon: '🧘', text: 'Light stretching or yoga outdoors (avoid midday)' },
-  { icon: '📸', text: 'Photography during morning or evening' },
+  { icon: '☕', text: 'Outdoor café (sit in the shade)' },
+  { icon: '🧘', text: 'Yoga or stretching outdoors — avoid midday' },
+  { icon: '📸', text: 'Photography during morning or evening light' },
+  { icon: '🏃', text: 'Early morning run before UV peaks (before 10am)' },
+  { icon: '🌊', text: 'Beach activities — stay in the shade or water' },
+  { icon: '🌿', text: 'Shaded botanical garden or woodland walk' },
 ]
 const HIGH_UV_CLOTHING = [
-  { icon: '🧴', text: 'Sunscreen — essential today!' },
-  { icon: '🧢', text: 'Cap' },
-  { icon: '🕶',  text: 'Sunglasses' },
+  { icon: '🧴', text: 'Sunscreen — SPF 50 recommended, reapply every 2h' },
+  { icon: '🧢', text: 'Wide-brim hat or cap' },
+  { icon: '🕶',  text: 'UV-protective sunglasses' },
+  { icon: '👚', text: 'Light long-sleeve shirt for UV coverage' },
 ]
 
 const MILD_ACTIVITIES = [
@@ -135,11 +197,16 @@ const MILD_ACTIVITIES = [
   { icon: '📸', text: 'Photography outdoors' },
   { icon: '🚲', text: 'Cycling' },
   { icon: '📚', text: 'Read in a quiet spot' },
+  { icon: '🌳', text: 'Explore a local park or nature trail' },
+  { icon: '🏃', text: 'Go for a run' },
+  { icon: '🛒', text: 'Visit a market or browse the shops' },
+  { icon: '🎾', text: 'Hit the courts for some tennis' },
 ]
 const MILD_CLOTHING = [
   { icon: '🧥', text: 'Light jacket' },
-  { icon: '👖', text: 'Jeans' },
-  { icon: '👟', text: 'Comfortable shoes' },
+  { icon: '👖', text: 'Jeans or comfortable trousers' },
+  { icon: '👟', text: 'Comfortable trainers' },
+  { icon: '👚', text: 'Casual top or t-shirt' },
 ]
 
 // ── deduplicate by text field ─────────────────────────────────────
@@ -189,7 +256,6 @@ export function getWeatherSuggestions({ temp, windspeed, precipProb, weathercode
     primaryEmoji     = '🌧'
     conditionLabels.push('Rain')
 
-    // Layer temperature clothing under rain gear
     if (isCold) {
       clothing = [...clothing, ...COLD_CLOTHING]
       conditionLabels.push('Cold')
@@ -227,7 +293,7 @@ export function getWeatherSuggestions({ temp, windspeed, precipProb, weathercode
     activities = [...activities, ...WINDY_EXTRAS_ACTIVITIES]
     const hasJacket = clothing.some(c => c.text.toLowerCase().includes('jacket') || c.text.toLowerCase().includes('coat'))
     if (!hasJacket) clothing = [...clothing, ...WINDY_EXTRAS_CLOTHING]
-    else clothing = [...clothing, { icon: '👖', text: 'Long trousers' }]
+    else clothing = [...clothing, { icon: '👖', text: 'Long trousers' }, { icon: '🧢', text: 'Close-fitting hat that won\'t blow off' }]
   }
 
   // Overlay: high UV (adds items when outdoors is viable)
@@ -244,8 +310,8 @@ export function getWeatherSuggestions({ temp, windspeed, precipProb, weathercode
     primaryCondition,
     primaryEmoji,
     conditionLabels,
-    activities: dedup(activities).slice(0, 8),
-    clothing:   dedup(clothing).slice(0, 8),
+    activities: dedup(activities).slice(0, 10),
+    clothing:   dedup(clothing).slice(0, 10),
   }
 }
 
@@ -264,10 +330,9 @@ export function buildSuggestionInputs(weather, forecast) {
 
   if (forecast?.hourly) {
     const { time, precipitation_probability, weathercode: codes } = forecast.hourly
-    const now   = Date.now()
+    const now    = Date.now()
     const cutoff = now + 12 * 60 * 60 * 1000
 
-    // Max precip and most severe code in the next 12 hours
     time.forEach((t, i) => {
       const ts = new Date(t).getTime()
       if (ts >= now && ts <= cutoff) {
@@ -282,4 +347,17 @@ export function buildSuggestionInputs(weather, forecast) {
   }
 
   return { temp, feelsLike, windspeed, precipProb, weathercode, uvIndex, humidity, country }
+}
+
+// ── build a plain-text weather summary for the AI ────────────────
+export function buildWeatherSummary({ temp, feelsLike, windspeed, precipProb, weathercode, uvIndex, humidity, country }, locationName, primaryCondition) {
+  return [
+    `Location: ${locationName ?? 'unknown'}${country ? ` (${country})` : ''}`,
+    `Condition: ${primaryCondition}`,
+    `Temperature: ${Math.round(temp)}°C (feels like ${Math.round(feelsLike)}°C)`,
+    `Humidity: ${humidity}%`,
+    `Wind: ${Math.round(windspeed)} km/h`,
+    `Rain chance (next 12h): ${precipProb}%`,
+    `UV Index: ${uvIndex}`,
+  ].join(' | ')
 }

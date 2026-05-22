@@ -1,16 +1,17 @@
 import { useEffect, useState, useRef } from 'react'
-import { getWeatherSuggestions, buildSuggestionInputs } from '../data/suggestions'
+import { getWeatherSuggestions, buildSuggestionInputs, buildWeatherSummary } from '../data/suggestions'
 import { getAISuggestions } from '../services/ai'
+import SuggestionChat from '../components/dashboard/SuggestionChat'
 
 export default function ActivitySuggestion({ weather, forecast, locationName }) {
-  const [suggestions,  setSuggestions]  = useState(null)
-  const [inputs,       setInputs]       = useState(null)
-  const [aiInsight,    setAiInsight]    = useState(null)
-  const [aiLoading,    setAiLoading]    = useState(false)
-  const [aiError,      setAiError]      = useState(false)
+  const [suggestions,   setSuggestions]   = useState(null)
+  const [inputs,        setInputs]        = useState(null)
+  const [weatherSummary, setWeatherSummary] = useState('')
+  const [aiInsight,     setAiInsight]     = useState(null)
+  const [aiLoading,     setAiLoading]     = useState(false)
+  const [aiError,       setAiError]       = useState(false)
   const prevKeyRef = useRef(null)
 
-  // Derive suggestion inputs and run rule engine whenever weather/forecast change
   useEffect(() => {
     if (!weather || !forecast) return
 
@@ -20,12 +21,13 @@ export default function ActivitySuggestion({ weather, forecast, locationName }) 
     const result = getWeatherSuggestions(derived)
     setSuggestions(result)
 
-    // Cache-bust key so we don't re-call Claude for the same data
+    const summary = buildWeatherSummary(derived, locationName, result.primaryCondition)
+    setWeatherSummary(summary)
+
     const key = `${locationName}|${Math.round(derived.temp)}|${derived.weathercode}|${Math.round(derived.precipProb)}`
     if (key === prevKeyRef.current) return
     prevKeyRef.current = key
 
-    // Fetch AI insight from Claude
     setAiLoading(true)
     setAiError(false)
     setAiInsight(null)
@@ -148,6 +150,9 @@ export default function ActivitySuggestion({ weather, forecast, locationName }) 
           ))}
         </div>
       </div>
+
+      {/* ── AI Chat ── */}
+      <SuggestionChat weatherSummary={weatherSummary} />
 
       {/* ── Disclaimer ── */}
       <p className="cs-activity-disclaimer">

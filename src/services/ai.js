@@ -10,3 +10,14 @@ export async function getAISuggestions(payload) {
   if (!res.ok) throw new Error('AI service unavailable')
   return res.json()
 }
+
+export async function chatWithAI(messages, weatherSummary) {
+  const res = await fetch(`${API}/api/ai/chat`, {
+    method:      'POST',
+    credentials: 'include',
+    headers:     { 'Content-Type': 'application/json' },
+    body:        JSON.stringify({ messages, weatherSummary }),
+  })
+  if (!res.ok) throw new Error('AI chat unavailable')
+  return res.json()
+}

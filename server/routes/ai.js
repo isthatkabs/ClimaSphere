@@ -58,4 +58,34 @@ router.post('/suggestions', async (req, res) => {
   }
 })
 
+router.post('/chat', async (req, res) => {
+  const { messages, weatherSummary } = req.body
+
+  if (!Array.isArray(messages) || messages.length === 0) {
+    return res.status(400).json({ error: 'messages array required' })
+  }
+
+  const system =
+    `You are ClimaSphere's friendly weather advisor. ` +
+    `Current conditions: ${weatherSummary ?? 'unknown'}. ` +
+    `Answer questions about what to wear or what activities to do based on the weather. ` +
+    `Keep replies short (2–4 sentences), warm, and practical. ` +
+    `If asked something unrelated to weather, clothing, or activities, ` +
+    `politely say you can only help with weather-related advice.`
+
+  try {
+    const message = await getClient().messages.create({
+      model:      'claude-haiku-4-5-20251001',
+      max_tokens: 300,
+      system,
+      messages,
+    })
+
+    res.json({ reply: message.content[0].text })
+  } catch (err) {
+    console.error('AI chat error:', err.message)
+    res.status(500).json({ error: err.message })
+  }
+})
+
 export default router
