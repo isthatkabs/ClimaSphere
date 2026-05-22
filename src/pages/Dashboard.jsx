@@ -26,12 +26,26 @@ import HourlyForecast from '../components/dashboard/HourlyForecast'
 import MetricsGrid    from '../components/dashboard/MetricsGrid'
 import WeeklyForecast from '../components/dashboard/WeeklyForecast'
 import SideCards      from '../components/dashboard/SideCards'
-import FloatingAlert  from '../components/dashboard/FloatingAlert'
+import FloatingAlert      from '../components/dashboard/FloatingAlert'
+import FloatingSuggestion from '../components/dashboard/FloatingSuggestion'
 import MapView            from '../components/dashboard/map/MapView'
 import AlertsView        from '../components/dashboard/AlertsView'
 import ActivitySuggestion from './ActivitySuggestion'
 
 const DEFAULT_LOCATION = { lat: 51.5074, lon: -0.1278, name: 'London' }
+
+function hasFloatingAlert(forecast) {
+  if (!forecast?.hourly) return false
+  const { time, precipitation_probability, weathercode } = forecast.hourly
+  const now   = new Date()
+  const today = now.toDateString()
+  return time.some((t, i) => {
+    const d = new Date(t)
+    return d > now && d.toDateString() === today && (
+      weathercode[i] >= 71 || precipitation_probability[i] >= 60
+    )
+  })
+}
 
 export default function Dashboard() {
   const { logout } = useAuth()
@@ -190,6 +204,12 @@ export default function Dashboard() {
       </div>
 
       <FloatingAlert forecast={forecast} />
+      <FloatingSuggestion
+        weather={weather}
+        forecast={forecast}
+        onNav={setActivePage}
+        hasWeatherAlert={hasFloatingAlert(forecast)}
+      />
     </div>
   )
 }
