@@ -66,6 +66,7 @@ export default function Dashboard() {
     const page = params.get('page')
     if (page === 'Map')       setActivePage('Map')
     if (page === 'Locations') setActivePage('Locations')
+    if (page) navigate('/dashboard', { replace: true })
   }, [location.search])
 
   useEffect(() => {
