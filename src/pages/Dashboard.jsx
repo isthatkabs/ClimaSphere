@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useLocations } from '../context/LocationsContext'
 import { getCurrentWeather, getForecast } from '../services/weather'
 
 import '../styles/dash-base.css'
@@ -14,7 +15,8 @@ import '../styles/dash-sidecards.css'
 import '../styles/dash-map.css'
 import '../styles/dash-settings.css'
 
-import Settings       from './Settings'
+import Settings         from './Settings'
+import ManageLocations  from './ManageLocations'
 import Sidebar        from '../components/dashboard/Sidebar'
 import DashHeader     from '../components/dashboard/DashHeader'
 import HeroCard       from '../components/dashboard/HeroCard'
@@ -29,6 +31,7 @@ const DEFAULT_LOCATION = { lat: 51.5074, lon: -0.1278, name: 'London' }
 
 export default function Dashboard() {
   const { logout } = useAuth()
+  const { homeLocation } = useLocations()
   const navigate   = useNavigate()
   const location   = useLocation()
 
@@ -40,26 +43,28 @@ export default function Dashboard() {
   const [activePage,   setActivePage]   = useState('Overview')
   const [selectedHour, setSelectedHour] = useState(null)
 
-  // Read ?page=Map from URL on mount
   useEffect(() => {
     const params = new URLSearchParams(location.search)
-    if (params.get('page') === 'Map') setActivePage('Map')
+    const page = params.get('page')
+    if (page === 'Map')       setActivePage('Map')
+    if (page === 'Locations') setActivePage('Locations')
   }, [location.search])
 
   useEffect(() => {
+    if (homeLocation) {
+      setLoc({ lat: homeLocation.lat, lon: homeLocation.lon, name: homeLocation.name })
+      return
+    }
     if (!navigator.geolocation) {
       setLoc(DEFAULT_LOCATION)
       return
     }
     navigator.geolocation.getCurrentPosition(
-      (pos) => setLoc({
-        lat:  pos.coords.latitude,
-        lon:  pos.coords.longitude,
-        name: 'Your Location',
-      }),
+      (pos) => setLoc({ lat: pos.coords.latitude, lon: pos.coords.longitude, name: 'Your Location' }),
       () => setLoc(DEFAULT_LOCATION),
       { timeout: 8000 }
     )
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
@@ -148,6 +153,8 @@ export default function Dashboard() {
         <div className="dash-content">
           {activePage === 'Settings' ? (
             <Settings />
+          ) : activePage === 'Locations' ? (
+            <ManageLocations onSwitch={(loc) => { setLoc(loc); setActivePage('Overview') }} />
           ) : activePage === 'Map' ? (
             <MapView weather={weather} />
           ) : (

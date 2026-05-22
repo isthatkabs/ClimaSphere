@@ -13,6 +13,7 @@ import Contact      from './pages/Contact'
 import ProfilePage  from './pages/ProfilePage'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { SettingsProvider } from './context/SettingsContext'
+import { LocationsProvider } from './context/LocationsContext'
 
 function PrivateRoute({ children }) {
   const { user } = useAuth()
@@ -22,6 +23,7 @@ function PrivateRoute({ children }) {
 function App() {
   return (
     <SettingsProvider>
+    <LocationsProvider>
     <AuthProvider>
       <Routes>
         <Route path="/"         element={<Home />}         />
@@ -52,6 +54,7 @@ function App() {
         />
       </Routes>
     </AuthProvider>
+    </LocationsProvider>
     </SettingsProvider>
   )
 }

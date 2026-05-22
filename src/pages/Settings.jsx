@@ -68,9 +68,9 @@ export default function Settings() {
       </div>
 
       <Section title="GENERAL">
-        <Row icon="🏠" label="Home" sub="Return to landing page" onClick={() => navigate('/')} showChevron />
-        <Row icon="📍" label="Manage Locations" sub="Add or remove saved cities" onClick={() => {}} showChevron />
-        <Row icon="🔔" label="Notifications" sub="Weather alerts and updates">
+        <Row icon="🏠" label="Home" sub="Return to home page" onClick={() => navigate('/')} showChevron />
+        <Row icon="📍" label="Manage Locations" sub="Add or remove saved cities" onClick={() => navigate('/dashboard?page=Locations')} showChevron />
+        <Row icon="🔔" label="Notifications" sub="Clothing Suggestions and updates">
           <Toggle
             on={settings.notifications}
             onToggle={() => updateSetting('notifications', !settings.notifications)}
