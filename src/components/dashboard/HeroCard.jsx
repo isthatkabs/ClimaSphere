@@ -1,10 +1,10 @@
-// Helper: convert wind degrees to compass direction
+import { useSettings, fmtTemp, fmtTempShort, fmtWind, fmtDist } from '../../context/SettingsContext'
+
 function getWindDirection(deg) {
   const dirs = ['N','NE','E','SE','S','SW','W','NW']
   return dirs[Math.round(deg / 45) % 8]
 }
 
-// Helper: map OWM icon code to emoji
 function getWeatherEmoji(iconCode) {
   const map = {
     '01d': '☀️', '01n': '🌙',
@@ -20,7 +20,6 @@ function getWeatherEmoji(iconCode) {
   return map[iconCode] || '🌡️'
 }
 
-// Helper: how long ago the data was fetched
 function getUpdatedText(unixTimestamp) {
   const diffMs = Date.now() - unixTimestamp * 1000
   const mins = Math.floor(diffMs / 60000)
@@ -29,7 +28,6 @@ function getUpdatedText(unixTimestamp) {
   return `Updated ${mins} min ago`
 }
 
-// Helper: convert country code to full name
 function getCountryName(code) {
   try {
     return new Intl.DisplayNames(['en'], { type: 'region' }).of(code) || code
@@ -39,6 +37,7 @@ function getCountryName(code) {
 }
 
 export default function HeroCard({ weather }) {
+  const { settings } = useSettings()
   if (!weather) return null
 
   const {
@@ -51,10 +50,12 @@ export default function HeroCard({ weather }) {
     dt,
   } = weather
 
-  const windKmh = Math.round(speed * 3.6)
+  const windKmh = speed * 3.6
   const windDir = getWindDirection(deg)
   const visKm   = (visibility / 1000).toFixed(1)
   const condition = description.charAt(0).toUpperCase() + description.slice(1)
+
+  const { tempUnit, distanceUnit } = settings
 
   return (
     <div className="dash-hero-card">
@@ -65,11 +66,11 @@ export default function HeroCard({ weather }) {
         </div>
 
         <div className="dash-hero-temp-row">
-          <div className="dash-hero-temp">{Math.round(temp)}°</div>
+          <div className="dash-hero-temp">{fmtTempShort(temp, tempUnit)}</div>
           <div className="dash-hero-temp-meta">
             <div className="dash-hero-condition">{condition}</div>
             <div className="dash-hero-hilo">
-              H: {Math.round(temp_max)}° · L: {Math.round(temp_min)}°
+              H: {fmtTempShort(temp_max, tempUnit)} · L: {fmtTempShort(temp_min, tempUnit)}
             </div>
             <div className="dash-hero-updated">{getUpdatedText(dt)}</div>
           </div>
@@ -77,9 +78,9 @@ export default function HeroCard({ weather }) {
 
         <div className="dash-hero-pills">
           <span className="dash-pill">💧 {humidity}% humidity</span>
-          <span className="dash-pill">💨 {windKmh} km/h {windDir}</span>
+          <span className="dash-pill">💨 {fmtWind(windKmh, distanceUnit)} {windDir}</span>
           <span className="dash-pill">🌡 {pressure} hPa</span>
-          <span className="dash-pill">👁 {visKm} km visibility</span>
+          <span className="dash-pill">👁 {fmtDist(visKm, distanceUnit)} visibility</span>
         </div>
       </div>
 
@@ -88,11 +89,11 @@ export default function HeroCard({ weather }) {
         <div className="dash-hero-right-stats">
           <div className="dash-right-stat">
             <span className="dash-right-stat-label">Feels like</span>
-            <span className="dash-right-stat-val">{Math.round(feels_like)}°C</span>
+            <span className="dash-right-stat-val">{fmtTemp(feels_like, tempUnit)}</span>
           </div>
           <div className="dash-right-stat">
             <span className="dash-right-stat-label">Visibility</span>
-            <span className="dash-right-stat-val">{visKm} km</span>
+            <span className="dash-right-stat-val">{fmtDist(visKm, distanceUnit)}</span>
           </div>
           <div className="dash-right-stat">
             <span className="dash-right-stat-label">Pressure</span>

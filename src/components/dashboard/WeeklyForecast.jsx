@@ -1,3 +1,5 @@
+import { useSettings, fmtTempShort } from '../../context/SettingsContext'
+
 function getWeatherEmoji(code) {
   if (code === 0)  return '☀️'
   if (code <= 2)   return '⛅'
@@ -25,6 +27,9 @@ function getCondition(code) {
 }
 
 export default function WeeklyForecast({ forecast }) {
+  const { settings } = useSettings()
+  const { tempUnit } = settings
+
   if (!forecast?.daily) return null
 
   const {
@@ -40,8 +45,8 @@ export default function WeeklyForecast({ forecast }) {
     today:  i === 0,
     icon:   getWeatherEmoji(weathercode[i]),
     cond:   getCondition(weathercode[i]),
-    hi:     Math.round(temperature_2m_max[i]),
-    lo:     Math.round(temperature_2m_min[i]),
+    hi:     temperature_2m_max[i],
+    lo:     temperature_2m_min[i],
     precip: `${precipitation_probability_max[i] ?? 0}%`,
   }))
 
@@ -62,8 +67,8 @@ export default function WeeklyForecast({ forecast }) {
             <div className="dash-weekly-right">
               <span className="dash-weekly-precip">💧 {w.precip}</span>
               <div className="dash-weekly-temps">
-                <span className="dash-weekly-hi">{w.hi}°</span>
-                <span className="dash-weekly-lo">{w.lo}°</span>
+                <span className="dash-weekly-hi">{fmtTempShort(w.hi, tempUnit)}</span>
+                <span className="dash-weekly-lo">{fmtTempShort(w.lo, tempUnit)}</span>
               </div>
             </div>
           </div>

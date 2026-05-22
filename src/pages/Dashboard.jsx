@@ -12,7 +12,9 @@ import '../styles/dash-forecast.css'
 import '../styles/dash-sidebar.css'
 import '../styles/dash-sidecards.css'
 import '../styles/dash-map.css'
+import '../styles/dash-settings.css'
 
+import Settings       from './Settings'
 import Sidebar        from '../components/dashboard/Sidebar'
 import DashHeader     from '../components/dashboard/DashHeader'
 import HeroCard       from '../components/dashboard/HeroCard'
@@ -144,7 +146,9 @@ export default function Dashboard() {
         <DashHeader onSearch={setLoc} onReset={handleReset} />
 
         <div className="dash-content">
-          {activePage === 'Map' ? (
+          {activePage === 'Settings' ? (
+            <Settings />
+          ) : activePage === 'Map' ? (
             <MapView weather={weather} />
           ) : (
             <>

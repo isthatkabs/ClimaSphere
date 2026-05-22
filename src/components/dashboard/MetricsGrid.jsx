@@ -1,4 +1,5 @@
-// Helper: clamp a value between 0–100 for the fill bar
+import { useSettings, fmtTemp, fmtWind, fmtDist } from '../../context/SettingsContext'
+
 function toPercent(value, min, max) {
   return Math.round(Math.min(100, Math.max(0, ((value - min) / (max - min)) * 100)))
 }
@@ -47,8 +48,9 @@ function feelsLikeLabel(temp) {
 }
 
 export default function MetricsGrid({ weather, selectedHour }) {
-  // If a forecast hour is selected AND it has the fields we need, use it.
-  // Otherwise fall back to live weather.
+  const { settings } = useSettings()
+  const { tempUnit, distanceUnit } = settings
+
   const useForecast = selectedHour &&
     selectedHour.humidity   != null &&
     selectedHour.windspeed  != null &&
@@ -58,7 +60,7 @@ export default function MetricsGrid({ weather, selectedHour }) {
 
   if (useForecast) {
     humidity    = selectedHour.humidity
-    windKmh     = Math.round(selectedHour.windspeed)          // open-meteo already in km/h
+    windKmh     = Math.round(selectedHour.windspeed)
     visKm       = selectedHour.visibilityM != null
                     ? (selectedHour.visibilityM / 1000).toFixed(1)
                     : '–'
@@ -95,7 +97,7 @@ export default function MetricsGrid({ weather, selectedHour }) {
     {
       icon:  '💨',
       label: 'Wind speed',
-      val:   `${windKmh} km/h`,
+      val:   fmtWind(windKmh, distanceUnit),
       sub:   windLabel(windKmh),
       fill:  toPercent(windKmh, 0, 100),
       color: '#81c784',
@@ -103,7 +105,7 @@ export default function MetricsGrid({ weather, selectedHour }) {
     {
       icon:  '👁',
       label: 'Visibility',
-      val:   `${visKm} km`,
+      val:   fmtDist(visKm, distanceUnit),
       sub:   visibilityLabel(parseFloat(visKm)),
       fill:  toPercent(parseFloat(visKm) * 1000, 0, 10000),
       color: '#ce93d8',
@@ -127,7 +129,7 @@ export default function MetricsGrid({ weather, selectedHour }) {
     {
       icon:  '🤔',
       label: 'Feels like',
-      val:   `${feelsLike}°C`,
+      val:   fmtTemp(feelsLike, tempUnit),
       sub:   feelsLikeLabel(feelsLike),
       fill:  toPercent(feelsLike, -10, 40),
       color: '#ef9a9a',

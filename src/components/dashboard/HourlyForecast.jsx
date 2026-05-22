@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useSettings, fmtTempShort } from '../../context/SettingsContext'
 
 function getWeatherEmoji(code) {
   if (code === 0)  return '☀️'
@@ -13,8 +14,16 @@ function getWeatherEmoji(code) {
   return '🌡️'
 }
 
+function fmtHourLabel(dateStr, format) {
+  const d = new Date(dateStr)
+  if (format === '12') return d.toLocaleTimeString([], { hour: 'numeric', hour12: true })
+  return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })
+}
+
 export default function HourlyForecast({ forecast, onHourSelect }) {
   const [activeHour, setActiveHour] = useState(0)
+  const { settings } = useSettings()
+  const { tempUnit, timeFormat } = settings
 
   if (!forecast?.hourly) return null
 
@@ -31,14 +40,13 @@ export default function HourlyForecast({ forecast, onHourSelect }) {
     surface_pressure,
   } = forecast.hourly
 
-  // Find current hour index then take next 12
   const now    = new Date()
   const startI = time.findIndex(t => new Date(t) >= now)
   const hours  = Array.from({ length: 12 }, (_, i) => startI + i)
     .filter(i => i < time.length)
     .map((i, arrIndex) => ({
-      time:        arrIndex === 0 ? 'Now' : new Date(time[i]).toLocaleTimeString([], { hour: 'numeric', hour12: true }),
-      temp:        Math.round(temperature_2m[i]),
+      time:        arrIndex === 0 ? 'Now' : fmtHourLabel(time[i], timeFormat),
+      temp:        temperature_2m[i],
       precip:      precipitation_probability[i] ?? 0,
       icon:        getWeatherEmoji(weathercode[i]),
       humidity:    relativehumidity_2m?.[i]  ?? null,
@@ -49,7 +57,6 @@ export default function HourlyForecast({ forecast, onHourSelect }) {
       pressure:    surface_pressure?.[i]     ?? null,
     }))
 
-  // Fire on mount so MetricsGrid starts in sync with "Now"
   useEffect(() => {
     if (hours.length > 0 && onHourSelect) onHourSelect(hours[0])
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -75,7 +82,7 @@ export default function HourlyForecast({ forecast, onHourSelect }) {
           >
             <span className="dash-hourly-time">{h.time}</span>
             <span className="dash-hourly-icon">{h.icon}</span>
-            <span className="dash-hourly-temp">{h.temp}°</span>
+            <span className="dash-hourly-temp">{fmtTempShort(h.temp, tempUnit)}</span>
             <div className="dash-precip-row">
               <div className="dash-precip-track">
                 <div className="dash-precip-fill" style={{ height: `${h.precip}%` }} />
