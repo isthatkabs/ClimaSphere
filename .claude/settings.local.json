@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(cd \"C:\\\\Users\\\\Kabir\\\\nea\\\\ClimaSphere\"; Start-Job -ScriptBlock { cd \"C:\\\\Users\\\\Kabir\\\\nea\\\\ClimaSphere\"; npx vite --port 5177 } | Out-Null; Start-Sleep -Seconds 4; Invoke-WebRequest http://localhost:5177 -UseBasicParsing -TimeoutSec 5 | Select-Object StatusCode)",
+      "PowerShell(node -e \"require\\('@playwright/test'\\)\" 2>&1)"
+    ]
+  }
+}

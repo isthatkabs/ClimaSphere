@@ -1,19 +1,39 @@
 /* ── 5-DAY FORECAST ── */
-.dash-weekly-list { display: flex; flex-direction: column; gap: 4px; }
+.dash-weekly-list  { display: flex; flex-direction: column; gap: 4px; }
+.dash-weekly-entry { display: flex; flex-direction: column; }
 .dash-weekly-item {
   display: flex; align-items: center; gap: 10px;
   padding: 9px 14px;
   background: var(--surface); border: 1px solid var(--border);
   border-radius: var(--r-sm);
   transition: all 0.15s;
+  cursor: pointer; user-select: none;
 }
-.dash-weekly-item.today { background: var(--accent-glow); border-color: var(--border-accent); }
-.dash-weekly-item:hover:not(.today) { background: var(--surface-hover); }
+.dash-weekly-item.today    { background: var(--accent-glow); border-color: var(--border-accent); }
+.dash-weekly-item.selected { border-color: var(--border-accent); border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+.dash-weekly-item:hover:not(.today):not(.selected) { background: var(--surface-hover); }
 .dash-weekly-day  { font-size: 13px; font-weight: 500; width: 42px; flex-shrink: 0; }
 .dash-weekly-icon { font-size: 17px; flex-shrink: 0; }
 .dash-weekly-cond { font-size: 12px; color: var(--text-muted); flex: 1; }
 .dash-weekly-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-.dash-weekly-precip { font-size: 12px; color: var(--blue); min-width: 30px; }
-.dash-weekly-temps  { display: flex; gap: 6px; }
-.dash-weekly-hi { font-size: 13px; font-weight: 500; }
-.dash-weekly-lo { font-size: 13px; color: var(--text-muted); }
+.dash-weekly-precip  { font-size: 12px; color: var(--blue); min-width: 30px; }
+.dash-weekly-temps   { display: flex; gap: 6px; }
+.dash-weekly-hi      { font-size: 13px; font-weight: 500; }
+.dash-weekly-lo      { font-size: 13px; color: var(--text-muted); }
+.dash-weekly-chevron { font-size: 9px; color: var(--text-muted); margin-left: 2px; }
+
+/* ── DAY DETAIL PANEL ── */
+.dash-weekly-detail {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 0; padding: 10px 14px;
+  background: var(--surface-hover); border: 1px solid var(--border-accent);
+  border-top: none; border-bottom-left-radius: var(--r-sm); border-bottom-right-radius: var(--r-sm);
+  animation: detail-expand 0.15s ease;
+}
+@keyframes detail-expand {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.dash-weekly-detail-item { display: flex; flex-direction: column; gap: 3px; }
+.dash-detail-label { font-size: 11px; color: var(--text-muted); }
+.dash-detail-value { font-size: 13px; font-weight: 500; }
