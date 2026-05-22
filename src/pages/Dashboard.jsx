@@ -15,6 +15,7 @@ import '../styles/dash-sidecards.css'
 import '../styles/dash-map.css'
 import '../styles/dash-settings.css'
 import '../styles/dash-alerts.css'
+import '../styles/dash-activity.css'
 
 import Settings         from './Settings'
 import ManageLocations  from './ManageLocations'
@@ -26,8 +27,9 @@ import MetricsGrid    from '../components/dashboard/MetricsGrid'
 import WeeklyForecast from '../components/dashboard/WeeklyForecast'
 import SideCards      from '../components/dashboard/SideCards'
 import FloatingAlert  from '../components/dashboard/FloatingAlert'
-import MapView        from '../components/dashboard/map/MapView'
-import AlertsView    from '../components/dashboard/AlertsView'
+import MapView            from '../components/dashboard/map/MapView'
+import AlertsView        from '../components/dashboard/AlertsView'
+import ActivitySuggestion from './ActivitySuggestion'
 
 const DEFAULT_LOCATION = { lat: 51.5074, lon: -0.1278, name: 'London' }
 
@@ -161,6 +163,8 @@ export default function Dashboard() {
             <MapView weather={weather} />
           ) : activePage === 'Alerts' ? (
             <AlertsView forecast={forecast} weather={weather} />
+          ) : activePage === 'Suggestions' ? (
+            <ActivitySuggestion weather={weather} forecast={forecast} locationName={loc?.name} />
           ) : (
             <>
               <HeroCard weather={weather} />
