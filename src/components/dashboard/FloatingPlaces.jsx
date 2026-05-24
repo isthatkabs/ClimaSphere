@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import { getNearbyPlaces } from '../../services/places'
 import { useSettings } from '../../context/SettingsContext'
 import { getWeatherSuggestions, buildSuggestionInputs } from '../../data/suggestions'
@@ -34,9 +34,47 @@ export default function FloatingPlaces({ loc, weather, forecast }) {
   const [progress,  setProgress]  = useState(100)
   const [places,    setPlaces]    = useState([])
   const [condition, setCondition] = useState('Mild')
+
   const startRef    = useRef(null)
   const rafRef      = useRef(null)
-  const shownKeyRef = useRef(null)
+  const shownLocRef = useRef(null)
+  const pausedAtRef = useRef(null)
+  const tickRef     = useRef(null)
+
+  // Keep tickRef current so mouse handlers always call the latest version
+  tickRef.current = (now) => {
+    const elapsed   = now - startRef.current
+    const remaining = Math.max(0, 1 - elapsed / DISPLAY_MS)
+    setProgress(remaining * 100)
+    if (remaining > 0) {
+      rafRef.current = requestAnimationFrame(tickRef.current)
+    } else {
+      setVisible(false)
+    }
+  }
+
+  const handleMouseEnter = useCallback(() => {
+    if (rafRef.current) {
+      cancelAnimationFrame(rafRef.current)
+      rafRef.current = null
+    }
+    pausedAtRef.current = performance.now()
+  }, [])
+
+  const handleMouseLeave = useCallback(() => {
+    if (pausedAtRef.current !== null) {
+      // Shift the start time forward by however long we were paused
+      startRef.current += performance.now() - pausedAtRef.current
+      pausedAtRef.current = null
+    }
+    rafRef.current = requestAnimationFrame(tickRef.current)
+  }, [])
+
+  function handlePlaceClick(place) {
+    const locationSuffix = loc?.name && loc.name !== 'Your Location' ? loc.name : 'near me'
+    const query = `${place.name} ${locationSuffix}`
+    window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, '_blank', 'noopener,noreferrer')
+  }
 
   useEffect(() => {
     if (!weather || !forecast || !loc) return
@@ -47,14 +85,15 @@ export default function FloatingPlaces({ loc, weather, forecast }) {
     const cond   = result.primaryCondition
     setCondition(cond)
 
-    const key = `${loc.lat}|${loc.lon}|${cond}`
-    if (key === shownKeyRef.current) return
-    shownKeyRef.current = key
+    const locKey = `${loc.lat}|${loc.lon}`
+    if (locKey === shownLocRef.current) return
+    shownLocRef.current = locKey
 
     setVisible(false)
     setDismissed(false)
     setProgress(100)
     setPlaces([])
+    pausedAtRef.current = null
 
     getNearbyPlaces(loc.lat, loc.lon, settings.placesRadius ?? 1000, cond)
       .then(data => {
@@ -62,20 +101,9 @@ export default function FloatingPlaces({ loc, weather, forecast }) {
         if (results.length === 0) return
         setPlaces(results)
         const appear = setTimeout(() => {
-          if (dismissed) return
           setVisible(true)
           startRef.current = performance.now()
-          const tick = (now) => {
-            const elapsed  = now - startRef.current
-            const remaining = Math.max(0, 1 - elapsed / DISPLAY_MS)
-            setProgress(remaining * 100)
-            if (remaining > 0) {
-              rafRef.current = requestAnimationFrame(tick)
-            } else {
-              setVisible(false)
-            }
-          }
-          rafRef.current = requestAnimationFrame(tick)
+          rafRef.current = requestAnimationFrame(tickRef.current)
         }, APPEAR_DELAY)
         return () => clearTimeout(appear)
       })
@@ -109,8 +137,11 @@ export default function FloatingPlaces({ loc, weather, forecast }) {
   })()
 
   return (
-    <div className="cs-places-wrap">
-      {/* Header */}
+    <div
+      className="cs-places-wrap"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
       <div className="cs-places-header">
         <div className="cs-places-header-left">
           <span className="cs-places-pin">📍</span>
@@ -125,14 +156,18 @@ export default function FloatingPlaces({ loc, weather, forecast }) {
         </div>
       </div>
 
-      {/* Place rows */}
       <div className="cs-places-list">
         {places.slice(0, 4).map((place, i) => {
           const cat  = place.categories?.[0]?.name ?? ''
           const icon = categoryIcon(cat)
           const dist = fmtDist(place.distance)
           return (
-            <div key={i} className="cs-places-row">
+            <div
+              key={i}
+              className="cs-places-row cs-places-row--clickable"
+              onClick={() => handlePlaceClick(place)}
+              title={`Search "${place.name}" on Google`}
+            >
               <span className="cs-places-row-icon">{icon}</span>
               <div className="cs-places-row-info">
                 <div className="cs-places-row-name">{place.name}</div>
@@ -144,7 +179,6 @@ export default function FloatingPlaces({ loc, weather, forecast }) {
         })}
       </div>
 
-      {/* Countdown bar */}
       <div className="cs-places-bar-track">
         <div className="cs-places-bar-fill" style={{ width: `${progress}%` }} />
       </div>

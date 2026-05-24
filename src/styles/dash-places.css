@@ -102,6 +102,16 @@
   background: rgba(255, 255, 255, 0.04);
 }
 
+.cs-places-row--clickable {
+  cursor: pointer;
+}
+
+.cs-places-row--clickable:hover .cs-places-row-name {
+  color: #a78bfa;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .cs-places-row-icon {
   font-size:  17px;
   flex-shrink: 0;
