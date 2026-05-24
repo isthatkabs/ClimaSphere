@@ -29,6 +29,7 @@ import WeeklyForecast from '../components/dashboard/WeeklyForecast'
 import SideCards      from '../components/dashboard/SideCards'
 import FloatingAlert      from '../components/dashboard/FloatingAlert'
 import FloatingSuggestion from '../components/dashboard/FloatingSuggestion'
+import FeedbackModal      from '../components/dashboard/FeedbackModal'
 import MapView            from '../components/dashboard/map/MapView'
 import AlertsView        from '../components/dashboard/AlertsView'
 import ActivitySuggestion from './ActivitySuggestion'
@@ -60,8 +61,9 @@ export default function Dashboard() {
   const [forecast,     setForecast]     = useState(null)
   const [loading,      setLoading]      = useState(true)
   const [error,        setError]        = useState(null)
-  const [activePage,   setActivePage]   = useState('Overview')
-  const [selectedHour, setSelectedHour] = useState(null)
+  const [activePage,    setActivePage]    = useState('Overview')
+  const [selectedHour,  setSelectedHour]  = useState(null)
+  const [feedbackOpen,  setFeedbackOpen]  = useState(false)
 
   useEffect(() => {
     const params = new URLSearchParams(location.search)
@@ -134,7 +136,7 @@ export default function Dashboard() {
   if (loading) {
     return (
       <div className="dash-root">
-        <Sidebar onLogout={handleLogout} forecast={forecast} activePage={activePage} onNav={setActivePage} />
+        <Sidebar onLogout={handleLogout} forecast={forecast} activePage={activePage} onNav={setActivePage} onOpenFeedback={() => setFeedbackOpen(true)} />
         <div className="dash-main">
           <DashHeader onSearch={(loc) => { setLoc(loc); setActivePage('Overview') }} onReset={handleReset} forecast={forecast} onNav={setActivePage} />
           <div className="dash-content">
@@ -150,7 +152,7 @@ export default function Dashboard() {
   if (error) {
     return (
       <div className="dash-root">
-        <Sidebar onLogout={handleLogout} forecast={forecast} activePage={activePage} onNav={setActivePage} />
+        <Sidebar onLogout={handleLogout} forecast={forecast} activePage={activePage} onNav={setActivePage} onOpenFeedback={() => setFeedbackOpen(true)} />
         <div className="dash-main">
           <DashHeader onSearch={(loc) => { setLoc(loc); setActivePage('Overview') }} onReset={handleReset} forecast={forecast} onNav={setActivePage} />
           <div className="dash-content">
@@ -166,7 +168,7 @@ export default function Dashboard() {
 
   return (
     <div className="dash-root">
-      <Sidebar onLogout={handleLogout} forecast={forecast} activePage={activePage} onNav={setActivePage} />
+      <Sidebar onLogout={handleLogout} forecast={forecast} activePage={activePage} onNav={setActivePage} onOpenFeedback={() => setFeedbackOpen(true)} />
 
       <div className="dash-main">
         <DashHeader onSearch={(loc) => { setLoc(loc); setActivePage('Overview') }} onReset={handleReset} />
@@ -215,6 +217,7 @@ export default function Dashboard() {
         onNav={setActivePage}
         hasWeatherAlert={hasFloatingAlert(forecast)}
       />
+      {feedbackOpen && <FeedbackModal onClose={() => setFeedbackOpen(false)} />}
     </div>
   )
 }

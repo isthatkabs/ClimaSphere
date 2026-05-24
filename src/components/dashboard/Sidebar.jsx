@@ -49,7 +49,7 @@ function getAlert(forecast) {
   return null
 }
 
-export default function Sidebar({ onLogout, forecast, activePage, onNav }) {
+export default function Sidebar({ onLogout, forecast, activePage, onNav, onOpenFeedback }) {
   const { user } = useAuth()
   const navigate = useNavigate()
   const alert    = getAlert(forecast)
@@ -91,6 +91,36 @@ export default function Sidebar({ onLogout, forecast, activePage, onNav }) {
             </div>
           </div>
         )}
+
+        <button
+          onClick={onOpenFeedback}
+          style={{
+            display:      'flex',
+            alignItems:   'center',
+            gap:          8,
+            width:        '100%',
+            padding:      '9px 12px',
+            marginBottom: 8,
+            background:   'rgba(139,92,246,0.08)',
+            border:       '1px solid rgba(139,92,246,0.2)',
+            borderRadius: 10,
+            color:        '#a78bfa',
+            fontSize:     13,
+            fontWeight:   500,
+            cursor:       'pointer',
+            transition:   'background 0.15s, border-color 0.15s',
+          }}
+          onMouseEnter={e => {
+            e.currentTarget.style.background   = 'rgba(139,92,246,0.15)'
+            e.currentTarget.style.borderColor  = 'rgba(139,92,246,0.4)'
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.background   = 'rgba(139,92,246,0.08)'
+            e.currentTarget.style.borderColor  = 'rgba(139,92,246,0.2)'
+          }}
+        >
+          <span>⭐</span> Rate us
+        </button>
 
         {user ? (
           <button className="dash-logout-btn" onClick={onLogout}>
