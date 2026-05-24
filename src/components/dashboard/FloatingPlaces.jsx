@@ -9,6 +9,7 @@ const DISPLAY_MS   = 8000
 function categoryIcon(name = '') {
   const n = name.toLowerCase()
   if (n.includes('coffee') || n.includes('cafe') || n.includes('tea')) return '☕'
+  if (n.includes('takeaway') || n.includes('takeout')) return '🥡'
   if (n.includes('restaurant') || n.includes('food') || n.includes('dining')) return '🍽'
   if (n.includes('park') || n.includes('garden') || n.includes('nature')) return '🌳'
   if (n.includes('museum')) return '🏛'
