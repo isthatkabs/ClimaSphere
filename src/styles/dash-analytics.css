@@ -1,0 +1,288 @@
+/* ── ANALYTICS PAGE ── */
+.cs-analytics {
+  max-width: 720px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ── Header ── */
+.cs-an-header {
+  padding-bottom: 4px;
+}
+
+.cs-an-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.cs-an-sub {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* ── Stat Cards Row ── */
+.cs-an-stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.cs-an-stat {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 18px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+}
+
+.cs-an-stat-icon {
+  font-size: 22px;
+  margin-bottom: 4px;
+}
+
+.cs-an-stat-val {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.3px;
+}
+
+.cs-an-stat-label {
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.cs-an-stat-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+  opacity: 0.7;
+}
+
+/* ── Chart Container ── */
+.cs-an-chart-wrap {
+  padding: 16px 14px 10px;
+}
+
+/* ── Legend ── */
+.cs-an-legend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.cs-an-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.cs-an-legend-dashed {
+  border-radius: 2px;
+  height: 3px;
+  width: 18px;
+}
+
+.cs-an-legend-text {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-right: 10px;
+}
+
+/* ── Comfort Windows ── */
+.cs-an-comfort-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 6px;
+  padding: 4px 0 12px;
+}
+
+.cs-an-comfort-block {
+  border: 1px solid;
+  border-radius: var(--r-md);
+  padding: 12px 6px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  text-align: center;
+}
+
+.cs-an-comfort-time {
+  font-size: 10px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.cs-an-comfort-score {
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.cs-an-comfort-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Comfort key */
+.cs-an-comfort-key {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  margin-top: 4px;
+}
+
+.cs-an-key-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ── 5-Day Breakdown ── */
+.cs-an-day-row {
+  align-items: center;
+}
+
+.cs-an-day-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  width: 88px;
+  flex-shrink: 0;
+}
+
+.cs-an-day-temps {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cs-an-day-low {
+  font-size: 12px;
+  color: var(--text-muted);
+  width: 38px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.cs-an-day-high {
+  font-size: 12px;
+  color: var(--text);
+  font-weight: 500;
+  width: 38px;
+  flex-shrink: 0;
+}
+
+.cs-an-temp-track {
+  flex: 1;
+  height: 5px;
+  background: rgba(255,255,255,0.07);
+  border-radius: 99px;
+  position: relative;
+  overflow: hidden;
+}
+
+.cs-an-temp-fill {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, #7c3aed, #a855f7);
+}
+
+.cs-an-day-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  margin-left: 12px;
+}
+
+.cs-an-day-rain {
+  font-size: 12px;
+  color: var(--text-muted);
+  min-width: 46px;
+}
+
+/* ── Conditions Snapshot ── */
+.cs-an-snap-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.cs-an-snap-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.cs-an-snap-label {
+  font-size: 13px;
+  color: var(--text-muted);
+  width: 100px;
+  flex-shrink: 0;
+}
+
+.cs-an-snap-bar-wrap {
+  flex: 1;
+}
+
+.cs-an-snap-bar {
+  height: 6px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.cs-an-snap-fill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.4s ease;
+}
+
+.cs-an-snap-val {
+  font-size: 13px;
+  font-weight: 600;
+  width: 80px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .cs-an-stats-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .cs-an-comfort-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .cs-an-day-temps {
+    display: none;
+  }
+}

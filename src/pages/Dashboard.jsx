@@ -16,6 +16,7 @@ import '../styles/dash-map.css'
 import '../styles/dash-settings.css'
 import '../styles/dash-alerts.css'
 import '../styles/dash-activity.css'
+import '../styles/dash-analytics.css'
 
 import Settings         from './Settings'
 import ManageLocations  from './ManageLocations'
@@ -31,6 +32,7 @@ import FloatingSuggestion from '../components/dashboard/FloatingSuggestion'
 import MapView            from '../components/dashboard/map/MapView'
 import AlertsView        from '../components/dashboard/AlertsView'
 import ActivitySuggestion from './ActivitySuggestion'
+import Analytics          from './Analytics'
 
 const DEFAULT_LOCATION = { lat: 51.5074, lon: -0.1278, name: 'London' }
 
@@ -178,6 +180,8 @@ export default function Dashboard() {
             <MapView weather={weather} />
           ) : activePage === 'Alerts' ? (
             <AlertsView forecast={forecast} weather={weather} />
+          ) : activePage === 'Analytics' ? (
+            <Analytics weather={weather} forecast={forecast} locationName={loc?.name} />
           ) : activePage === 'Suggestions' ? (
             <ActivitySuggestion weather={weather} forecast={forecast} locationName={loc?.name} />
           ) : (
