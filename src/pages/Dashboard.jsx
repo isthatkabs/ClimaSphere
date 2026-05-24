@@ -231,7 +231,7 @@ export default function Dashboard() {
         hasWeatherAlert={hasFloatingAlert(forecast)}
       />
       {activePage === 'Overview' && (
-        <FloatingPlaces key={`${loc?.lat}|${loc?.lon}`} loc={loc} weather={weather} forecast={forecast} />
+        <FloatingPlaces loc={loc} weather={weather} forecast={forecast} />
       )}
       {feedbackOpen && <FeedbackModal onClose={() => setFeedbackOpen(false)} />}
     </div>

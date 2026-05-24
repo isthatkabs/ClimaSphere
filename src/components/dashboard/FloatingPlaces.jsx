@@ -76,42 +76,54 @@ export default function FloatingPlaces({ loc, weather, forecast }) {
     window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, '_blank', 'noopener,noreferrer')
   }
 
+  // Effect 1: when coordinates change, reset everything and clear the dedup key
+  useEffect(() => {
+    if (!loc) return
+    shownLocRef.current = null
+    setVisible(false)
+    setDismissed(false)
+    setPlaces([])
+    pausedAtRef.current = null
+    if (rafRef.current) { cancelAnimationFrame(rafRef.current); rafRef.current = null }
+  }, [loc?.lat, loc?.lon]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Effect 2: fetch places once weather is ready and this loc hasn't been fetched yet
   useEffect(() => {
     if (!weather || !forecast || !loc) return
     if (!settings.nearbyPlaces) return
-
-    const inputs = buildSuggestionInputs(weather, forecast)
-    const result = getWeatherSuggestions(inputs)
-    const cond   = result.primaryCondition
-    setCondition(cond)
 
     const locKey = `${loc.lat}|${loc.lon}`
     if (locKey === shownLocRef.current) return
     shownLocRef.current = locKey
 
-    setVisible(false)
-    setDismissed(false)
-    setPlaces([])
-    pausedAtRef.current = null
+    const inputs = buildSuggestionInputs(weather, forecast)
+    const cond   = getWeatherSuggestions(inputs).primaryCondition
+    setCondition(cond)
+
+    let active      = true
+    let appearTimer = null
 
     getNearbyPlaces(loc.lat, loc.lon, settings.placesRadius ?? 1000, cond)
       .then(data => {
+        if (!active) return
         const results = data?.results ?? []
         if (results.length === 0) return
         setPlaces(results)
-        const appear = setTimeout(() => {
+        appearTimer = setTimeout(() => {
+          if (!active) return
           setVisible(true)
           startRef.current = performance.now()
           rafRef.current = requestAnimationFrame(tickRef.current)
         }, APPEAR_DELAY)
-        return () => clearTimeout(appear)
       })
       .catch(() => {})
-  }, [weather, forecast, loc, settings.nearbyPlaces, settings.placesRadius])
 
-  useEffect(() => () => {
-    if (rafRef.current) cancelAnimationFrame(rafRef.current)
-  }, [])
+    return () => {
+      active = false
+      clearTimeout(appearTimer)
+      if (rafRef.current) { cancelAnimationFrame(rafRef.current); rafRef.current = null }
+    }
+  }, [weather, forecast, loc, settings.nearbyPlaces, settings.placesRadius])
 
   function dismiss() {
     setVisible(false)
