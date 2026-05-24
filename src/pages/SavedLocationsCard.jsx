@@ -19,7 +19,7 @@ export default function SavedLocationsCard() {
       </h3>
 
       {locations.length === 0 ? (
-        <p style={{ color: "rgba(255,255,255,0.42)", fontSize: 13, margin: "0 0 1rem", fontStyle: "italic" }}>
+        <p style={{ color: "rgba(255,255,255,0.78)", fontSize: 13, margin: "0 0 1rem", fontStyle: "italic" }}>
           No locations saved yet.
         </p>
       ) : (

@@ -12,7 +12,7 @@ function SegPicker({ options, value, onChange }) {
           background: value === o.value ? "rgba(90,124,255,0.75)" : "transparent",
           border: `1px solid ${value === o.value ? "rgba(90,124,255,0.9)" : "transparent"}`,
           borderRadius: 5, padding: "4px 10px",
-          color: value === o.value ? "#fff" : "rgba(255,255,255,0.48)",
+          color: value === o.value ? "#fff" : "rgba(255,255,255,0.9)",
           fontSize: 12, fontWeight: 600, cursor: "pointer", transition: "all 0.15s",
           whiteSpace: "nowrap",
         }}>{o.label}</button>
@@ -48,8 +48,8 @@ function PrefRow({ icon, label, sub, children, last }) {
     }}>
       <span style={{ fontSize: 16, width: 22, textAlign: "center", flexShrink: 0 }}>{icon}</span>
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ color: "rgba(255,255,255,0.88)", fontSize: 13, fontWeight: 500 }}>{label}</div>
-        {sub && <div style={{ color: "rgba(255,255,255,0.38)", fontSize: 11, marginTop: 1 }}>{sub}</div>}
+        <div style={{ color: "#fff", fontSize: 13, fontWeight: 500 }}>{label}</div>
+        {sub && <div style={{ color: "rgba(255,255,255,0.88)", fontSize: 11, marginTop: 1 }}>{sub}</div>}
       </div>
       {children}
     </div>

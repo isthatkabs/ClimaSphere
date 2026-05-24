@@ -20,10 +20,10 @@ function getProvider(user) {
 function MetaItem({ label, value }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-      <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.07em", color: "rgba(255,255,255,0.38)", textTransform: "uppercase" }}>
+      <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.07em", color: "rgba(255,255,255,0.72)", textTransform: "uppercase" }}>
         {label}
       </span>
-      <span style={{ fontSize: 13, fontWeight: 500, color: "rgba(255,255,255,0.82)" }}>
+      <span style={{ fontSize: 13, fontWeight: 500, color: "#fff" }}>
         {value}
       </span>
     </div>
