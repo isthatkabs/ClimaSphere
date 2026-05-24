@@ -5,6 +5,7 @@ import cors        from 'cors'
 import authRoutes    from './routes/auth.js'
 import weatherRoutes from './routes/weather.js'
 import aiRoutes      from './routes/ai.js'
+import placesRoutes  from './routes/places.js'
 
 const app  = express()
 const PORT = process.env.PORT || 3001
@@ -32,6 +33,7 @@ app.use(session({
 app.use('/auth',        authRoutes)
 app.use('/api/weather', weatherRoutes)
 app.use('/api/ai',      aiRoutes)
+app.use('/api/places',  placesRoutes)
 
 app.get('/health', (_req, res) => res.json({ status: 'ok', ts: new Date() }))
 

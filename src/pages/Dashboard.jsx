@@ -17,6 +17,7 @@ import '../styles/dash-settings.css'
 import '../styles/dash-alerts.css'
 import '../styles/dash-activity.css'
 import '../styles/dash-analytics.css'
+import '../styles/dash-places.css'
 
 import Settings         from './Settings'
 import ManageLocations  from './ManageLocations'
@@ -29,6 +30,7 @@ import WeeklyForecast from '../components/dashboard/WeeklyForecast'
 import SideCards      from '../components/dashboard/SideCards'
 import FloatingAlert      from '../components/dashboard/FloatingAlert'
 import FloatingSuggestion from '../components/dashboard/FloatingSuggestion'
+import FloatingPlaces     from '../components/dashboard/FloatingPlaces'
 import FeedbackModal      from '../components/dashboard/FeedbackModal'
 import MapView            from '../components/dashboard/map/MapView'
 import AlertsView        from '../components/dashboard/AlertsView'
@@ -217,6 +219,9 @@ export default function Dashboard() {
         onNav={setActivePage}
         hasWeatherAlert={hasFloatingAlert(forecast)}
       />
+      {activePage === 'Overview' && (
+        <FloatingPlaces loc={loc} weather={weather} forecast={forecast} />
+      )}
       {feedbackOpen && <FeedbackModal onClose={() => setFeedbackOpen(false)} />}
     </div>
   )

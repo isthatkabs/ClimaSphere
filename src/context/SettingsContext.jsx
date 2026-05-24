@@ -8,6 +8,8 @@ const DEFAULTS = {
   weatherRadar:         false,
   activitySuggestions:  true,  // show clothing/activity tips on Suggestions page
   alertSuggestions:     true,  // show safety tips inside Alerts cards
+  nearbyPlaces:         true,  // show nearby places popup on dashboard
+  placesRadius:         1000,  // search radius in metres (500 | 1000 | 2000 | 5000)
 }
 
 function loadSettings() {
