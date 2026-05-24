@@ -80,6 +80,10 @@ export default function Dashboard() {
       setLoc({ lat: homeLocation.lat, lon: homeLocation.lon, name: homeLocation.name })
       return
     }
+    const saved = sessionStorage.getItem('cs_last_loc')
+    if (saved) {
+      try { setLoc(JSON.parse(saved)); return } catch {}
+    }
     if (!navigator.geolocation) {
       setLoc(DEFAULT_LOCATION)
       return
@@ -119,7 +123,14 @@ export default function Dashboard() {
     navigate('/')
   }
 
+  const handleSearch = (newLoc) => {
+    sessionStorage.setItem('cs_last_loc', JSON.stringify(newLoc))
+    setLoc(newLoc)
+    setActivePage('Overview')
+  }
+
   const handleReset = () => {
+    sessionStorage.removeItem('cs_last_loc')
     if (!navigator.geolocation) {
       setLoc(DEFAULT_LOCATION)
       return
@@ -140,7 +151,7 @@ export default function Dashboard() {
       <div className="dash-root">
         <Sidebar onLogout={handleLogout} forecast={forecast} activePage={activePage} onNav={setActivePage} onOpenFeedback={() => setFeedbackOpen(true)} />
         <div className="dash-main">
-          <DashHeader onSearch={(loc) => { setLoc(loc); setActivePage('Overview') }} onReset={handleReset} forecast={forecast} onNav={setActivePage} />
+          <DashHeader onSearch={handleSearch} onReset={handleReset} forecast={forecast} onNav={setActivePage} />
           <div className="dash-content">
             <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>
               Loading weather data…
@@ -156,7 +167,7 @@ export default function Dashboard() {
       <div className="dash-root">
         <Sidebar onLogout={handleLogout} forecast={forecast} activePage={activePage} onNav={setActivePage} onOpenFeedback={() => setFeedbackOpen(true)} />
         <div className="dash-main">
-          <DashHeader onSearch={(loc) => { setLoc(loc); setActivePage('Overview') }} onReset={handleReset} forecast={forecast} onNav={setActivePage} />
+          <DashHeader onSearch={handleSearch} onReset={handleReset} forecast={forecast} onNav={setActivePage} />
           <div className="dash-content">
             <div style={{ padding: '40px', textAlign: 'center', color: '#f87171' }}>
               <p>Could not load weather for "{loc.name}".</p>
@@ -173,7 +184,7 @@ export default function Dashboard() {
       <Sidebar onLogout={handleLogout} forecast={forecast} activePage={activePage} onNav={setActivePage} onOpenFeedback={() => setFeedbackOpen(true)} />
 
       <div className="dash-main">
-        <DashHeader onSearch={(loc) => { setLoc(loc); setActivePage('Overview') }} onReset={handleReset} />
+        <DashHeader onSearch={handleSearch} onReset={handleReset} />
 
         <div className="dash-content">
           {activePage === 'Settings' ? (

@@ -23,23 +23,40 @@ function getCategories(condition) {
   }
 }
 
-function friendlyCategory(raw = '') {
-  if (raw.includes('cafe'))           return 'Cafe'
-  if (raw.includes('restaurant'))     return 'Restaurant'
-  if (raw.includes('bar'))            return 'Bar'
-  if (raw.includes('pub'))            return 'Pub'
-  if (raw.includes('fast_food'))      return 'Fast Food'
-  if (raw.includes('ice_cream'))      return 'Ice Cream'
-  if (raw.includes('cinema'))         return 'Cinema'
-  if (raw.includes('library'))        return 'Library'
-  if (raw.includes('museum'))         return 'Museum'
-  if (raw.includes('shopping'))       return 'Shopping'
-  if (raw.includes('park'))           return 'Park'
-  if (raw.includes('playground'))     return 'Playground'
-  if (raw.includes('forest'))         return 'Nature'
-  if (raw.includes('zoo'))            return 'Zoo'
-  if (raw.includes('attraction'))     return 'Attraction'
-  return 'Place'
+function friendlyCategory(categories = []) {
+  const raw = (Array.isArray(categories) ? categories : [categories]).join(',').toLowerCase()
+  if (raw.includes('cafe') || raw.includes('coffee'))              return 'Café'
+  if (raw.includes('fast_food') || raw.includes('takeaway'))       return 'Takeaway'
+  if (raw.includes('bakery') || raw.includes('pastry'))            return 'Bakery'
+  if (raw.includes('ice_cream') || raw.includes('dessert'))        return 'Ice Cream'
+  if (raw.includes('restaurant'))                                  return 'Restaurant'
+  if (raw.includes('pub') || raw.includes('biergarten'))           return 'Pub'
+  if (raw.includes('bar'))                                         return 'Bar'
+  if (raw.includes('food_court'))                                  return 'Food Court'
+  if (raw.includes('supermarket'))                                 return 'Supermarket'
+  if (raw.includes('food_and_drink') || raw.includes('butcher'))   return 'Food & Drink'
+  if (raw.includes('convenience'))                                 return 'Convenience Store'
+  if (raw.includes('department_store'))                            return 'Department Store'
+  if (raw.includes('shopping') || raw.includes('mall'))            return 'Shopping'
+  if (raw.includes('clothing') || raw.includes('fashion'))         return 'Clothing'
+  if (raw.includes('cinema') || raw.includes('movie'))             return 'Cinema'
+  if (raw.includes('museum'))                                      return 'Museum'
+  if (raw.includes('art') || raw.includes('gallery'))              return 'Art Gallery'
+  if (raw.includes('library'))                                     return 'Library'
+  if (raw.includes('zoo'))                                         return 'Zoo'
+  if (raw.includes('attraction') || raw.includes('tourism'))       return 'Attraction'
+  if (raw.includes('playground'))                                  return 'Playground'
+  if (raw.includes('park') || raw.includes('garden'))              return 'Park'
+  if (raw.includes('forest') || raw.includes('nature'))            return 'Nature'
+  if (raw.includes('sport') || raw.includes('gym') || raw.includes('fitness')) return 'Sports & Fitness'
+  if (raw.includes('swimming'))                                    return 'Swimming Pool'
+  if (raw.includes('pharmacy') || raw.includes('chemist'))         return 'Pharmacy'
+  if (raw.includes('hotel') || raw.includes('accommodation'))      return 'Hotel'
+  if (raw.includes('catering'))                                    return 'Eatery'
+  if (raw.includes('commercial'))                                  return 'Shop'
+  if (raw.includes('leisure'))                                     return 'Leisure'
+  if (raw.includes('entertainment'))                               return 'Entertainment'
+  return 'Local Place'
 }
 
 router.get('/nearby', async (req, res) => {
@@ -60,7 +77,7 @@ router.get('/nearby', async (req, res) => {
     const results = (data?.features ?? [])
       .map(f => ({
         name:       f.properties?.name,
-        categories: [{ name: friendlyCategory(f.properties?.categories?.[0] ?? '') }],
+        categories: [{ name: friendlyCategory(f.properties?.categories ?? []) }],
         distance:   Math.round(f.properties?.distance ?? 0),
       }))
       .filter(r => r.name)
