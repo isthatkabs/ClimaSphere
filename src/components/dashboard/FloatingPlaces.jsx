@@ -34,6 +34,7 @@ export default function FloatingPlaces({ loc, weather, forecast }) {
   const [dismissed, setDismissed] = useState(false)
   const [places,    setPlaces]    = useState([])
   const [condition, setCondition] = useState('Mild')
+  const [showAll,   setShowAll]   = useState(false)
 
   const startRef    = useRef(null)
   const rafRef      = useRef(null)
@@ -84,6 +85,7 @@ export default function FloatingPlaces({ loc, weather, forecast }) {
     setVisible(false)
     setDismissed(false)
     setPlaces([])
+    setShowAll(false)
     pausedAtRef.current = null
     if (rafRef.current) { cancelAnimationFrame(rafRef.current); rafRef.current = null }
   }, [loc?.lat, loc?.lon]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -168,8 +170,8 @@ export default function FloatingPlaces({ loc, weather, forecast }) {
         </div>
       </div>
 
-      <div className="cs-places-list">
-        {places.slice(0, 4).map((place, i) => {
+      <div className={`cs-places-list${showAll ? ' cs-places-list--expanded' : ''}`}>
+        {(showAll ? places : places.slice(0, 4)).map((place, i) => {
           const cat  = place.categories?.[0]?.name ?? ''
           const icon = categoryIcon(cat)
           const dist = fmtDist(place.distance)
@@ -190,6 +192,15 @@ export default function FloatingPlaces({ loc, weather, forecast }) {
           )
         })}
       </div>
+
+      {places.length > 4 && (
+        <button
+          className="cs-places-toggle"
+          onClick={() => setShowAll(v => !v)}
+        >
+          {showAll ? 'Show less ↑' : `Show ${places.length - 4} more ↓`}
+        </button>
+      )}
 
       <div className="cs-places-bar-track">
         <div className="cs-places-bar-fill" ref={barRef} />

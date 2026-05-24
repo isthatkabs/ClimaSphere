@@ -147,6 +147,41 @@
   white-space: nowrap;
 }
 
+/* ── Expanded scrollable list ── */
+.cs-places-list--expanded {
+  max-height:    260px;
+  overflow-y:    auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(124, 58, 255, 0.4) transparent;
+}
+.cs-places-list--expanded::-webkit-scrollbar {
+  width: 4px;
+}
+.cs-places-list--expanded::-webkit-scrollbar-thumb {
+  background:    rgba(124, 58, 255, 0.45);
+  border-radius: 4px;
+}
+
+/* ── Show more / Show less toggle ── */
+.cs-places-toggle {
+  display:     block;
+  width:       100%;
+  background:  none;
+  border:      none;
+  border-top:  1px solid rgba(255, 255, 255, 0.07);
+  padding:     8px 14px;
+  font-size:   11px;
+  font-weight: 500;
+  color:       rgba(167, 139, 250, 0.7);
+  cursor:      pointer;
+  text-align:  center;
+  transition:  color 0.15s, background 0.15s;
+}
+.cs-places-toggle:hover {
+  color:       rgba(167, 139, 250, 1);
+  background:  rgba(255, 255, 255, 0.04);
+}
+
 /* ── Countdown bar ── */
 .cs-places-bar-track {
   height:     3px;

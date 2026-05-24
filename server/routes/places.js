@@ -68,7 +68,7 @@ router.get('/nearby', async (req, res) => {
   }
 
   const categories = getCategories(condition)
-  const url = `${GEOAPIFY_URL}?categories=${categories}&filter=circle:${lon},${lat},${radius}&bias=proximity:${lon},${lat}&limit=6&apiKey=${API_KEY}`
+  const url = `${GEOAPIFY_URL}?categories=${categories}&filter=circle:${lon},${lat},${radius}&bias=proximity:${lon},${lat}&limit=10&apiKey=${API_KEY}`
 
   try {
     const upstream = await fetch(url)
