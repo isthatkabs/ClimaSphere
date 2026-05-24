@@ -86,11 +86,11 @@ function Auth() {
     }
     try {
       await sendPasswordResetEmail(auth, email);
-      setSuccess("Reset link sent — check your inbox (and spam folder).");
+      setSuccess("Reset link sent — check your inbox & spam folder.");
     } catch (err) {
       console.error("Password reset error:", err.code, err.message);
       if (err.code === "auth/user-not-found" || err.code === "auth/invalid-email") {
-        setError("No account found with that email address.");
+        setError("No account has been found with that email address.");
       } else if (err.code === "auth/too-many-requests") {
         setError("Too many attempts. Please wait a few minutes and try again.");
       } else {
