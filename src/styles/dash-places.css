@@ -156,6 +156,6 @@
 
 .cs-places-bar-fill {
   height:     100%;
+  width:      100%;
   background: linear-gradient(90deg, #7c3aff, #5a7cff);
-  transition: width 0.1s linear;
 }

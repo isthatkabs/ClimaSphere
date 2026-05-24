@@ -31,7 +31,6 @@ export default function FloatingPlaces({ loc, weather, forecast }) {
   const { settings } = useSettings()
   const [visible,   setVisible]   = useState(false)
   const [dismissed, setDismissed] = useState(false)
-  const [progress,  setProgress]  = useState(100)
   const [places,    setPlaces]    = useState([])
   const [condition, setCondition] = useState('Mild')
 
@@ -40,12 +39,13 @@ export default function FloatingPlaces({ loc, weather, forecast }) {
   const shownLocRef = useRef(null)
   const pausedAtRef = useRef(null)
   const tickRef     = useRef(null)
+  const barRef      = useRef(null)
 
-  // Keep tickRef current so mouse handlers always call the latest version
+  // Direct DOM update — no React state, so no re-renders per frame
   tickRef.current = (now) => {
     const elapsed   = now - startRef.current
     const remaining = Math.max(0, 1 - elapsed / DISPLAY_MS)
-    setProgress(remaining * 100)
+    if (barRef.current) barRef.current.style.width = `${remaining * 100}%`
     if (remaining > 0) {
       rafRef.current = requestAnimationFrame(tickRef.current)
     } else {
@@ -91,7 +91,6 @@ export default function FloatingPlaces({ loc, weather, forecast }) {
 
     setVisible(false)
     setDismissed(false)
-    setProgress(100)
     setPlaces([])
     pausedAtRef.current = null
 
@@ -180,7 +179,7 @@ export default function FloatingPlaces({ loc, weather, forecast }) {
       </div>
 
       <div className="cs-places-bar-track">
-        <div className="cs-places-bar-fill" style={{ width: `${progress}%` }} />
+        <div className="cs-places-bar-fill" ref={barRef} />
       </div>
     </div>
   )
