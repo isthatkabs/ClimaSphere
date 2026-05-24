@@ -2,17 +2,28 @@ import { useEffect, useState, useRef } from 'react'
 import { getWeatherSuggestions, buildSuggestionInputs, buildWeatherSummary } from '../data/suggestions'
 import { getAISuggestions } from '../services/ai'
 import { useSettings } from '../context/SettingsContext'
+import { useAuth } from '../context/AuthContext'
+import { usePreferences } from '../hooks/usePreferences'
 import SuggestionChat from '../components/dashboard/SuggestionChat'
 
 export default function ActivitySuggestion({ weather, forecast, locationName }) {
   const { settings } = useSettings()
-  const [suggestions,   setSuggestions]   = useState(null)
-  const [inputs,        setInputs]        = useState(null)
-  const [weatherSummary, setWeatherSummary] = useState('')
-  const [aiInsight,     setAiInsight]     = useState(null)
-  const [aiLoading,     setAiLoading]     = useState(false)
-  const [aiError,       setAiError]       = useState(false)
+  const { user } = useAuth()
+  const { preferences, setPreference } = usePreferences()
+  const [suggestions,          setSuggestions]          = useState(null)
+  const [inputs,               setInputs]               = useState(null)
+  const [weatherSummary,       setWeatherSummary]       = useState('')
+  const [aiInsight,            setAiInsight]            = useState(null)
+  const [aiLoading,            setAiLoading]            = useState(false)
+  const [aiError,              setAiError]              = useState(false)
+  const [showHiddenActivities, setShowHiddenActivities] = useState(false)
+  const [showHiddenClothing,   setShowHiddenClothing]   = useState(false)
   const prevKeyRef = useRef(null)
+
+  function handleReact(text, reaction) {
+    const current = preferences[text]
+    setPreference(text, current === reaction ? null : reaction)
+  }
 
   useEffect(() => {
     if (!weather || !forecast) return
@@ -81,6 +92,11 @@ export default function ActivitySuggestion({ weather, forecast, locationName }) 
   }
 
   const { primaryCondition, primaryEmoji, conditionLabels, activities, clothing } = suggestions
+
+  const visibleActivities = activities.filter(i => preferences[i.text] !== 'disliked')
+  const hiddenActivities  = activities.filter(i => preferences[i.text] === 'disliked')
+  const visibleClothing   = clothing.filter(i => preferences[i.text] !== 'disliked')
+  const hiddenClothing    = clothing.filter(i => preferences[i.text] === 'disliked')
   const cityLabel = locationName ?? 'Your location'
 
   return (
@@ -140,16 +156,59 @@ export default function ActivitySuggestion({ weather, forecast, locationName }) 
         <div className="cs-activity-section-header">
           <span className="cs-activity-section-icon">🎯</span>
           <span className="cs-activity-section-title">What to Do Today</span>
-          <span className="cs-activity-section-count">{activities.length} suggestions</span>
+          <span className="cs-activity-section-count">{visibleActivities.length} suggestions</span>
         </div>
         <div className="cs-activity-chips">
-          {activities.map((item, i) => (
-            <div key={i} className="cs-activity-chip">
-              <span className="cs-activity-chip-icon">{item.icon}</span>
-              {item.text}
-            </div>
-          ))}
+          {visibleActivities.map((item, i) => {
+            const reaction = preferences[item.text]
+            return (
+              <div key={i} className={`cs-activity-chip${reaction === 'liked' ? ' liked' : ''}`}>
+                <span className="cs-activity-chip-icon">{item.icon}</span>
+                {item.text}
+                {user && (
+                  <div className="cs-chip-reactions">
+                    <button
+                      className={`cs-chip-react${reaction === 'liked' ? ' active' : ''}`}
+                      onClick={() => handleReact(item.text, 'liked')}
+                      title="Like this suggestion"
+                      aria-label="Like"
+                    >👍</button>
+                    <button
+                      className="cs-chip-react"
+                      onClick={() => handleReact(item.text, 'disliked')}
+                      title="Hide this suggestion"
+                      aria-label="Dislike"
+                    >👎</button>
+                  </div>
+                )}
+              </div>
+            )
+          })}
         </div>
+        {hiddenActivities.length > 0 && (
+          <div className="cs-hidden-row">
+            <button className="cs-hidden-toggle" onClick={() => setShowHiddenActivities(v => !v)}>
+              {hiddenActivities.length} hidden · {showHiddenActivities ? 'Hide' : 'Manage'}
+            </button>
+            {showHiddenActivities && (
+              <div className="cs-hidden-list">
+                {hiddenActivities.map((item, i) => (
+                  <div key={i} className="cs-hidden-item">
+                    <span>{item.icon} {item.text}</span>
+                    <button className="cs-hidden-restore" onClick={() => setPreference(item.text, null)}>
+                      Restore
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+        {!user && (
+          <p className="cs-pref-guest-note">
+            <a href="/auth">Sign in</a> to save your preferences.
+          </p>
+        )}
       </div>
 
       {/* ── Clothing ── */}
@@ -157,16 +216,59 @@ export default function ActivitySuggestion({ weather, forecast, locationName }) 
         <div className="cs-activity-section-header">
           <span className="cs-activity-section-icon">👔</span>
           <span className="cs-activity-section-title">What to Wear</span>
-          <span className="cs-activity-section-count">{clothing.length} items</span>
+          <span className="cs-activity-section-count">{visibleClothing.length} items</span>
         </div>
         <div className="cs-activity-chips">
-          {clothing.map((item, i) => (
-            <div key={i} className="cs-activity-chip clothing">
-              <span className="cs-activity-chip-icon">{item.icon}</span>
-              {item.text}
-            </div>
-          ))}
+          {visibleClothing.map((item, i) => {
+            const reaction = preferences[item.text]
+            return (
+              <div key={i} className={`cs-activity-chip clothing${reaction === 'liked' ? ' liked' : ''}`}>
+                <span className="cs-activity-chip-icon">{item.icon}</span>
+                {item.text}
+                {user && (
+                  <div className="cs-chip-reactions">
+                    <button
+                      className={`cs-chip-react${reaction === 'liked' ? ' active' : ''}`}
+                      onClick={() => handleReact(item.text, 'liked')}
+                      title="Like this suggestion"
+                      aria-label="Like"
+                    >👍</button>
+                    <button
+                      className="cs-chip-react"
+                      onClick={() => handleReact(item.text, 'disliked')}
+                      title="Hide this suggestion"
+                      aria-label="Dislike"
+                    >👎</button>
+                  </div>
+                )}
+              </div>
+            )
+          })}
         </div>
+        {hiddenClothing.length > 0 && (
+          <div className="cs-hidden-row">
+            <button className="cs-hidden-toggle" onClick={() => setShowHiddenClothing(v => !v)}>
+              {hiddenClothing.length} hidden · {showHiddenClothing ? 'Hide' : 'Manage'}
+            </button>
+            {showHiddenClothing && (
+              <div className="cs-hidden-list">
+                {hiddenClothing.map((item, i) => (
+                  <div key={i} className="cs-hidden-item">
+                    <span>{item.icon} {item.text}</span>
+                    <button className="cs-hidden-restore" onClick={() => setPreference(item.text, null)}>
+                      Restore
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+        {!user && (
+          <p className="cs-pref-guest-note">
+            <a href="/auth">Sign in</a> to save your preferences.
+          </p>
+        )}
       </div>
 
       {/* ── AI Chat ── */}
