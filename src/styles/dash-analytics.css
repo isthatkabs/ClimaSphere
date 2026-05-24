@@ -230,29 +230,29 @@
 .cs-an-snap-row {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px 0;
+  gap: 16px;
+  padding: 14px 20px;
   border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 
 .cs-an-snap-row:last-child {
   border-bottom: none;
-  padding-bottom: 0;
 }
 
 .cs-an-snap-label {
   font-size: 13px;
   color: var(--text-muted);
-  width: 100px;
+  width: 110px;
   flex-shrink: 0;
 }
 
 .cs-an-snap-bar-wrap {
   flex: 1;
+  padding: 0 4px;
 }
 
 .cs-an-snap-bar {
-  height: 6px;
+  height: 7px;
   background: rgba(255,255,255,0.06);
   border-radius: 99px;
   overflow: hidden;
@@ -267,9 +267,10 @@
 .cs-an-snap-val {
   font-size: 13px;
   font-weight: 600;
-  width: 80px;
+  width: 90px;
   text-align: right;
   flex-shrink: 0;
+  padding-right: 2px;
 }
 
 /* ── Responsive ── */
