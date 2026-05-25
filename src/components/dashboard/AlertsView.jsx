@@ -85,7 +85,7 @@ const ALERT_TIPS = {
   },
   fog: {
     clothing:   ['🦺 Bright or reflective clothing', '🧥 Warm layers', '👟 Grippy shoes for wet ground'],
-    activities: ['🚗 Drive slowly — reduce speed significantly', '🚲 Avoid cycling in fog', '⏰ Allow extra travel time', '💡 Use headlights if driving'],
+    activities: ['🚗 Drive slowly — reduce speed significantly', '🚲 Avoid cycling in fog', '⏰ Leave room for extra travel time', '💡 Use headlights if driving'],
   },
   heat: {
     clothing:   ['👕 Light breathable clothing', '🧴 Sunscreen SPF 50+', '🕶 UV-protective sunglasses', '🧢 Wide-brim hat'],
