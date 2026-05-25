@@ -37,16 +37,6 @@ function getAlert(forecast) {
     icon:   '⚠️',
   }
 
-  const rain = todayHours.find(h => h.precip >= 60)
-  if (rain) return {
-    title:  '🌧 Rain alert today',
-    sub:    `${rain.precip}% chance from ${fmt(rain.time)}`,
-    color:  '#22c55e',
-    bg:     'rgba(34,197,94,0.08)',
-    border: 'rgba(34,197,94,0.2)',
-    icon:   '⚠️',
-  }
-
   return null
 }
 

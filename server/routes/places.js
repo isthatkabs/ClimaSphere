@@ -6,21 +6,25 @@ const GEOAPIFY_URL = 'https://api.geoapify.com/v2/places'
 
 router.use(requireSession)
 
-const INDOOR  = 'catering.cafe,catering.restaurant,catering.bar,catering.pub,catering.fast_food,catering.ice_cream,entertainment.cinema,education.library,entertainment.museum,commercial.shopping_mall'
-const OUTDOOR = 'leisure.park,leisure.playground,natural.forest,entertainment.zoo,tourism.attraction'
-const ALL     = `${INDOOR},${OUTDOOR}`
+const BASE_INDOOR  = ['catering.cafe','catering.restaurant','catering.bar','catering.pub','catering.fast_food','catering.ice_cream','entertainment.cinema','education.library','entertainment.museum','commercial.shopping_mall']
+const BASE_OUTDOOR = ['leisure.park','leisure.playground','natural.forest','entertainment.zoo','tourism.attraction']
 
-function getCategories(condition) {
-  switch (condition) {
-    case 'Stormy':
-    case 'Rainy':
-    case 'Cold':
-    case 'Very Cold':
-    case 'Snowy':
-      return INDOOR
-    default:
-      return ALL
-  }
+const INTEREST_CATEGORIES = {
+  'Outdoors & Nature':      ['leisure.park','leisure.playground','natural.forest','tourism.attraction','entertainment.zoo'],
+  'Food & Drink':           ['catering.cafe','catering.restaurant','catering.bar','catering.pub','catering.fast_food','catering.ice_cream'],
+  'Arts & Culture':         ['entertainment.museum','education.library'],
+  'Sports & Fitness':       ['sport','leisure.fitness_center','leisure.swimming_pool'],
+  'Cinema & Entertainment': ['entertainment.cinema','entertainment'],
+  'Photography':            ['tourism.attraction','leisure.park'],
+  'Books & Reading':        ['education.library'],
+  'Shopping':               ['commercial.shopping_mall','commercial'],
+}
+
+function getCategories(condition, interests = []) {
+  const isIndoor = ['Stormy','Rainy','Cold','Very Cold','Snowy'].includes(condition)
+  const cats = new Set(isIndoor ? BASE_INDOOR : [...BASE_INDOOR, ...BASE_OUTDOOR])
+  interests.forEach(i => (INTEREST_CATEGORIES[i] ?? []).forEach(c => cats.add(c)))
+  return [...cats].join(',')
 }
 
 function friendlyCategory(categories = []) {
@@ -61,13 +65,14 @@ function friendlyCategory(categories = []) {
 
 router.get('/nearby', async (req, res) => {
   const API_KEY = process.env.GEOAPIFY_API_KEY
-  const { lat, lon, radius = 1000, condition = 'Mild' } = req.query
+  const { lat, lon, radius = 1000, condition = 'Mild', interests: interestsParam = '' } = req.query
   if (!lat || !lon) return res.status(400).json({ error: 'lat and lon are required' })
   if (!API_KEY || API_KEY === 'your_geoapify_api_key_here') {
     return res.status(503).json({ error: 'Places API not configured' })
   }
 
-  const categories = getCategories(condition)
+  const interests  = interestsParam ? interestsParam.split(',').map(s => s.trim()).filter(Boolean) : []
+  const categories = getCategories(condition, interests)
   const url = `${GEOAPIFY_URL}?categories=${categories}&filter=circle:${lon},${lat},${radius}&bias=proximity:${lon},${lat}&limit=10&apiKey=${API_KEY}`
 
   try {

@@ -209,6 +209,33 @@ const MILD_CLOTHING = [
   { icon: '👚', text: 'Casual top or t-shirt' },
 ]
 
+// ── interest → keyword map (used to reorder activities) ──────────
+const INTEREST_KEYWORDS = {
+  'Outdoors & Nature':      ['walk', 'hike', 'cycl', 'park', 'garden', 'beach', 'outdoor', 'nature', 'forest', 'picnic', 'sunset', 'botanical', 'birdwatch', 'woodland', 'trail', 'reserve', 'snow'],
+  'Food & Drink':           ['café', 'coffee', 'restaurant', 'food', 'eat', 'ice cream', 'hot chocolate', 'soup', 'stew', 'bak', 'cook', 'bbq', 'meal', 'market', 'brunch'],
+  'Arts & Culture':         ['museum', 'gallery', 'art', 'library', 'theatre', 'show', 'concert', 'aquarium', 'pottery', 'craft', 'draw', 'sketch', 'creative'],
+  'Sports & Fitness':       ['swim', 'sport', 'cycl', 'gym', 'fitness', 'yoga', 'active', 'workout', 'run', 'jog', 'tennis', 'badminton', 'football', 'cricket', 'climb', 'skate', 'sled', 'ski', 'morning'],
+  'Cinema & Entertainment': ['cinema', 'movie', 'film', 'game', 'board game', 'bowling', 'arcade', 'series', 'watch', 'binge', 'playlist', 'music', 'show'],
+  'Photography':            ['photo', 'photograph', 'sunset', 'scenic', 'cloud', 'sky'],
+  'Books & Reading':        ['read', 'book', 'library', 'podcast', 'journal'],
+  'Shopping':               ['shop', 'mall', 'market', 'browse', 'store'],
+}
+
+const SPORTS_ACTIVEWEAR = [
+  { icon: '🏃', text: 'Activewear or gym clothes' },
+  { icon: '👟', text: 'Running or training shoes' },
+]
+
+// Moves interest-relevant items to the front without removing others
+function interestBoost(items, interests = []) {
+  if (!interests || !interests.length) return items
+  const keywords = interests.flatMap(i => INTEREST_KEYWORDS[i] ?? [])
+  if (!keywords.length) return items
+  const matches = items.filter(item => keywords.some(kw => item.text.toLowerCase().includes(kw)))
+  const rest    = items.filter(item => !keywords.some(kw => item.text.toLowerCase().includes(kw)))
+  return [...matches, ...rest]
+}
+
 // ── deduplicate by text field ─────────────────────────────────────
 function dedup(arr) {
   const seen = new Set()
@@ -220,7 +247,7 @@ function dedup(arr) {
 }
 
 // ── main engine ──────────────────────────────────────────────────
-export function getWeatherSuggestions({ temp, windspeed, precipProb, weathercode, uvIndex = 3 }) {
+export function getWeatherSuggestions({ temp, windspeed, precipProb, weathercode, uvIndex = 3 }, interests = []) {
   const isStorm     = weathercode >= 95
   const isSnow      = (weathercode >= 71 && weathercode <= 77) || (weathercode >= 85 && weathercode <= 86)
   const isRain      = (weathercode >= 51 && weathercode <= 67) || (weathercode >= 80 && weathercode <= 82) || precipProb >= 60
@@ -306,11 +333,16 @@ export function getWeatherSuggestions({ temp, windspeed, precipProb, weathercode
     if (!hasSunscreen) clothing = [...clothing, ...HIGH_UV_CLOTHING]
   }
 
+  // Interest: Sports & Fitness adds activewear when conditions allow
+  if (interests.includes('Sports & Fitness') && !isStorm && !isSnow && temp > 5) {
+    clothing = [...clothing, ...SPORTS_ACTIVEWEAR]
+  }
+
   return {
     primaryCondition,
     primaryEmoji,
     conditionLabels,
-    activities: dedup(activities).slice(0, 10),
+    activities: dedup(interestBoost(activities, interests)).slice(0, 10),
     clothing:   dedup(clothing).slice(0, 10),
   }
 }

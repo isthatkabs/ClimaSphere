@@ -10,6 +10,7 @@ const DEFAULTS = {
   alertSuggestions:     true,  // show safety tips inside Alerts cards
   nearbyPlaces:         true,  // show nearby places popup on dashboard
   placesRadius:         1000,  // search radius in metres (500 | 1000 | 2000 | 5000)
+  interests:            [],    // user interest tags that personalise suggestions and places
 }
 
 function loadSettings() {

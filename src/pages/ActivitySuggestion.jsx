@@ -31,7 +31,7 @@ export default function ActivitySuggestion({ weather, forecast, locationName }) 
     const derived = buildSuggestionInputs(weather, forecast)
     setInputs(derived)
 
-    const result = getWeatherSuggestions(derived)
+    const result = getWeatherSuggestions(derived, settings.interests ?? [])
     setSuggestions(result)
 
     const summary = buildWeatherSummary(derived, locationName, result.primaryCondition)

@@ -1,7 +1,7 @@
 export const profileStyles = {
   page: {
     minHeight: "100vh",
-    background: "url('/auth-bluebg.png') no-repeat center center / cover",
+    background: "url('/lightning-bg.jpg') no-repeat center center / cover",
     padding: "2rem",
     fontFamily: "sans-serif",
   },

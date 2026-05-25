@@ -19,24 +19,6 @@ function getAlert(forecast) {
 
   const fmt = t => t.toLocaleTimeString([], { hour: 'numeric', hour12: true })
 
-  const storm = todayHours.find(h => h.code >= 95)
-  if (storm) return {
-    title:  'Storm alert today',
-    sub:    `Thunderstorms from ${fmt(storm.time)}`,
-    color:  '#f87171',
-    bg:     'rgba(248,113,113,0.07)',
-    border: 'rgba(248,113,113,0.2)',
-  }
-
-  const snow = todayHours.find(h => h.code >= 71 && h.code <= 77)
-  if (snow) return {
-    title:  'Snow expected today',
-    sub:    `Snow from ${fmt(snow.time)}`,
-    color:  '#38bdf8',
-    bg:     'rgba(56,189,248,0.07)',
-    border: 'rgba(56,189,248,0.2)',
-  }
-
   const rain = todayHours.find(h => h.precip >= 60)
   if (rain) return {
     title:  'Rain alert today',

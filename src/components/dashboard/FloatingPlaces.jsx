@@ -106,7 +106,7 @@ export default function FloatingPlaces({ loc, weather, forecast }) {
     let active      = true
     let appearTimer = null
 
-    getNearbyPlaces(loc.lat, loc.lon, settings.placesRadius ?? 1000, cond)
+    getNearbyPlaces(loc.lat, loc.lon, settings.placesRadius ?? 1000, cond, settings.interests ?? [])
       .then(data => {
         if (!active) return
         const results = data?.results ?? []
