@@ -63,8 +63,10 @@ export default function Dashboard() {
   const [forecast,     setForecast]     = useState(null)
   const [loading,      setLoading]      = useState(true)
   const [error,        setError]        = useState(null)
-  const [activePage,    setActivePage]    = useState('Overview')
+  const [activePage,    setActivePage]    = useState(() => sessionStorage.getItem('cs_last_page') || 'Overview')
   const [selectedHour,  setSelectedHour]  = useState(null)
+
+  useEffect(() => { sessionStorage.setItem('cs_last_page', activePage) }, [activePage])
   const [feedbackOpen,  setFeedbackOpen]  = useState(false)
 
   useEffect(() => {
