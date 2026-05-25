@@ -32,7 +32,7 @@ router.get('/forecast', (req, res) => {
   const url =
     `${METEO}/forecast?latitude=${lat}&longitude=${lon}` +
     `&hourly=temperature_2m,precipitation_probability,weathercode,relativehumidity_2m,` +
-    `windspeed_10m,apparent_temperature,cloudcover,visibility,surface_pressure` +
+    `windspeed_10m,apparent_temperature,cloudcover,visibility,surface_pressure,uv_index` +
     `&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max,uv_index_max` +
     `&timezone=auto&forecast_days=5`
   return proxy(res, url)

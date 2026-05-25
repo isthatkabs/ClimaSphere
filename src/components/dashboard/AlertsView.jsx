@@ -249,7 +249,6 @@ export default function AlertsView({ forecast, weather }) {
   }, [hours])
 
   const locationName = weather?.name ?? 'Current Location'
-  const activeIds    = new Set(alerts.map(a => a.id))
 
   return (
     <div className="cs-alerts">
@@ -300,32 +299,6 @@ export default function AlertsView({ forecast, weather }) {
                   : <span className="cs-timeline-ok">✓</span>
                 }
               </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Monitored conditions reference */}
-      <div className="cs-section">
-        <div className="cs-section-title">MONITORED CONDITIONS</div>
-        <div className="cs-card">
-          {ALERT_DEFS.map(def => (
-            <div key={def.id} className="cs-row">
-              <span className="cs-row-icon">{def.icon}</span>
-              <div className="cs-row-text">
-                <span className="cs-row-label">{def.title}</span>
-                <span className="cs-row-sub" style={{ color: def.color, opacity: 0.75 }}>
-                  {def.severityLabel}
-                </span>
-              </div>
-              {activeIds.has(def.id) && (
-                <span
-                  className="cs-badge"
-                  style={{ color: def.color, background: def.bg, borderColor: def.border }}
-                >
-                  Active
-                </span>
-              )}
             </div>
           ))}
         </div>

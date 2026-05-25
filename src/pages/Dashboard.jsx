@@ -184,7 +184,7 @@ export default function Dashboard() {
       <Sidebar onLogout={handleLogout} forecast={forecast} activePage={activePage} onNav={setActivePage} onOpenFeedback={() => setFeedbackOpen(true)} />
 
       <div className="dash-main">
-        <DashHeader onSearch={handleSearch} onReset={handleReset} />
+        <DashHeader onSearch={handleSearch} onReset={handleReset} forecast={forecast} onNav={setActivePage} />
 
         <div className="dash-content">
           {activePage === 'Settings' ? (

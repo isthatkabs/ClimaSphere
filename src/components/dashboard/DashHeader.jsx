@@ -12,11 +12,12 @@ const NOTIF_ALERT_DEFS = [
   { id: 'wind',  icon: '💨',  title: 'Strong Wind Advisory', color: '#a78bfa', check: h => h.wind > 50 },
   { id: 'fog',   icon: '🌫',  title: 'Dense Fog Advisory',   color: '#94a3b8', check: h => h.visibility < 1000 },
   { id: 'heat',  icon: '🌡',  title: 'Extreme Heat Warning', color: '#fb923c', check: h => h.apparent_temp > 35 },
+  { id: 'uv',    icon: '☀️', title: 'Very High UV Index',   color: '#fbbf24', check: h => h.uv_index >= 8 },
 ]
 
 function parseActiveAlerts(forecast) {
   if (!forecast?.hourly) return []
-  const { time, weathercode, precipitation_probability, windspeed_10m, visibility, apparent_temperature } = forecast.hourly
+  const { time, weathercode, precipitation_probability, windspeed_10m, visibility, apparent_temperature, uv_index } = forecast.hourly
   const now    = new Date()
   const cutoff = new Date(now.getTime() + 48 * 60 * 60 * 1000)
   const hours  = time
@@ -27,6 +28,7 @@ function parseActiveAlerts(forecast) {
       wind:          windspeed_10m?.[i]             ?? 0,
       visibility:    visibility?.[i]                ?? 99999,
       apparent_temp: apparent_temperature?.[i]       ?? 0,
+      uv_index:      uv_index?.[i]                  ?? 0,
     }))
     .filter(h => h.time >= now && h.time <= cutoff)
   return NOTIF_ALERT_DEFS.filter(def => hours.some(h => def.check(h)))
