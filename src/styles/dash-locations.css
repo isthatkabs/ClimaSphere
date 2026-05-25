@@ -1,5 +1,102 @@
 /* ── MANAGE LOCATIONS ── */
 
+/* ── Page layout: main content + recent panel side by side ── */
+.ml-page {
+  display: flex;
+  gap: 36px;
+  align-items: flex-start;
+}
+
+/* ── Recent searches panel ── */
+.ml-recent-panel {
+  width: 240px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 60px; /* visually align with first section after the page header */
+}
+
+.ml-recent-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 4px;
+}
+
+.ml-clear-all {
+  font-size: 11px;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: color 0.12s, background 0.12s;
+}
+
+.ml-clear-all:hover {
+  color: #f87171;
+  background: rgba(248, 113, 113, 0.08);
+}
+
+.ml-recent-row {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+}
+
+.ml-recent-row:last-child {
+  border-bottom: none;
+}
+
+.ml-recent-main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  padding: 10px 14px;
+  text-align: left;
+  transition: background 0.12s;
+  min-width: 0;
+}
+
+.ml-recent-main:hover {
+  background: var(--surface-hover);
+}
+
+.ml-recent-clock {
+  font-size: 14px;
+  opacity: 0.45;
+  flex-shrink: 0;
+}
+
+.ml-recent-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.ml-recent-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ml-recent-country {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.ml-recent-remove {
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+
+
 /* ── Search bar ── */
 .ml-search-wrap {
   display: flex;

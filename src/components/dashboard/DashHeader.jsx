@@ -103,6 +103,12 @@ export default function DashHeader({ onSearch, onReset, forecast, onNav }) {
     setInput(`${city.name}, ${getCountryName(city.country)}`)
     setShowDropdown(false)
     setSuggestions([])
+    try {
+      const entry = { name: city.name, country: city.country, lat: city.lat, lon: city.lon }
+      const prev  = JSON.parse(localStorage.getItem('cs-recent-searches') || '[]')
+      const next  = [entry, ...prev.filter(r => !(r.lat === entry.lat && r.lon === entry.lon))].slice(0, 5)
+      localStorage.setItem('cs-recent-searches', JSON.stringify(next))
+    } catch {}
     onSearch({ lat: city.lat, lon: city.lon, name: city.name, country: city.country })
   }
 
