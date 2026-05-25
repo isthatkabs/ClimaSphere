@@ -28,7 +28,7 @@ function fmtDist(m) {
   return m >= 1000 ? `${(m / 1000).toFixed(1)} km` : `${Math.round(m)} m`
 }
 
-export default function FloatingPlaces({ loc, weather, forecast }) {
+export default function FloatingPlaces({ loc, weather, forecast, activePage }) {
   const { settings } = useSettings()
   const [visible,   setVisible]   = useState(false)
   const [dismissed, setDismissed] = useState(false)
@@ -134,7 +134,7 @@ export default function FloatingPlaces({ loc, weather, forecast }) {
     if (rafRef.current) cancelAnimationFrame(rafRef.current)
   }
 
-  if (!settings.nearbyPlaces || !visible || dismissed || places.length === 0) return null
+  if (!settings.nearbyPlaces || !visible || dismissed || places.length === 0 || activePage !== 'Overview') return null
 
   const conditionEmoji = {
     'Hot': '☀️', 'Warm': '🌤', 'Cold': '🥶', 'Very Cold': '🥶',

@@ -232,9 +232,7 @@ export default function Dashboard() {
         onNav={setActivePage}
         hasWeatherAlert={hasFloatingAlert(forecast)}
       />
-      {activePage === 'Overview' && (
-        <FloatingPlaces loc={loc} weather={weather} forecast={forecast} />
-      )}
+      <FloatingPlaces loc={loc} weather={weather} forecast={forecast} activePage={activePage} />
       {feedbackOpen && <FeedbackModal onClose={() => setFeedbackOpen(false)} />}
     </div>
   )

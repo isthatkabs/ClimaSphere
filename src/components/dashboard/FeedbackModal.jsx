@@ -20,15 +20,22 @@ export default function FeedbackModal({ onClose }) {
 
     setStatus('submitting')
     try {
-      await addDoc(collection(db, 'feedback'), {
-        rating,
-        comment:   comment.trim(),
-        userId:    user?.uid   || null,
-        userEmail: user?.email || null,
-        createdAt: serverTimestamp(),
-      })
+      const timeout = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Request timed out')), 12000)
+      )
+      await Promise.race([
+        addDoc(collection(db, 'feedback'), {
+          rating,
+          comment:   comment.trim(),
+          userId:    user?.uid   || null,
+          userEmail: user?.email || null,
+          createdAt: serverTimestamp(),
+        }),
+        timeout,
+      ])
       setStatus('success')
-    } catch {
+    } catch (err) {
+      console.error('Feedback submit error:', err)
       setStatus('error')
     }
   }
