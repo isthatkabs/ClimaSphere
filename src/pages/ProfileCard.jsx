@@ -126,7 +126,7 @@ export default function ProfileCard({ user, avatarURL, setAvatarURL }) {
         flexWrap: "wrap",
       }}>
         <MetaItem label="Member since" value={memberSince(user?.metadata?.creationTime)} />
-        <MetaItem label="Sign-in" value={getProvider(user)} />
+        <MetaItem label="Sign-in Method" value={getProvider(user)} />
         <MetaItem
           label="Email"
           value={
