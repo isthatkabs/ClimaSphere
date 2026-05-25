@@ -40,7 +40,7 @@ export default function SavedLocationsCard() {
                   background: "rgba(90,124,255,0.22)", border: "1px solid rgba(90,124,255,0.5)",
                   borderRadius: 5, padding: "2px 8px", fontSize: 10, color: "#8fa8ff",
                   fontWeight: 700, letterSpacing: "0.06em", flexShrink: 0,
-                }}>HOME</span>
+                }}>★ #1</span>
               )}
               {!loc.isHome && (
                 <button
