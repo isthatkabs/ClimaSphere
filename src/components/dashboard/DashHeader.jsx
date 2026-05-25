@@ -51,12 +51,15 @@ export default function DashHeader({ onSearch, onReset, forecast, onNav }) {
   const [showDropdown, setShowDropdown] = useState(false)
   const [noResults, setNoResults]       = useState(false)
   const [notifOpen, setNotifOpen]       = useState(false)
+  const [notifRead, setNotifRead]       = useState(false)
   const debounceRef                     = useRef(null)
   const wrapRef                         = useRef(null)
   const inputRef                        = useRef(null)
   const notifRef                        = useRef(null)
 
   const activeAlerts = useMemo(() => parseActiveAlerts(forecast), [forecast])
+
+  useEffect(() => { setNotifRead(false) }, [activeAlerts.length])
 
   useEffect(() => {
     const handleClick = (e) => {
@@ -200,11 +203,11 @@ export default function DashHeader({ onSearch, onReset, forecast, onNav }) {
           <button
             className={`dash-icon-btn${notifOpen ? ' active' : ''}`}
             title="Notifications"
-            onClick={() => setNotifOpen(o => !o)}
+            onClick={() => { setNotifOpen(o => !o); setNotifRead(true) }}
             style={{ position: 'relative' }}
           >
             🔔
-            {settings.notifications && activeAlerts.length > 0 && (
+            {settings.notifications && activeAlerts.length > 0 && !notifRead && (
               <span className="dash-notif-badge">{activeAlerts.length}</span>
             )}
           </button>
