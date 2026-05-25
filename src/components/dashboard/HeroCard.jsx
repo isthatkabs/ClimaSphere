@@ -64,6 +64,7 @@ function getCurrentWmoCode(forecast) {
 
 export default function HeroCard({ weather, forecast }) {
   const { settings } = useSettings()
+  const { animatedBackground } = settings
   if (!weather) return null
 
   const {
@@ -87,8 +88,8 @@ export default function HeroCard({ weather, forecast }) {
   const { tempUnit, distanceUnit } = settings
 
   return (
-    <div className={`dash-hero-card${effect ? ` dash-hero-card--${effect}` : ''}`}>
-      <WeatherParticles wmoCode={wmoCode} iconCode={icon} />
+    <div className={`dash-hero-card${animatedBackground && effect ? ` dash-hero-card--${effect}` : ''}`}>
+      {animatedBackground && <WeatherParticles wmoCode={wmoCode} iconCode={icon} />}
       <div className="dash-hero-left">
         <div className="dash-hero-location">
           <span className="dash-hero-loc-dot" />

@@ -76,6 +76,12 @@ export default function Settings() {
             onToggle={() => updateSetting('notifications', !settings.notifications)}
           />
         </Row>
+        <Row icon="🎨" label="Animated Background" sub="Weather-themed colours and particles on the hero card">
+          <Toggle
+            on={settings.animatedBackground}
+            onToggle={() => updateSetting('animatedBackground', !settings.animatedBackground)}
+          />
+        </Row>
         <Row icon="🗺" label="Weather Radar" sub="Live precipitation radar" onClick={() => navigate('/dashboard?page=Map')} showChevron />
       </Section>
 
