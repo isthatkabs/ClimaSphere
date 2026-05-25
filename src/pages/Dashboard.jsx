@@ -78,13 +78,13 @@ export default function Dashboard() {
   }, [location.search])
 
   useEffect(() => {
-    if (homeLocation) {
-      setLoc({ lat: homeLocation.lat, lon: homeLocation.lon, name: homeLocation.name })
-      return
-    }
     const saved = sessionStorage.getItem('cs_last_loc')
     if (saved) {
       try { setLoc(JSON.parse(saved)); return } catch {}
+    }
+    if (homeLocation) {
+      setLoc({ lat: homeLocation.lat, lon: homeLocation.lon, name: homeLocation.name })
+      return
     }
     if (!navigator.geolocation) {
       setLoc(DEFAULT_LOCATION)
