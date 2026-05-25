@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { getAQI } from '../../services/weather'
 
 // ── Sun helpers ───────────────────────────────────────────────
 function formatTime(unixTs) {
@@ -65,12 +66,7 @@ export default function SideCards({ weather }) {
     if (!weather?.coord) return
 
     const { lat, lon } = weather.coord
-    const key = import.meta.env.VITE_WEATHER_API_KEY
-
-    fetch(
-      `https://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${key}`
-    )
-      .then(r => r.json())
+    getAQI(lat, lon)
       .then(data => setAqi(data.list?.[0]?.main?.aqi ?? null))
       .catch(() => setAqi(null))
   }, [weather?.coord?.lat, weather?.coord?.lon])
