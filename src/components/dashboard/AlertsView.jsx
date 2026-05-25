@@ -89,7 +89,7 @@ const ALERT_TIPS = {
   },
   heat: {
     clothing:   ['👕 Light breathable clothing', '🧴 Sunscreen SPF 50+', '🕶 UV-protective sunglasses', '🧢 Wide-brim hat'],
-    activities: ['🏠 Stay indoors between 11am–3pm', '💧 Stay hydrated — drink water regularly', '🌊 Swimming or paddling pools', '🌳 Seek shade if going out'],
+    activities: ['🏠 Stay indoors between 11am–3pm', '💧 Stay hydrated 💧', '🌊 Swimming or paddling pools', '🌳 Seek shade if you are going out'],
   },
 }
 
@@ -113,6 +113,7 @@ function getTimeWindow(first, last, timeFormat) {
   const lastDay  = fmtSlotDay(last.time)
   const firstT   = fmtSlotTime(first.time, timeFormat)
   const lastT    = fmtSlotTime(last.time, timeFormat)
+  if (firstT === lastT) return `${firstDay} at ${firstT}`
   if (firstDay === lastDay) return `${firstDay}, ${firstT} – ${lastT}`
   return `${firstDay} ${firstT} – ${lastDay} ${lastT}`
 }
@@ -195,7 +196,7 @@ function AlertCard({ alert, settings, showTips }) {
 
       <div className="cs-alert-card-footer">
         <span className="cs-alert-footer-left">
-          {alert.count} hr{alert.count !== 1 ? 's' : ''} affected · {pct}% of next 24h
+          {alert.count} hr{alert.count !== 1 ? 's' : ''} to be affected of the next 24 hrs
         </span>
         <span className="cs-alert-footer-right" style={{ color: alert.color }}>
           {desc}

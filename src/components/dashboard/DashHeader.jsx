@@ -236,7 +236,12 @@ export default function DashHeader({ onSearch, onReset, forecast, onNav }) {
                 <>
                   <div className="dash-notif-list">
                     {activeAlerts.map(alert => (
-                      <div key={alert.id} className="dash-notif-item">
+                      <div
+                        key={alert.id}
+                        className="dash-notif-item"
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => { setNotifOpen(false); onNav?.('Alerts') }}
+                      >
                         <span className="dash-notif-item-icon">{alert.icon}</span>
                         <span className="dash-notif-item-title" style={{ color: alert.color }}>
                           {alert.title}
