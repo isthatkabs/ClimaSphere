@@ -8,6 +8,7 @@ import SavedLocationsCard from "./SavedLocationsCard";
 import PreferencesCard    from "./PreferencesCard";
 import NearbyPlacesCard   from "./NearbyPlacesCard"
 import InterestsCard      from "./InterestsCard";
+import ProfileBackground  from "../components/ProfileBackground";
 import { profileStyles as s } from "../styles/profileStyles";
 
 export default function ProfilePage() {
@@ -16,6 +17,8 @@ export default function ProfilePage() {
   const [avatarURL, setAvatarURL] = useState(user?.photoURL || "");
 
   return (
+    <>
+    <ProfileBackground />
     <div style={s.page}>
       <button style={s.back} onClick={() => navigate(-1)}>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -48,5 +51,6 @@ export default function ProfilePage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

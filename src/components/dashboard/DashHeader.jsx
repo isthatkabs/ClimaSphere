@@ -272,7 +272,7 @@ export default function DashHeader({ onSearch, onReset, forecast, onNav }) {
 
         <button
           className="dash-icon-btn"
-          title="Back to home"
+          title="Back to current location"
           onClick={handleReset}
         >
           🏠

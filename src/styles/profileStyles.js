@@ -1,9 +1,11 @@
 export const profileStyles = {
   page: {
     minHeight: "100vh",
-    background: "url('/lightning-bg.jpg') no-repeat center center / cover",
+    background: "transparent",
     padding: "2rem",
     fontFamily: "sans-serif",
+    position: "relative",
+    zIndex: 1,
   },
   back: {
     display: "flex",
