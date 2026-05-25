@@ -1,4 +1,16 @@
 import { useSettings, fmtTemp, fmtTempShort, fmtWind, fmtDist } from '../../context/SettingsContext'
+import WeatherParticles, { getWeatherEffect } from './WeatherParticles'
+
+function FogIcon() {
+  return (
+    <svg width="72" height="62" viewBox="0 0 28 24" fill="none">
+      <line x1="2"  y1="4"  x2="26" y2="4"  stroke="rgba(203,213,225,0.90)" strokeWidth="2.5" strokeLinecap="round"/>
+      <line x1="4"  y1="10" x2="24" y2="10" stroke="rgba(203,213,225,0.70)" strokeWidth="2.5" strokeLinecap="round"/>
+      <line x1="1"  y1="16" x2="27" y2="16" stroke="rgba(203,213,225,0.50)" strokeWidth="2.5" strokeLinecap="round"/>
+      <line x1="3"  y1="22" x2="25" y2="22" stroke="rgba(203,213,225,0.30)" strokeWidth="2.5" strokeLinecap="round"/>
+    </svg>
+  )
+}
 
 function getWindDirection(deg) {
   const dirs = ['N','NE','E','SE','S','SW','W','NW']
@@ -36,7 +48,21 @@ function getCountryName(code) {
   }
 }
 
-export default function HeroCard({ weather }) {
+function getCurrentWmoCode(forecast) {
+  if (!forecast?.hourly) return null
+  const { time, weathercode, precipitation_probability } = forecast.hourly
+  const now = new Date()
+  // find the closest upcoming hour slot
+  const idx = time.findIndex(t => new Date(t) >= now)
+  if (idx === -1) return null
+  // if precip probability is high in the next 3 hours, prefer rain code
+  const next3 = time.slice(idx, idx + 3)
+  const highPrecip = next3.some((_, i) => (precipitation_probability?.[idx + i] ?? 0) >= 60)
+  if (highPrecip && weathercode?.[idx] < 50) return 61 // treat as rain
+  return weathercode?.[idx] ?? null
+}
+
+export default function HeroCard({ weather, forecast }) {
   const { settings } = useSettings()
   if (!weather) return null
 
@@ -50,6 +76,9 @@ export default function HeroCard({ weather }) {
     dt,
   } = weather
 
+  const wmoCode = getCurrentWmoCode(forecast)
+  const effect  = getWeatherEffect(wmoCode, icon)
+
   const windKmh = speed * 3.6
   const windDir = getWindDirection(deg)
   const visKm   = (visibility / 1000).toFixed(1)
@@ -58,7 +87,8 @@ export default function HeroCard({ weather }) {
   const { tempUnit, distanceUnit } = settings
 
   return (
-    <div className="dash-hero-card">
+    <div className={`dash-hero-card${effect ? ` dash-hero-card--${effect}` : ''}`}>
+      <WeatherParticles wmoCode={wmoCode} iconCode={icon} />
       <div className="dash-hero-left">
         <div className="dash-hero-location">
           <span className="dash-hero-loc-dot" />
@@ -85,7 +115,7 @@ export default function HeroCard({ weather }) {
       </div>
 
       <div className="dash-hero-right">
-        <div className="dash-hero-icon-big">{getWeatherEmoji(icon)}</div>
+        <div className="dash-hero-icon-big">{icon?.startsWith('50') ? <FogIcon /> : getWeatherEmoji(icon)}</div>
         <div className="dash-hero-right-stats">
           <div className="dash-right-stat">
             <span className="dash-right-stat-label">Feels like</span>

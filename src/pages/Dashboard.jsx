@@ -201,7 +201,7 @@ export default function Dashboard() {
             <ActivitySuggestion weather={weather} forecast={forecast} locationName={loc?.name} />
           ) : (
             <>
-              <HeroCard weather={weather} />
+              <HeroCard weather={weather} forecast={forecast} />
               <HourlyForecast
                 forecast={forecast}
                 onHourSelect={setSelectedHour}

@@ -6,6 +6,7 @@ const DEFAULTS = {
   timeFormat:           '24',  // '12' | '24'
   notifications:        false,
   weatherRadar:         false,
+  animatedBackground:   true,  // animated per-condition hero card background
   activitySuggestions:  true,  // show clothing/activity tips on Suggestions page
   alertSuggestions:     true,  // show safety tips inside Alerts cards
   nearbyPlaces:         true,  // show nearby places popup on dashboard

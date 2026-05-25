@@ -1,6 +1,16 @@
 import { useState } from 'react'
 import { useSettings, fmtTempShort } from '../../context/SettingsContext'
 
+function FogIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+      <line x1="3"  y1="6"  x2="21" y2="6"  stroke="rgba(203,213,225,0.92)" strokeWidth="2" strokeLinecap="round"/>
+      <line x1="5"  y1="12" x2="19" y2="12" stroke="rgba(203,213,225,0.68)" strokeWidth="2" strokeLinecap="round"/>
+      <line x1="2"  y1="18" x2="22" y2="18" stroke="rgba(203,213,225,0.44)" strokeWidth="2" strokeLinecap="round"/>
+    </svg>
+  )
+}
+
 function getWeatherEmoji(code) {
   if (code === 0)  return '☀️'
   if (code <= 2)   return '⛅'
@@ -49,6 +59,7 @@ export default function WeeklyForecast({ forecast }) {
     return {
       day:        i === 0 ? 'Today' : new Date(t).toLocaleDateString('en-GB', { weekday: 'short' }),
       today:      i === 0,
+      code:       weathercode[i],
       icon:       getWeatherEmoji(weathercode[i]),
       cond:       getCondition(weathercode[i]),
       hi:         temperature_2m_max[i],
@@ -81,7 +92,7 @@ export default function WeeklyForecast({ forecast }) {
               onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && handleClick(i)}
             >
               <span className="dash-weekly-day">{w.day}</span>
-              <span className="dash-weekly-icon">{w.icon}</span>
+              <span className="dash-weekly-icon">{w.code >= 45 && w.code <= 48 ? <FogIcon /> : w.icon}</span>
               <span className="dash-weekly-cond">{w.cond}</span>
               <div className="dash-weekly-right">
                 <span className="dash-weekly-precip">💧 {w.precip}</span>

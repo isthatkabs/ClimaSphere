@@ -30,6 +30,65 @@
   pointer-events: none;
 }
 
+/* ── Per-condition hero card themes ── */
+.dash-hero-card--sunny {
+  background: linear-gradient(135deg, #1c1205 0%, #3a2808 55%, #1e1600 100%);
+  border-color: rgba(251,191,36,0.18);
+}
+.dash-hero-card--sunny::before { background: rgba(251,191,36,0.18); }
+.dash-hero-card--sunny::after  { background: rgba(245,158,11,0.12); }
+
+.dash-hero-card--cloudy {
+  background: linear-gradient(135deg, #0d1525 0%, #1a2035 55%, #0e1628 100%);
+  border-color: rgba(148,163,184,0.12);
+}
+.dash-hero-card--cloudy::before { background: rgba(148,163,184,0.10); }
+.dash-hero-card--cloudy::after  { background: rgba(100,116,139,0.08); }
+
+.dash-hero-card--drizzle {
+  background: linear-gradient(135deg, #060e1e 0%, #0a1830 55%, #050c1a 100%);
+  border-color: rgba(125,211,252,0.18);
+}
+.dash-hero-card--drizzle::before { background: rgba(125,211,252,0.14); }
+.dash-hero-card--drizzle::after  { background: rgba(56,189,248,0.10); }
+
+.dash-hero-card--rain {
+  background: linear-gradient(135deg, #030a18 0%, #061428 55%, #030a18 100%);
+  border-color: rgba(56,189,248,0.22);
+}
+.dash-hero-card--rain::before { background: rgba(14,165,233,0.18); }
+.dash-hero-card--rain::after  { background: rgba(56,189,248,0.14); }
+
+.dash-hero-card--storm {
+  background: linear-gradient(135deg, #04050e 0%, #080a18 55%, #040510 100%);
+  border-color: rgba(99,102,241,0.20);
+}
+.dash-hero-card--storm::before { background: rgba(99,102,241,0.14); }
+.dash-hero-card--storm::after  { background: rgba(71,85,105,0.18); }
+
+.dash-hero-card--snow {
+  background: linear-gradient(135deg, #06101e 0%, #0c2038 55%, #06101e 100%);
+  border-color: rgba(186,230,253,0.20);
+}
+.dash-hero-card--snow::before { background: rgba(186,230,253,0.14); }
+.dash-hero-card--snow::after  { background: rgba(147,197,253,0.10); }
+
+.dash-hero-card--fog {
+  background: linear-gradient(135deg, #0e1318 0%, #18222e 55%, #0e1318 100%);
+  border-color: rgba(180,196,210,0.22);
+}
+.dash-hero-card--fog::before {
+  background: rgba(160,180,200,0.28);
+  width: 340px; height: 280px;
+  top: -80px; right: 160px;
+  filter: blur(70px);
+}
+.dash-hero-card--fog::after {
+  background: rgba(120,148,168,0.22);
+  width: 260px; height: 200px;
+  filter: blur(60px);
+}
+
 .dash-hero-left { flex: 1; position: relative; z-index: 1; }
 
 .dash-hero-location {
