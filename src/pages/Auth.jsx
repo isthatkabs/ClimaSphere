@@ -27,13 +27,22 @@ function Auth() {
   const redirect = new URLSearchParams(location.search).get('redirect');
   const { user } = useAuth();
 
-  const rainDrops = useMemo(() => Array.from({ length: 60 }, (_, i) => ({
+  const rainDrops = useMemo(() => Array.from({ length: 120 }, (_, i) => ({
     id:       i,
     left:     `${Math.random() * 100}%`,
-    height:   `${Math.random() * 60 + 40}px`,
-    duration: `${Math.random() * 0.6 + 0.5}s`,
-    delay:    `${Math.random() * 3}s`,
-    opacity:  Math.random() * 0.45 + 0.35,
+    height:   `${Math.random() * 70 + 30}px`,
+    width:    Math.random() > 0.6 ? '2px' : '1.5px',
+    duration: `${Math.random() * 0.5 + 0.4}s`,
+    delay:    `-${Math.random() * 4}s`,
+    opacity:  Math.random() * 0.4 + 0.3,
+  })), []);
+
+  const drips = useMemo(() => Array.from({ length: 12 }, (_, i) => ({
+    id:       i,
+    left:     `${8 + Math.random() * 84}%`,
+    duration: `${Math.random() * 2 + 2.5}s`,
+    delay:    `-${Math.random() * 6}s`,
+    width:    `${Math.random() * 1.5 + 2}px`,
   })), []);
 
   useEffect(() => {
@@ -131,18 +140,21 @@ function Auth() {
           style={{
             left:              drop.left,
             height:            drop.height,
+            width:             drop.width,
             opacity:           drop.opacity,
             animationDuration: drop.duration,
             animationDelay:    drop.delay,
           }}
         />
       ))}
-      <div className="auth-left">
-        <img src="/auth-bg.png" className="auth-bg" />
-      </div>
 
-      <div className="auth-right">
-        <div className="auth-box">
+      <div className="auth-cloud auth-cloud-1" />
+      <div className="auth-cloud auth-cloud-2" />
+      <div className="auth-cloud auth-cloud-3" />
+
+      <div className="auth-center">
+        <div className="auth-box-wrapper">
+          <div className="auth-box">
           {isForgot ? (
             <>
               <h2>Reset Password</h2>
@@ -255,6 +267,19 @@ function Auth() {
               </p>
             </>
           )}
+          </div>
+          {drips.map(drip => (
+            <span
+              key={drip.id}
+              className="box-drip"
+              style={{
+                left:              drip.left,
+                width:             drip.width,
+                animationDuration: drip.duration,
+                animationDelay:    drip.delay,
+              }}
+            />
+          ))}
         </div>
       </div>
     </div>
