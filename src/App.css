@@ -23,14 +23,16 @@ body {
   100% { transform: translateY(-20px); }
 }
 
-@keyframes rainFall {
-  from { transform: translateY(-60%) translateX(0); }
-  to   { transform: translateY(0%)   translateX(-8%); }
+@keyframes rainDrop {
+  0%   { transform: translateY(-10vh) translateX(0); opacity: 0; }
+  5%   { opacity: 1; }
+  95%  { opacity: 1; }
+  100% { transform: translateY(110vh) translateX(-15vw); opacity: 0; }
 }
 
 @keyframes boxGlow {
-  0%, 100% { box-shadow: 0 0 18px rgba(90, 150, 255, 0.25), 0 8px 32px rgba(0,0,0,0.18); }
-  50%       { box-shadow: 0 0 32px rgba(90, 180, 255, 0.45), 0 8px 32px rgba(0,0,0,0.18); }
+  0%, 100% { box-shadow: 0 0 24px rgba(80, 140, 255, 0.3),  0 12px 40px rgba(0,0,0,0.45); }
+  50%       { box-shadow: 0 0 44px rgba(90, 170, 255, 0.55), 0 12px 40px rgba(0,0,0,0.45); }
 }
 
 @keyframes btnShine {
@@ -43,36 +45,26 @@ body {
   display: flex;
   height: 100vh;
   font-family: sans-serif;
-  background: url('/auth-bluebg.png') no-repeat center center/cover;
+  background:
+    radial-gradient(ellipse at 15% 25%, rgba(60, 90, 160, 0.55) 0%, transparent 45%),
+    radial-gradient(ellipse at 80% 15%, rgba(40, 65, 130, 0.5)  0%, transparent 40%),
+    radial-gradient(ellipse at 50% 70%, rgba(25, 45, 100, 0.45) 0%, transparent 50%),
+    radial-gradient(ellipse at 90% 80%, rgba(50, 75, 140, 0.4)  0%, transparent 40%),
+    linear-gradient(175deg, #0c1a3a 0%, #152645 20%, #1c3460 40%, #1a3058 60%, #11223f 80%, #0a1628 100%);
   overflow: hidden;
   position: relative;
 }
 
-/* Animated rain overlay */
-.auth-wrapper::before {
-  content: '';
+/* Individual rain drops */
+.rain-drop {
   position: absolute;
-  inset: 0;
+  top: 0;
+  width: 1.5px;
+  border-radius: 2px;
+  background: linear-gradient(to bottom, rgba(200, 230, 255, 0), rgba(200, 230, 255, 0.65));
   pointer-events: none;
   z-index: 0;
-  background-image:
-    repeating-linear-gradient(
-      108deg,
-      transparent 0px, transparent 14px,
-      rgba(180, 220, 255, 0.09) 14px, rgba(180, 220, 255, 0.09) 15px
-    ),
-    repeating-linear-gradient(
-      108deg,
-      transparent 0px, transparent 22px,
-      rgba(180, 220, 255, 0.06) 22px, rgba(180, 220, 255, 0.06) 23px
-    ),
-    repeating-linear-gradient(
-      108deg,
-      transparent 0px, transparent 9px,
-      rgba(180, 220, 255, 0.05) 9px, rgba(180, 220, 255, 0.05) 10px
-    );
-  background-size: 100% 60px, 100% 80px, 100% 40px;
-  animation: rainFall 0.7s linear infinite;
+  animation: rainDrop linear infinite;
 }
 
 /* LEFT SIDE */

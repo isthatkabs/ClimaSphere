@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import '../App.css';
 import { useNavigate, useLocation } from "react-router-dom";
 import {
@@ -26,6 +26,15 @@ function Auth() {
   const location = useLocation();
   const redirect = new URLSearchParams(location.search).get('redirect');
   const { user } = useAuth();
+
+  const rainDrops = useMemo(() => Array.from({ length: 60 }, (_, i) => ({
+    id:       i,
+    left:     `${Math.random() * 100}%`,
+    height:   `${Math.random() * 60 + 40}px`,
+    duration: `${Math.random() * 0.6 + 0.5}s`,
+    delay:    `${Math.random() * 3}s`,
+    opacity:  Math.random() * 0.45 + 0.35,
+  })), []);
 
   useEffect(() => {
     if (user) navigate(redirect === 'map' ? '/dashboard?page=Map' : '/dashboard', { replace: true });
@@ -115,6 +124,19 @@ function Auth() {
 
   return (
     <div className="auth-wrapper">
+      {rainDrops.map(drop => (
+        <span
+          key={drop.id}
+          className="rain-drop"
+          style={{
+            left:              drop.left,
+            height:            drop.height,
+            opacity:           drop.opacity,
+            animationDuration: drop.duration,
+            animationDelay:    drop.delay,
+          }}
+        />
+      ))}
       <div className="auth-left">
         <img src="/auth-bg.png" className="auth-bg" />
       </div>
