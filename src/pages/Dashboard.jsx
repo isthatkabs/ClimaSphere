@@ -82,17 +82,16 @@ export default function Dashboard() {
     if (saved) {
       try { setLoc(JSON.parse(saved)); return } catch {}
     }
-    if (homeLocation) {
-      setLoc({ lat: homeLocation.lat, lon: homeLocation.lon, name: homeLocation.name })
-      return
-    }
+    const fallback = homeLocation
+      ? { lat: homeLocation.lat, lon: homeLocation.lon, name: homeLocation.name }
+      : DEFAULT_LOCATION
     if (!navigator.geolocation) {
-      setLoc(DEFAULT_LOCATION)
+      setLoc(fallback)
       return
     }
     navigator.geolocation.getCurrentPosition(
       (pos) => setLoc({ lat: pos.coords.latitude, lon: pos.coords.longitude, name: 'Your Location' }),
-      () => setLoc(DEFAULT_LOCATION),
+      () => setLoc(fallback),
       { timeout: 8000 }
     )
   // eslint-disable-next-line react-hooks/exhaustive-deps
