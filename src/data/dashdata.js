@@ -32,11 +32,11 @@ export const METRICS = [
 
 export const NAV = [
   { icon: '🏠', label: 'Overview',    active: true  },
-  { icon: '🗺',  label: 'Map',         active: false },
-  { icon: '📊', label: 'Analytics',   active: false },
-  { icon: '📍', label: 'Locations',   active: false },
-  { icon: '🔔', label: 'Alerts',      active: false },
   { icon: '💡', label: 'Suggestions', active: false },
+  { icon: '📍', label: 'Locations',   active: false },
+  { icon: '🗺',  label: 'Map',         active: false },
+  { icon: '🔔', label: 'Alerts',      active: false },
+  { icon: '📊', label: 'Analytics',   active: false },
   { icon: '⚙️', label: 'Settings',    active: false },
 ]
 
