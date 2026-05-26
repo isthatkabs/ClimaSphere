@@ -24,6 +24,7 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 button { cursor: pointer; border: none; background: none; font-family: var(--font); color: inherit; }
 input  { font-family: var(--font); }
+input::placeholder { color: rgba(226,234,252,0.55); }
  
 /* ── ROOT ── */
 .dash-root {

@@ -17,7 +17,7 @@ const HOT_ACTIVITIES = [
   { icon: '🍦', text: 'Get ice cream and enjoy the outdoors' },
   { icon: '🌅', text: 'Walk during sunset when it cools down' },
   { icon: '🥾', text: 'Hike on a shaded trail early morning' },
-  { icon: '🌿', text: 'Visit a botanical garden' },
+  { icon: '🌿', text: 'Visit a public garden' },
   { icon: '🎾', text: 'Early morning tennis before the heat peaks' },
   { icon: '🏕',  text: 'Evening BBQ or garden party' },
   { icon: '🌟', text: 'Stargazing after dark when it\'s cooler' },
@@ -182,7 +182,7 @@ const HIGH_UV_ACTIVITIES = [
   { icon: '📸', text: 'Photography during morning or evening light' },
   { icon: '🏃', text: 'Early morning run before UV peaks (before 10am)' },
   { icon: '🌊', text: 'Beach activities — stay in the shade or water' },
-  { icon: '🌿', text: 'Shaded botanical garden or woodland walk' },
+  { icon: '🌿', text: 'Shaded public garden or woodland walk' },
 ]
 const HIGH_UV_CLOTHING = [
   { icon: '🧴', text: 'Sunscreen — SPF 50 recommended, reapply every 2h' },

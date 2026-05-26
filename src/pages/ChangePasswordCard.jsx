@@ -45,7 +45,7 @@ export default function ChangePasswordCard() {
       <input
         style={s.input}
         type="password"
-        placeholder="New password"
+        placeholder="Enter new password"
         value={newPassword}
         onChange={e => setNewPassword(e.target.value)}
         onKeyDown={e => e.key === "Enter" && handleChangePassword()}
