@@ -6,22 +6,86 @@ body {
   margin: 0;
 }
  
+/* ── Auth keyframes ── */
+@keyframes fadeSlideLeft {
+  from { opacity: 0; transform: translateX(-40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeSlideRight {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes float {
+  0%   { transform: translateY(-20px); }
+  50%  { transform: translateY(20px); }
+  100% { transform: translateY(-20px); }
+}
+
+@keyframes rainFall {
+  from { transform: translateY(-60%) translateX(0); }
+  to   { transform: translateY(0%)   translateX(-8%); }
+}
+
+@keyframes boxGlow {
+  0%, 100% { box-shadow: 0 0 18px rgba(90, 150, 255, 0.25), 0 8px 32px rgba(0,0,0,0.18); }
+  50%       { box-shadow: 0 0 32px rgba(90, 180, 255, 0.45), 0 8px 32px rgba(0,0,0,0.18); }
+}
+
+@keyframes btnShine {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+
 /* Layout */
 .auth-wrapper {
   display: flex;
   height: 100vh;
   font-family: sans-serif;
   background: url('/auth-bluebg.png') no-repeat center center/cover;
+  overflow: hidden;
+  position: relative;
 }
- 
+
+/* Animated rain overlay */
+.auth-wrapper::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    repeating-linear-gradient(
+      108deg,
+      transparent 0px, transparent 14px,
+      rgba(180, 220, 255, 0.09) 14px, rgba(180, 220, 255, 0.09) 15px
+    ),
+    repeating-linear-gradient(
+      108deg,
+      transparent 0px, transparent 22px,
+      rgba(180, 220, 255, 0.06) 22px, rgba(180, 220, 255, 0.06) 23px
+    ),
+    repeating-linear-gradient(
+      108deg,
+      transparent 0px, transparent 9px,
+      rgba(180, 220, 255, 0.05) 9px, rgba(180, 220, 255, 0.05) 10px
+    );
+  background-size: 100% 60px, 100% 80px, 100% 40px;
+  animation: rainFall 0.7s linear infinite;
+}
+
 /* LEFT SIDE */
 .auth-left {
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
+  z-index: 1;
+  animation: fadeSlideLeft 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
- 
+
 /* RIGHT SIDE */
 .auth-right {
   flex: 1;
@@ -29,8 +93,11 @@ body {
   justify-content: center;
   align-items: center;
   background: transparent;
+  position: relative;
+  z-index: 1;
+  animation: fadeSlideRight 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
 }
- 
+
 /* FORM BOX */
 .auth-box {
   width: 320px;
@@ -38,29 +105,38 @@ body {
   padding: 2rem;
   border-radius: 12px;
   backdrop-filter: blur(10px);
+  animation: boxGlow 3.5s ease-in-out infinite;
+  border: 1px solid rgba(180, 220, 255, 0.35);
 }
- 
+
 .auth-box h2 {
   margin-bottom: 1.5rem;
   color: #fff;
   text-align: center;
 }
- 
+
 .input-group {
   display: flex;
   align-items: center;
   background: rgba(255, 255, 255, 0.6);
-  border: 1px solid #ddd;
+  border: 1px solid rgba(180, 210, 255, 0.5);
   border-radius: 6px;
   padding: 10px;
   margin-bottom: 1rem;
+  transition: border-color 0.25s, box-shadow 0.25s;
 }
- 
+
+.input-group:focus-within {
+  border-color: rgba(90, 160, 255, 0.8);
+  box-shadow: 0 0 0 3px rgba(90, 160, 255, 0.18);
+  background: rgba(255, 255, 255, 0.75);
+}
+
 .input-group span {
   margin-right: 8px;
   opacity: 0.6;
 }
- 
+
 .input-group input {
   border: none;
   outline: none;
@@ -68,72 +144,86 @@ body {
   font-size: 14px;
   background: transparent;
 }
- 
+
 /* BUTTON */
 .auth-btn {
   width: 100%;
   padding: 10px;
-  background: linear-gradient(to right, #5a7cff, #6f86ff);
+  background: linear-gradient(90deg, #5a7cff, #7ab3ff, #5a7cff);
+  background-size: 200% auto;
   color: white;
   border: none;
   border-radius: 6px;
   cursor: pointer;
   margin-top: 10px;
   font-size: 14px;
+  transition: transform 0.15s, box-shadow 0.15s;
+  animation: btnShine 3s linear infinite;
 }
- 
+
 .auth-btn:hover {
-  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(90, 124, 255, 0.45);
 }
- 
+
+.auth-btn:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
 .forgot {
   text-align: right;
   font-size: 12px;
   color: #fff;
   cursor: pointer;
   margin-bottom: 10px;
+  transition: opacity 0.2s;
 }
- 
+
+.forgot:hover {
+  opacity: 0.7;
+}
+
 .toggle-text {
   margin-top: 1rem;
   font-size: 14px;
   text-align: center;
   color: #fff;
 }
- 
+
 .toggle-text span {
   color: #fff;
   cursor: pointer;
   font-weight: bold;
   margin-left: 5px;
+  transition: opacity 0.2s;
 }
- 
+
+.toggle-text span:hover {
+  opacity: 0.75;
+}
+
 .error {
   color: #ff4444;
   font-size: 12px;
   margin-bottom: 1rem;
   text-align: center;
 }
- 
+
 .success {
   color: #22c55e;
   font-size: 12px;
   margin-bottom: 1rem;
   text-align: center;
 }
- 
+
 .auth-bg {
   width: 350px;
   opacity: 0.8;
   animation: float 3s ease-in-out infinite;
+  filter: drop-shadow(0 12px 32px rgba(80, 140, 255, 0.35));
 }
- 
-@keyframes float {
-  0%   { transform: translateY(-20px); }
-  50%  { transform: translateY(20px); }
-  100% { transform: translateY(-20px); }
-}
- 
+
 /* ── Google divider ── */
 .auth-divider {
   display: flex;
@@ -168,9 +258,16 @@ body {
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
-  transition: background 0.2s;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.15s;
 }
 
 .google-btn:hover {
   background: rgba(255, 255, 255, 1);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+}
+
+.google-btn:active {
+  transform: translateY(0);
+  box-shadow: none;
 }
