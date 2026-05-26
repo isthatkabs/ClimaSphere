@@ -281,7 +281,15 @@ export default function DashHeader({ onSearch, onReset, forecast, onNav }) {
         <div
           className="dash-avatar"
           title={user?.email}
-          onClick={() => navigate('/profile')}
+          onClick={() => {
+            const root = document.querySelector('.dash-root')
+            if (root) {
+              root.style.animation = 'dashLeave 0.22s ease-in both'
+              setTimeout(() => navigate('/profile'), 210)
+            } else {
+              navigate('/profile')
+            }
+          }}
           style={{ cursor: 'pointer', padding: 0, overflow: 'hidden' }}
         >
           {user?.photoURL ? (

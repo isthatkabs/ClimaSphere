@@ -187,7 +187,7 @@ export default function Dashboard() {
       <div className="dash-main">
         <DashHeader onSearch={handleSearch} onReset={handleReset} forecast={forecast} onNav={setActivePage} />
 
-        <div className="dash-content">
+        <div className="dash-content" key={activePage}>
           {activePage === 'Settings' ? (
             <Settings />
           ) : activePage === 'Locations' ? (

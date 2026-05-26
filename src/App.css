@@ -6,6 +6,23 @@ body {
   margin: 0;
 }
  
+/* ── Profile page transitions ── */
+@keyframes profileEnter {
+  from { opacity: 0; transform: translateX(50px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes profileLeave {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(50px); }
+}
+
+.profile-page {
+  animation: profileEnter 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.profile-page--leaving {
+  animation: profileLeave 0.24s ease-in both;
+}
+
 /* ── Auth keyframes ── */
 @keyframes fadeSlideRight {
   from { opacity: 0; transform: translateX(40px); }

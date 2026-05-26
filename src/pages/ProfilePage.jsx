@@ -12,15 +12,21 @@ import ProfileBackground  from "../components/ProfileBackground";
 import { profileStyles as s } from "../styles/profileStyles";
 
 export default function ProfilePage() {
-  const { user }  = useAuth();
-  const navigate  = useNavigate();
+  const { user }    = useAuth();
+  const navigate    = useNavigate();
   const [avatarURL, setAvatarURL] = useState(user?.photoURL || "");
+  const [leaving,   setLeaving]   = useState(false);
+
+  const handleBack = () => {
+    setLeaving(true);
+    setTimeout(() => navigate(-1), 240);
+  };
 
   return (
     <>
     <ProfileBackground />
-    <div style={s.page}>
-      <button style={s.back} onClick={() => navigate(-1)}>
+    <div style={s.page} className={`profile-page${leaving ? ' profile-page--leaving' : ''}`}>
+      <button style={s.back} onClick={handleBack}>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <path d="M19 12H5M12 5l-7 7 7 7"/>
