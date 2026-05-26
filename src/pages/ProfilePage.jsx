@@ -47,13 +47,13 @@ export default function ProfilePage() {
         </div>
 
         <div style={s.twoCol}>
-          <ChangePasswordCard />
-          <AccountCard />
+          <InterestsCard />
+          <NearbyPlacesCard />
         </div>
 
         <div style={s.twoCol}>
-          <InterestsCard />
-          <NearbyPlacesCard />
+          <ChangePasswordCard />
+          <AccountCard />
         </div>
       </div>
     </div>
