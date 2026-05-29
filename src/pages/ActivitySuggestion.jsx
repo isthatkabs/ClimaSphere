@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
-import { getWeatherSuggestions, buildSuggestionInputs, buildWeatherSummary } from '../data/suggestions'
+import { getWeatherSuggestions, buildSuggestionInputs, buildWeatherSummary, TIME_OF_DAY_LABEL } from '../data/suggestions'
 import { getAISuggestions } from '../services/ai'
 import { useSettings } from '../context/SettingsContext'
 import { useAuth } from '../context/AuthContext'
@@ -37,7 +37,7 @@ export default function ActivitySuggestion({ weather, forecast, locationName }) 
     const summary = buildWeatherSummary(derived, locationName, result.primaryCondition)
     setWeatherSummary(summary)
 
-    const key = `${locationName}|${Math.round(derived.temp)}|${derived.weathercode}|${Math.round(derived.precipProb)}`
+    const key = `${locationName}|${Math.round(derived.temp)}|${derived.weathercode}|${Math.round(derived.precipProb)}|${derived.timeOfDay}`
     if (key === prevKeyRef.current) return
     prevKeyRef.current = key
 
@@ -56,6 +56,7 @@ export default function ActivitySuggestion({ weather, forecast, locationName }) 
       uvIndex:          derived.uvIndex,
       humidity:         derived.humidity,
       primaryCondition: result.primaryCondition,
+      timeOfDay:        derived.timeOfDay,
     })
       .then(data => setAiInsight(data.insight))
       .catch(() => setAiError(true))
@@ -91,7 +92,8 @@ export default function ActivitySuggestion({ weather, forecast, locationName }) 
     )
   }
 
-  const { primaryCondition, primaryEmoji, conditionLabels, activities, clothing } = suggestions
+  const { primaryCondition, primaryEmoji, conditionLabels, activities, clothing, timeOfDay } = suggestions
+  const tod = TIME_OF_DAY_LABEL[timeOfDay] ?? TIME_OF_DAY_LABEL.afternoon
 
   const visibleActivities = activities.filter(i => preferences[i.text] !== 'disliked')
   const hiddenActivities  = activities.filter(i => preferences[i.text] === 'disliked')
@@ -107,7 +109,7 @@ export default function ActivitySuggestion({ weather, forecast, locationName }) 
         <div>
           <div className="cs-activity-title">Suggestions for {cityLabel}</div>
           <div className="cs-activity-sub">
-            Personalised clothing and activity recommendations based on today's forecast
+            Personalised recommendations for this {tod.label.toLowerCase()}
           </div>
         </div>
         <div className="cs-activity-condition-badge">
@@ -117,16 +119,15 @@ export default function ActivitySuggestion({ weather, forecast, locationName }) 
       </div>
 
       {/* ── Active condition pills ── */}
-      {conditionLabels.length > 0 && (
-        <div className="cs-activity-pills">
-          {conditionLabels.map(label => (
-            <span key={label} className="cs-activity-pill">{label}</span>
-          ))}
-          <span className="cs-activity-pill">
-            {Math.round(inputs.temp)}°C · {Math.round(inputs.windspeed)} km/h wind · {inputs.precipProb}% rain
-          </span>
-        </div>
-      )}
+      <div className="cs-activity-pills">
+        <span className="cs-activity-pill">{tod.emoji} {tod.label}</span>
+        {conditionLabels.map(label => (
+          <span key={label} className="cs-activity-pill">{label}</span>
+        ))}
+        <span className="cs-activity-pill">
+          {Math.round(inputs.temp)}°C · {Math.round(inputs.windspeed)} km/h wind · {inputs.precipProb}% rain
+        </span>
+      </div>
 
       {/* ── AI Insight card ── */}
       <div className="cs-activity-insight">

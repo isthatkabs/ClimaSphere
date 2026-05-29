@@ -15,13 +15,13 @@ const HOT_ACTIVITIES = [
   { icon: '⚽', text: 'Outdoor sports — football or cricket' },
   { icon: '🏊', text: 'Go swimming outdoors or at a pool' },
   { icon: '🍦', text: 'Get ice cream and enjoy the outdoors' },
-  { icon: '🌅', text: 'Walk during sunset when it cools down' },
-  { icon: '🥾', text: 'Hike on a shaded trail early morning' },
+  { icon: '🌅', text: 'Walk during sunset when it cools down',      onlyAt: ['evening'] },
+  { icon: '🥾', text: 'Hike on a shaded trail early morning',       onlyAt: ['morning'] },
   { icon: '🌿', text: 'Visit a public garden' },
-  { icon: '🎾', text: 'Early morning tennis before the heat peaks' },
-  { icon: '🏕',  text: 'Evening BBQ or garden party' },
-  { icon: '🌟', text: 'Stargazing after dark when it\'s cooler' },
-  { icon: '🚴', text: 'Cycle early morning or evening' },
+  { icon: '🎾', text: 'Early morning tennis before the heat peaks', onlyAt: ['morning'] },
+  { icon: '🏕',  text: 'Evening BBQ or garden party',               onlyAt: ['evening'] },
+  { icon: '🌟', text: 'Stargazing after dark when it\'s cooler',    onlyAt: ['evening', 'night'] },
+  { icon: '🚴', text: 'Cycle early morning or evening',             onlyAt: ['morning', 'evening'] },
 ]
 const HOT_CLOTHING = [
   { icon: '👕', text: 'T-shirt or vest top' },
@@ -179,8 +179,8 @@ const HIGH_UV_ACTIVITIES = [
   { icon: '📖', text: 'Reading outdoors with protective clothing' },
   { icon: '☕', text: 'Outdoor café (sit in the shade)' },
   { icon: '🧘', text: 'Yoga or stretching outdoors — avoid midday' },
-  { icon: '📸', text: 'Photography during morning or evening light' },
-  { icon: '🏃', text: 'Early morning run before UV peaks (before 10am)' },
+  { icon: '📸', text: 'Photography during morning or evening light',       onlyAt: ['morning', 'evening'] },
+  { icon: '🏃', text: 'Early morning run before UV peaks (before 10am)',   onlyAt: ['morning'] },
   { icon: '🌊', text: 'Beach activities — stay in the shade or water' },
   { icon: '🌿', text: 'Shaded public garden or woodland walk' },
 ]
@@ -236,6 +236,128 @@ function interestBoost(items, interests = []) {
   return [...matches, ...rest]
 }
 
+// ── time of day ──────────────────────────────────────────────────
+export function getTimeOfDay() {
+  const h = new Date().getHours()
+  if (h >= 5  && h < 12) return 'morning'
+  if (h >= 12 && h < 17) return 'afternoon'
+  if (h >= 17 && h < 21) return 'evening'
+  return 'night'
+}
+
+export const TIME_OF_DAY_LABEL = {
+  morning:   { emoji: '🌅', label: 'Morning' },
+  afternoon: { emoji: '☀️',  label: 'Afternoon' },
+  evening:   { emoji: '🌇', label: 'Evening' },
+  night:     { emoji: '🌙', label: 'Night' },
+}
+
+// Small per-condition, per-time supplement pools
+const TIME_SUPPLEMENTS = {
+  hot: {
+    morning:   [
+      { icon: '🧘', text: 'Sunrise yoga before the heat rises' },
+      { icon: '☕', text: 'Breakfast at an outdoor café' },
+    ],
+    afternoon: [
+      { icon: '💧', text: 'Stay hydrated — drink plenty of water' },
+      { icon: '🏊', text: 'Midday swim to cool off' },
+    ],
+    evening:   [
+      { icon: '🍹', text: 'Rooftop bar or outdoor evening drinks' },
+      { icon: '🌃', text: 'Evening stroll when the heat drops' },
+    ],
+    night:     [
+      { icon: '🌟', text: 'Stargazing — cool clear skies at night' },
+      { icon: '🌃', text: 'Night photography of the city lights' },
+    ],
+  },
+  warm: {
+    morning:   [
+      { icon: '🌄', text: 'Morning walk or jog before the day gets busy' },
+      { icon: '🛒', text: 'Visit a morning farmers market' },
+    ],
+    afternoon: [
+      { icon: '🏃', text: 'Afternoon run or sport session' },
+      { icon: '🌳', text: 'Afternoon stroll through a local park' },
+    ],
+    evening:   [
+      { icon: '🌇', text: 'Evening walk at golden hour' },
+      { icon: '🍺', text: 'Pub garden or outdoor evening dining' },
+    ],
+    night:     [
+      { icon: '🌙', text: 'Late evening stroll while it\'s still mild' },
+      { icon: '🔭', text: 'Stargazing on a clear evening' },
+    ],
+  },
+  cold: {
+    morning:   [
+      { icon: '☕', text: 'Warm up with a hot breakfast at a café' },
+      { icon: '🏋️', text: 'Morning gym session to get the blood flowing' },
+    ],
+    afternoon: [
+      { icon: '🎨', text: 'Afternoon museum or gallery visit' },
+      { icon: '🍜', text: 'Warm lunch somewhere cosy' },
+    ],
+    evening:   [
+      { icon: '🍽',  text: 'Dinner out somewhere warm and cosy' },
+      { icon: '🎭', text: 'Evening theatre, cinema, or live event' },
+    ],
+    night:     [
+      { icon: '🛋',  text: 'Cosy night in with a film or series' },
+      { icon: '🍵', text: 'Hot tea or cocoa before bed' },
+    ],
+  },
+  rain: {
+    morning:   [
+      { icon: '🥞', text: 'Lazy morning brunch at home or a café' },
+      { icon: '💻', text: 'Work or study from a cosy coffee shop' },
+    ],
+    afternoon: [
+      { icon: '🏛',  text: 'Afternoon trip to a museum or gallery' },
+      { icon: '🎬', text: 'Catch a film at the cinema' },
+    ],
+    evening:   [
+      { icon: '🍽',  text: 'Dinner out — try somewhere new' },
+      { icon: '🎲', text: 'Board games or pub quiz night' },
+    ],
+    night:     [
+      { icon: '📖', text: 'Read before bed — perfect for a rainy night' },
+      { icon: '🛋',  text: 'Wind down with a series or podcast' },
+    ],
+  },
+  snow: {
+    morning:   [{ icon: '☕', text: 'Warm up with a hot drink before heading out' }],
+    afternoon: [{ icon: '⛄', text: 'Build a snowman while it\'s light out' }],
+    evening:   [{ icon: '🕯', text: 'Cosy evening by candlelight or a fire' }],
+    night:     [{ icon: '🌨', text: 'Watch the snow fall from inside' }],
+  },
+  storm: {
+    morning:   [{ icon: '🌤', text: 'Check if the storm clears later today' }],
+    afternoon: [{ icon: '📺', text: 'Afternoon streaming session indoors' }],
+    evening:   [{ icon: '🕯', text: 'Candlelit cosy evening in' }],
+    night:     [{ icon: '🛌', text: 'Perfect night to fall asleep to the rain' }],
+  },
+  mild: {
+    morning:   [
+      { icon: '🌄', text: 'Morning walk to start the day fresh' },
+      { icon: '☕', text: 'Breakfast at a local café' },
+    ],
+    afternoon: [
+      { icon: '🌳', text: 'Afternoon stroll in the park' },
+      { icon: '📸', text: 'Afternoon photography walk' },
+    ],
+    evening:   [
+      { icon: '🌇', text: 'Evening walk at golden hour' },
+      { icon: '🍺', text: 'Evening drinks at an outdoor venue' },
+    ],
+    night:     [
+      { icon: '🌙', text: 'Evening stroll if the weather holds' },
+      { icon: '🔭', text: 'Try some stargazing' },
+    ],
+  },
+}
+
 // ── deduplicate by text field ─────────────────────────────────────
 function dedup(arr) {
   const seen = new Set()
@@ -247,7 +369,7 @@ function dedup(arr) {
 }
 
 // ── main engine ──────────────────────────────────────────────────
-export function getWeatherSuggestions({ temp, windspeed, precipProb, weathercode, uvIndex = 3 }, interests = []) {
+export function getWeatherSuggestions({ temp, windspeed, precipProb, weathercode, uvIndex = 3, timeOfDay = 'afternoon' }, interests = []) {
   const isStorm     = weathercode >= 95
   const isSnow      = (weathercode >= 71 && weathercode <= 77) || (weathercode >= 85 && weathercode <= 86)
   const isRain      = (weathercode >= 51 && weathercode <= 67) || (weathercode >= 80 && weathercode <= 82) || precipProb >= 60
@@ -338,10 +460,17 @@ export function getWeatherSuggestions({ temp, windspeed, precipProb, weathercode
     clothing = [...clothing, ...SPORTS_ACTIVEWEAR]
   }
 
+  // Filter out time-inappropriate items, then inject time supplements
+  activities = activities.filter(a => !a.onlyAt || a.onlyAt.includes(timeOfDay))
+  clothing   = clothing.filter(c => !c.onlyAt || c.onlyAt.includes(timeOfDay))
+  const condKey = isStorm ? 'storm' : isSnow ? 'snow' : isRain ? 'rain' : isHot ? 'hot' : isWarm ? 'warm' : isCold ? 'cold' : 'mild'
+  activities = [...activities, ...(TIME_SUPPLEMENTS[condKey]?.[timeOfDay] ?? [])]
+
   return {
     primaryCondition,
     primaryEmoji,
     conditionLabels,
+    timeOfDay,
     activities: dedup(interestBoost(activities, interests)).slice(0, 10),
     clothing:   dedup(clothing).slice(0, 10),
   }
@@ -378,13 +507,14 @@ export function buildSuggestionInputs(weather, forecast) {
     uvIndex = forecast.daily.uv_index_max[0] ?? 0
   }
 
-  return { temp, feelsLike, windspeed, precipProb, weathercode, uvIndex, humidity, country }
+  return { temp, feelsLike, windspeed, precipProb, weathercode, uvIndex, humidity, country, timeOfDay: getTimeOfDay() }
 }
 
 // ── build a plain-text weather summary for the AI ────────────────
-export function buildWeatherSummary({ temp, feelsLike, windspeed, precipProb, weathercode, uvIndex, humidity, country }, locationName, primaryCondition) {
+export function buildWeatherSummary({ temp, feelsLike, windspeed, precipProb, weathercode, uvIndex, humidity, country, timeOfDay }, locationName, primaryCondition) {
   return [
     `Location: ${locationName ?? 'unknown'}${country ? ` (${country})` : ''}`,
+    `Time of day: ${timeOfDay ?? 'afternoon'}`,
     `Condition: ${primaryCondition}`,
     `Temperature: ${Math.round(temp)}°C (feels like ${Math.round(feelsLike)}°C)`,
     `Humidity: ${humidity}%`,
