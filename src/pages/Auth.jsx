@@ -15,6 +15,13 @@ import { useAuth } from "../context/AuthContext";
 const googleProvider = new GoogleAuthProvider();
 
 function Auth() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const params   = new URLSearchParams(location.search);
+  const redirect = params.get('redirect');
+  const isSignup = params.get('mode') === 'signup';
+  const { user } = useAuth();
+
   const [isLogin, setIsLogin] = useState(!isSignup);
   const [isForgot, setIsForgot] = useState(false);
   const [email, setEmail] = useState("");
@@ -22,12 +29,6 @@ function Auth() {
   const [username, setUsername] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const navigate = useNavigate();
-  const location = useLocation();
-  const params   = new URLSearchParams(location.search);
-  const redirect = params.get('redirect');
-  const isSignup = params.get('mode') === 'signup';
-  const { user } = useAuth();
 
   const rainDrops = useMemo(() => Array.from({ length: 120 }, (_, i) => ({
     id:       i,
