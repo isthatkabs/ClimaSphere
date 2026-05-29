@@ -119,7 +119,11 @@ export default function FloatingPlaces({ loc, weather, forecast, activePage }) {
           rafRef.current = requestAnimationFrame(tickRef.current)
         }, APPEAR_DELAY)
       })
-      .catch(() => {})
+      .catch((err) => {
+        if (!active) return
+        console.warn('[FloatingPlaces] Could not load nearby places:', err?.message ?? err)
+        shownLocRef.current = null // allow retry on next effect run
+      })
 
     return () => {
       active = false

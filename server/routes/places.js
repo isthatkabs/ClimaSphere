@@ -13,7 +13,7 @@ const INTEREST_CATEGORIES = {
   'Outdoors & Nature':      ['leisure.park','leisure.playground','natural.forest','tourism.attraction','entertainment.zoo'],
   'Food & Drink':           ['catering.cafe','catering.restaurant','catering.bar','catering.pub','catering.fast_food','catering.ice_cream'],
   'Arts & Culture':         ['entertainment.museum','education.library'],
-  'Sports & Fitness':       ['sport','leisure.fitness_center','leisure.swimming_pool'],
+  'Sports & Fitness':       ['activity.sport_club','sport.sports_centre'],
   'Cinema & Entertainment': ['entertainment.cinema','entertainment'],
   'Photography':            ['tourism.attraction','leisure.park'],
   'Books & Reading':        ['education.library'],
