@@ -15,7 +15,7 @@ import { useAuth } from "../context/AuthContext";
 const googleProvider = new GoogleAuthProvider();
 
 function Auth() {
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLogin, setIsLogin] = useState(!isSignup);
   const [isForgot, setIsForgot] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,7 +24,9 @@ function Auth() {
   const [success, setSuccess] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
-  const redirect = new URLSearchParams(location.search).get('redirect');
+  const params   = new URLSearchParams(location.search);
+  const redirect = params.get('redirect');
+  const isSignup = params.get('mode') === 'signup';
   const { user } = useAuth();
 
   const rainDrops = useMemo(() => Array.from({ length: 120 }, (_, i) => ({
@@ -46,8 +48,8 @@ function Auth() {
   })), []);
 
   useEffect(() => {
-    if (user) navigate(redirect === 'map' ? '/dashboard?page=Map' : '/dashboard', { replace: true });
-  }, [user, navigate, redirect]);
+    if (user && !isSignup) navigate(redirect === 'map' ? '/dashboard?page=Map' : '/dashboard', { replace: true });
+  }, [user, navigate, redirect, isSignup]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
