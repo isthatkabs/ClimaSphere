@@ -5,7 +5,6 @@ import Dashboard    from './pages/Dashboard'
 import ForecastPage from './pages/ForecastPage'
 import MapsPage     from './pages/MapsPage'
 import AlertsPage   from './pages/AlertsPage'
-import ApiPage      from './pages/ApiPage'
 import Privacy      from './pages/Privacy'
 import Terms        from './pages/Terms'
 import Status       from './pages/Status'
@@ -31,7 +30,6 @@ function App() {
         <Route path="/forecast" element={<ForecastPage />} />
         <Route path="/maps"     element={<MapsPage />}     />
         <Route path="/alerts"   element={<AlertsPage />}   />
-        <Route path="/api"      element={<ApiPage />}      />
         <Route path="/privacy"  element={<Privacy />}      />
         <Route path="/terms"    element={<Terms />}        />
         <Route path="/status"   element={<Status />}       />

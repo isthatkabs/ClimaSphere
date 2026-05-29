@@ -5,7 +5,6 @@ const NAV_LINKS = [
   { label: 'Forecast', to: '/forecast' },
   { label: 'Maps',     to: '/maps'     },
   { label: 'Alerts',   to: '/alerts'   },
-  { label: 'API',      to: '/api'      },
 ]
 
 export default function HomeNav() {
