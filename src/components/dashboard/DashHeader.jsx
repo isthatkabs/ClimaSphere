@@ -127,6 +127,7 @@ export default function DashHeader({ onSearch, onReset, forecast, onNav }) {
   const handleReset = () => {
     handleClear()
     onReset()
+    onNav?.('Overview')
   }
 
   return (
