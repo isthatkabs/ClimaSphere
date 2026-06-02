@@ -116,7 +116,7 @@ router.post('/dayplan', async (req, res) => {
     : 'general activities'
 
   const prompt =
-    `You are ClimaSphere's day planner. Generate a personalised full-day itinerary.\n\n` +
+    `You are ClimaSphere's day planner. Generate a personalised full-day plan.\n\n` +
     `Weather:\n${weatherContext}\n\n` +
     `User interests: ${interestsList}\n\n` +
     `Return ONLY valid JSON in this exact structure, no other text:\n` +

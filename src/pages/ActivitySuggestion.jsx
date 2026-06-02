@@ -345,7 +345,7 @@ export default function ActivitySuggestion({ weather, forecast, locationName }) 
             <span className="cs-activity-section-title">Plan My Day</span>
           </div>
           <p style={{ fontSize: 13, color: 'var(--text-muted)', margin: '0 0 16px', lineHeight: 1.6 }}>
-            Get a full-day itinerary tailored to your interests and today's weather in {locationName ?? 'your location'}.
+            Get a full-day plan tailored to your interests and today's weather in {locationName ?? 'your location'}.
           </p>
 
           {(settings.interests ?? []).length === 0 ? (
