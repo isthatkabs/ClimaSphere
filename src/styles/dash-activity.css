@@ -299,6 +299,143 @@
   padding-bottom: 4px;
 }
 
+/* ── Day Plan ── */
+.cs-dayplan-interests {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.cs-dayplan-interest-tag {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(167,139,250,0.1);
+  border: 1px solid rgba(167,139,250,0.2);
+  color: #c4b5fd;
+}
+
+.cs-dayplan-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 22px;
+  background: linear-gradient(135deg, rgba(99,102,241,0.18), rgba(139,92,246,0.18));
+  border: 1px solid rgba(139,92,246,0.35);
+  border-radius: 12px;
+  color: #c4b5fd;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+  font-family: var(--font);
+}
+.cs-dayplan-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(99,102,241,0.28), rgba(139,92,246,0.28));
+  border-color: rgba(139,92,246,0.55);
+}
+.cs-dayplan-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.cs-dayplan-spinner {
+  display: inline-block;
+  width: 13px;
+  height: 13px;
+  border: 2px solid rgba(196,181,253,0.3);
+  border-top-color: #c4b5fd;
+  border-radius: 50%;
+  animation: cs-spin 0.7s linear infinite;
+}
+@keyframes cs-spin { to { transform: rotate(360deg); } }
+
+.cs-dayplan-slots {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cs-dayplan-slot {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.cs-dayplan-slot-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(255,255,255,0.02);
+}
+.cs-dayplan-slot-emoji  { font-size: 20px; flex-shrink: 0; }
+.cs-dayplan-slot-period { font-size: 14px; font-weight: 600; color: var(--text); }
+.cs-dayplan-slot-time   { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+.cs-dayplan-slot-theme  {
+  margin-left: auto;
+  font-size: 11px;
+  color: #a78bfa;
+  font-style: italic;
+  text-align: right;
+}
+
+.cs-dayplan-items { display: flex; flex-direction: column; }
+
+.cs-dayplan-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 11px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.cs-dayplan-item:last-child { border-bottom: none; }
+
+.cs-dayplan-item-emoji  { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+.cs-dayplan-item-title  { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+.cs-dayplan-item-detail { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+
+.cs-dayplan-regen { display: flex; justify-content: center; margin-top: 12px; }
+.cs-dayplan-regen-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-muted);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 6px 16px;
+  font-family: var(--font);
+  transition: border-color 0.15s, color 0.15s;
+}
+.cs-dayplan-regen-btn:hover:not(:disabled) { border-color: rgba(167,139,250,0.4); color: #a78bfa; }
+.cs-dayplan-regen-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.cs-dayplan-no-interests { text-align: center; padding: 4px 0 8px; }
+.cs-dayplan-no-interests-text {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0 0 12px;
+  line-height: 1.6;
+}
+.cs-dayplan-profile-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+  color: var(--text-muted);
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  font-family: var(--font);
+}
+.cs-dayplan-profile-link:hover {
+  background: rgba(167,139,250,0.08);
+  border-color: rgba(167,139,250,0.3);
+  color: #a78bfa;
+}
+
 /* ── Chat widget ── */
 .cs-chat-wrap {
   background: var(--surface);

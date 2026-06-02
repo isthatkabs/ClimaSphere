@@ -11,6 +11,17 @@ export async function getAISuggestions(payload) {
   return res.json()
 }
 
+export async function getDayPlan(payload) {
+  const res = await fetch(`${API}/api/ai/dayplan`, {
+    method:      'POST',
+    credentials: 'include',
+    headers:     { 'Content-Type': 'application/json' },
+    body:        JSON.stringify(payload),
+  })
+  if (!res.ok) throw new Error('Day plan unavailable')
+  return res.json()
+}
+
 export async function chatWithAI(messages, weatherSummary) {
   const res = await fetch(`${API}/api/ai/chat`, {
     method:      'POST',

@@ -87,4 +87,52 @@ router.post('/chat', async (req, res) => {
   }
 })
 
+router.post('/dayplan', async (req, res) => {
+  const {
+    location, country, temp, feelsLike, windspeed,
+    precipProb, primaryCondition, interests,
+  } = req.body
+
+  const weatherContext = [
+    `Location: ${location}${country ? `, ${country}` : ''}`,
+    `Temperature: ${Math.round(temp)}°C (feels like ${Math.round(feelsLike)}°C)`,
+    `Wind: ${Math.round(windspeed)} km/h`,
+    `Rain chance: ${precipProb}%`,
+    `Condition: ${primaryCondition}`,
+  ].join('\n')
+
+  const interestsList = Array.isArray(interests) && interests.length > 0
+    ? interests.join(', ')
+    : 'general activities'
+
+  const prompt =
+    `You are ClimaSphere's day planner. Generate a personalised full-day itinerary.\n\n` +
+    `Weather:\n${weatherContext}\n\n` +
+    `User interests: ${interestsList}\n\n` +
+    `Return ONLY valid JSON in this exact structure, no other text:\n` +
+    `{"slots":[` +
+    `{"period":"Morning","time":"8:00 AM – 12:00 PM","emoji":"🌅","theme":"short catchy phrase","items":[{"emoji":"☕","title":"Short title","detail":"One short sentence."}]},` +
+    `{"period":"Afternoon","time":"12:00 PM – 5:00 PM","emoji":"☀️","theme":"short catchy phrase","items":[...]},` +
+    `{"period":"Evening","time":"5:00 PM – 9:00 PM","emoji":"🌆","theme":"short catchy phrase","items":[...]}` +
+    `]}\n\n` +
+    `Rules: 2-3 items per slot. Tailor to user interests. Adjust for weather (indoor if rainy). Titles 3-6 words. Detail max 10 words. Fitting emojis.`
+
+  try {
+    const message = await getClient().messages.create({
+      model:      'claude-haiku-4-5-20251001',
+      max_tokens: 900,
+      messages:   [{ role: 'user', content: prompt }],
+    })
+
+    const text      = message.content[0].text.trim()
+    const jsonMatch = text.match(/\{[\s\S]*\}/)
+    if (!jsonMatch) throw new Error('No JSON in response')
+
+    res.json(JSON.parse(jsonMatch[0]))
+  } catch (err) {
+    console.error('Day plan error:', err.message)
+    res.status(500).json({ error: err.message })
+  }
+})
+
 export default router

@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { getWeatherSuggestions, buildSuggestionInputs, buildWeatherSummary, TIME_OF_DAY_LABEL } from '../data/suggestions'
-import { getAISuggestions } from '../services/ai'
+import { getAISuggestions, getDayPlan } from '../services/ai'
 import { useSettings } from '../context/SettingsContext'
 import { useAuth } from '../context/AuthContext'
 import { usePreferences } from '../hooks/usePreferences'
@@ -10,6 +11,7 @@ export default function ActivitySuggestion({ weather, forecast, locationName }) 
   const { settings } = useSettings()
   const { user } = useAuth()
   const { preferences, setPreference } = usePreferences()
+  const navigate = useNavigate()
   const [suggestions,          setSuggestions]          = useState(null)
   const [inputs,               setInputs]               = useState(null)
   const [weatherSummary,       setWeatherSummary]       = useState('')
@@ -18,7 +20,34 @@ export default function ActivitySuggestion({ weather, forecast, locationName }) 
   const [aiError,              setAiError]              = useState(false)
   const [showHiddenActivities, setShowHiddenActivities] = useState(false)
   const [showHiddenClothing,   setShowHiddenClothing]   = useState(false)
+  const [dayPlan,              setDayPlan]              = useState(null)
+  const [dayPlanLoading,       setDayPlanLoading]       = useState(false)
+  const [dayPlanError,         setDayPlanError]         = useState(false)
   const prevKeyRef = useRef(null)
+
+  async function generateDayPlan() {
+    if (!inputs) return
+    setDayPlanLoading(true)
+    setDayPlanError(false)
+    setDayPlan(null)
+    try {
+      const plan = await getDayPlan({
+        location:         locationName ?? 'your location',
+        country:          inputs.country,
+        temp:             inputs.temp,
+        feelsLike:        inputs.feelsLike,
+        windspeed:        inputs.windspeed,
+        precipProb:       inputs.precipProb,
+        primaryCondition: suggestions?.primaryCondition ?? '',
+        interests:        settings.interests ?? [],
+      })
+      setDayPlan(plan)
+    } catch {
+      setDayPlanError(true)
+    } finally {
+      setDayPlanLoading(false)
+    }
+  }
 
   function handleReact(text, reaction) {
     const current = preferences[text]
@@ -269,6 +298,98 @@ export default function ActivitySuggestion({ weather, forecast, locationName }) 
           <p className="cs-pref-guest-note">
             <a href="/auth">Sign in</a> to save your preferences.
           </p>
+        )}
+      </div>
+
+      {/* ── Day Plan ── */}
+      <div className="cs-activity-section">
+        <div className="cs-activity-section-header">
+          <span className="cs-activity-section-icon">📅</span>
+          <span className="cs-activity-section-title">Plan My Day</span>
+        </div>
+        <p style={{ fontSize: 13, color: 'var(--text-muted)', margin: '0 0 16px', lineHeight: 1.6 }}>
+          Get a full-day itinerary tailored to your interests and today's weather in {locationName ?? 'your location'}.
+        </p>
+
+        {(settings.interests ?? []).length === 0 ? (
+          <div className="cs-dayplan-no-interests">
+            <p className="cs-dayplan-no-interests-text">
+              Add your interests on your profile so we can personalise your day plan.
+            </p>
+            <button className="cs-dayplan-profile-link" onClick={() => navigate('/profile')}>
+              ✏️ &nbsp;Set interests on your profile
+            </button>
+          </div>
+        ) : (
+          <>
+            <div className="cs-dayplan-interests">
+              {(settings.interests ?? []).map(i => (
+                <span key={i} className="cs-dayplan-interest-tag">{i}</span>
+              ))}
+            </div>
+
+            {!dayPlan && (
+              <div style={{ textAlign: 'center' }}>
+                <button
+                  className="cs-dayplan-btn"
+                  onClick={generateDayPlan}
+                  disabled={dayPlanLoading}
+                >
+                  {dayPlanLoading ? (
+                    <>
+                      <span className="cs-dayplan-spinner" /> Generating your plan…
+                    </>
+                  ) : (
+                    '✨ Generate My Day Plan'
+                  )}
+                </button>
+                {dayPlanError && (
+                  <p style={{ fontSize: 12, color: '#f87171', marginTop: 10 }}>
+                    Couldn't generate a plan — please try again.
+                  </p>
+                )}
+              </div>
+            )}
+
+            {dayPlan && (
+              <>
+                <div className="cs-dayplan-slots">
+                  {dayPlan.slots.map(slot => (
+                    <div key={slot.period} className="cs-dayplan-slot">
+                      <div className="cs-dayplan-slot-header">
+                        <span className="cs-dayplan-slot-emoji">{slot.emoji}</span>
+                        <div>
+                          <div className="cs-dayplan-slot-period">{slot.period}</div>
+                          <div className="cs-dayplan-slot-time">{slot.time}</div>
+                        </div>
+                        <span className="cs-dayplan-slot-theme">"{slot.theme}"</span>
+                      </div>
+                      <div className="cs-dayplan-items">
+                        {slot.items.map((item, i) => (
+                          <div key={i} className="cs-dayplan-item">
+                            <span className="cs-dayplan-item-emoji">{item.emoji}</span>
+                            <div>
+                              <div className="cs-dayplan-item-title">{item.title}</div>
+                              <div className="cs-dayplan-item-detail">{item.detail}</div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="cs-dayplan-regen">
+                  <button
+                    className="cs-dayplan-regen-btn"
+                    onClick={generateDayPlan}
+                    disabled={dayPlanLoading}
+                  >
+                    {dayPlanLoading ? 'Regenerating…' : '↺ Regenerate'}
+                  </button>
+                </div>
+              </>
+            )}
+          </>
         )}
       </div>
 
