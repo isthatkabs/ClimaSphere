@@ -65,9 +65,14 @@ router.post('/chat', async (req, res) => {
     return res.status(400).json({ error: 'messages array required' })
   }
 
-  const cityClause = locationName
-    ? `The user is currently in ${locationName}. When recommending places to visit, things to do, or venues, always name specific real places in ${locationName} — actual parks, restaurants, cafes, landmarks, neighbourhoods, or attractions that exist there. Never give generic advice when you can give a local recommendation instead.`
-    : `When recommending places, be as location-specific as possible based on the weather context.`
+  const GENERIC_NAMES = ['your location', 'my location', 'current location', 'here']
+  const city = locationName && !GENERIC_NAMES.includes(locationName.toLowerCase().trim())
+    ? locationName
+    : null
+
+  const cityClause = city
+    ? `The user is in ${city}. When they ask about places, venues, things to do, or where to eat/go, you MUST name specific real places that exist in ${city} — actual restaurants, cafes, parks, landmarks, neighbourhoods, or attractions. Do not ask the user for their location. Do not say you don't know where they are. You know they are in ${city}.`
+    : `The user's location is in the weather context above. When they ask about places or things to do, use that location and name specific real places there. Do not ask the user to confirm their location.`
 
   const system =
     `You are ClimaSphere's helpful weather and lifestyle assistant. ` +
