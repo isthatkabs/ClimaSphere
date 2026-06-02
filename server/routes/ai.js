@@ -59,16 +59,21 @@ router.post('/suggestions', async (req, res) => {
 })
 
 router.post('/chat', async (req, res) => {
-  const { messages, weatherSummary } = req.body
+  const { messages, weatherSummary, locationName } = req.body
 
   if (!Array.isArray(messages) || messages.length === 0) {
     return res.status(400).json({ error: 'messages array required' })
   }
 
+  const cityClause = locationName
+    ? `The user is currently in ${locationName}. When recommending places to visit, things to do, or venues, always name specific real places in ${locationName} — actual parks, restaurants, cafes, landmarks, neighbourhoods, or attractions that exist there. Never give generic advice when you can give a local recommendation instead.`
+    : `When recommending places, be as location-specific as possible based on the weather context.`
+
   const system =
     `You are ClimaSphere's helpful weather and lifestyle assistant. ` +
     `The user's current local conditions are: ${weatherSummary ?? 'unknown'}. ` +
-    `\nKeep all replies short and direct — 2 to 4 sentences max unless the user explicitly asks for more detail. ` +
+    `${cityClause} ` +
+    `Keep all replies short and direct — 2 to 4 sentences max unless the user explicitly asks for more detail. ` +
     `Never use markdown formatting: no asterisks, no bold, no headers, no bullet points. Plain conversational text only. ` +
     `Only decline if a question is completely unrelated to weather, travel, activities, or lifestyle.`
 

@@ -22,13 +22,14 @@ export async function getDayPlan(payload) {
   return res.json()
 }
 
-export async function chatWithAI(messages, weatherSummary) {
+export async function chatWithAI(messages, weatherSummary, locationName) {
   const res = await fetch(`${API}/api/ai/chat`, {
     method:      'POST',
     credentials: 'include',
     headers:     { 'Content-Type': 'application/json' },
-    body:        JSON.stringify({ messages, weatherSummary }),
+    body:        JSON.stringify({ messages, weatherSummary, locationName }),
   })
+  if (res.status === 401) throw new Error('auth')
   if (!res.ok) throw new Error('AI chat unavailable')
   return res.json()
 }

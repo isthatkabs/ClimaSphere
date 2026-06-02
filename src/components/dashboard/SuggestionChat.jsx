@@ -1,6 +1,9 @@
 import { useState, useRef, useEffect } from 'react'
 import { chatWithAI } from '../../services/ai'
 
+const STORAGE_KEY  = 'cs-chat-history'
+const TTL_MS       = 12 * 60 * 60 * 1000   // 12 hours
+
 const STARTERS = [
   'Where in the UK is warm this weekend?',
   'What should I wear to a wedding today?',
@@ -12,13 +15,34 @@ const STARTERS = [
   'Where\'s hot abroad right now?',
 ]
 
-export default function SuggestionChat({ weatherSummary }) {
+function loadMessages() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    if (!raw) return []
+    const { messages, savedAt } = JSON.parse(raw)
+    if (Date.now() - savedAt > TTL_MS) { localStorage.removeItem(STORAGE_KEY); return [] }
+    return messages ?? []
+  } catch { return [] }
+}
+
+function saveMessages(messages) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ messages, savedAt: Date.now() }))
+  } catch {}
+}
+
+export default function SuggestionChat({ weatherSummary, locationName }) {
   const [open,     setOpen]     = useState(false)
-  const [messages, setMessages] = useState([])   // { role, content }
+  const [messages, setMessages] = useState(loadMessages)
   const [input,    setInput]    = useState('')
   const [loading,  setLoading]  = useState(false)
   const bottomRef  = useRef(null)
   const inputRef   = useRef(null)
+
+  // Persist messages to localStorage on every change
+  useEffect(() => {
+    saveMessages(messages)
+  }, [messages])
 
   // Scroll to latest message
   useEffect(() => {
@@ -40,15 +64,20 @@ export default function SuggestionChat({ weatherSummary }) {
     setLoading(true)
 
     try {
-      const { reply } = await chatWithAI(next, weatherSummary)
+      const { reply } = await chatWithAI(next, weatherSummary, locationName)
       setMessages(prev => [...prev, { role: 'assistant', content: reply }])
-    } catch {
-      setMessages(prev => [
-        ...prev,
-        { role: 'assistant', content: 'Sorry, I couldn\'t reach the AI right now. Please try again in a moment.' },
-      ])
+    } catch (err) {
+      const msg = err.message === 'auth'
+        ? 'You need to be signed in to use AI chat. Please log in and try again.'
+        : 'Sorry, I couldn\'t reach the AI right now. Please try again in a moment.'
+      setMessages(prev => [...prev, { role: 'assistant', content: msg }])
     }
     setLoading(false)
+  }
+
+  function clearChat() {
+    setMessages([])
+    localStorage.removeItem(STORAGE_KEY)
   }
 
   function handleKey(e) {
@@ -74,6 +103,14 @@ export default function SuggestionChat({ weatherSummary }) {
       {/* ── Chat panel ── */}
       {open && (
         <div className="cs-chat-panel">
+          {/* Clear button — only when there are messages */}
+          {messages.length > 0 && (
+            <div className="cs-chat-clear-row">
+              <button className="cs-chat-clear-btn" onClick={clearChat}>
+                🗑 Clear chat
+              </button>
+            </div>
+          )}
           {/* Message list */}
           <div className="cs-chat-messages">
             {messages.length === 0 ? (
