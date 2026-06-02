@@ -63,19 +63,11 @@ export default function Dashboard() {
   const [forecast,     setForecast]     = useState(null)
   const [loading,      setLoading]      = useState(true)
   const [error,        setError]        = useState(null)
-  const [activePage,    setActivePage]    = useState(() => sessionStorage.getItem('cs_last_page') || 'Overview')
   const [selectedHour,  setSelectedHour]  = useState(null)
-
-  useEffect(() => { sessionStorage.setItem('cs_last_page', activePage) }, [activePage])
   const [feedbackOpen,  setFeedbackOpen]  = useState(false)
 
-  useEffect(() => {
-    const params = new URLSearchParams(location.search)
-    const page = params.get('page')
-    if (page === 'Map')       setActivePage('Map')
-    if (page === 'Locations') setActivePage('Locations')
-    if (page) navigate('/dashboard', { replace: true })
-  }, [location.search])
+  const activePage = new URLSearchParams(location.search).get('page') || 'Overview'
+  const handleNav  = (page) => navigate(`/dashboard?page=${encodeURIComponent(page)}`, { replace: true })
 
   useEffect(() => {
     const saved = sessionStorage.getItem('cs_last_loc')
@@ -127,7 +119,7 @@ export default function Dashboard() {
   const handleSearch = (newLoc) => {
     sessionStorage.setItem('cs_last_loc', JSON.stringify(newLoc))
     setLoc(newLoc)
-    setActivePage('Overview')
+    handleNav('Overview')
   }
 
   const handleReset = () => {
@@ -150,9 +142,9 @@ export default function Dashboard() {
   if (loading) {
     return (
       <div className="dash-root">
-        <Sidebar onLogout={handleLogout} forecast={forecast} activePage={activePage} onNav={setActivePage} onOpenFeedback={() => setFeedbackOpen(true)} />
+        <Sidebar onLogout={handleLogout} forecast={forecast} activePage={activePage} onNav={handleNav} onOpenFeedback={() => setFeedbackOpen(true)} />
         <div className="dash-main">
-          <DashHeader onSearch={handleSearch} onReset={handleReset} forecast={forecast} onNav={setActivePage} />
+          <DashHeader onSearch={handleSearch} onReset={handleReset} forecast={forecast} onNav={handleNav} />
           <div className="dash-content">
             <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>
               Loading weather data…
@@ -166,9 +158,9 @@ export default function Dashboard() {
   if (error) {
     return (
       <div className="dash-root">
-        <Sidebar onLogout={handleLogout} forecast={forecast} activePage={activePage} onNav={setActivePage} onOpenFeedback={() => setFeedbackOpen(true)} />
+        <Sidebar onLogout={handleLogout} forecast={forecast} activePage={activePage} onNav={handleNav} onOpenFeedback={() => setFeedbackOpen(true)} />
         <div className="dash-main">
-          <DashHeader onSearch={handleSearch} onReset={handleReset} forecast={forecast} onNav={setActivePage} />
+          <DashHeader onSearch={handleSearch} onReset={handleReset} forecast={forecast} onNav={handleNav} />
           <div className="dash-content">
             <div style={{ padding: '40px', textAlign: 'center', color: '#f87171' }}>
               <p>Could not load weather for "{loc.name}".</p>
@@ -182,16 +174,16 @@ export default function Dashboard() {
 
   return (
     <div className="dash-root">
-      <Sidebar onLogout={handleLogout} forecast={forecast} activePage={activePage} onNav={setActivePage} onOpenFeedback={() => setFeedbackOpen(true)} />
+      <Sidebar onLogout={handleLogout} forecast={forecast} activePage={activePage} onNav={handleNav} onOpenFeedback={() => setFeedbackOpen(true)} />
 
       <div className="dash-main">
-        <DashHeader onSearch={handleSearch} onReset={handleReset} forecast={forecast} onNav={setActivePage} />
+        <DashHeader onSearch={handleSearch} onReset={handleReset} forecast={forecast} onNav={handleNav} />
 
         <div className="dash-content" key={activePage}>
           {activePage === 'Settings' ? (
             <Settings />
           ) : activePage === 'Locations' ? (
-            <ManageLocations onSwitch={(loc) => { setLoc(loc); setActivePage('Overview') }} />
+            <ManageLocations onSwitch={(loc) => { setLoc(loc); handleNav('Overview') }} />
           ) : activePage === 'Map' ? (
             <MapView weather={weather} />
           ) : activePage === 'Alerts' ? (
@@ -228,7 +220,7 @@ export default function Dashboard() {
       <FloatingSuggestion
         weather={weather}
         forecast={forecast}
-        onNav={setActivePage}
+        onNav={handleNav}
         hasWeatherAlert={hasFloatingAlert(forecast)}
       />
       <FloatingPlaces loc={loc} weather={weather} forecast={forecast} activePage={activePage} />

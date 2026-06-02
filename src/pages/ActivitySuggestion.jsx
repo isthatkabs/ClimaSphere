@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { getWeatherSuggestions, buildSuggestionInputs, buildWeatherSummary, TIME_OF_DAY_LABEL } from '../data/suggestions'
 import { getAISuggestions, getDayPlan } from '../services/ai'
 import { useSettings } from '../context/SettingsContext'
@@ -12,6 +12,13 @@ export default function ActivitySuggestion({ weather, forecast, locationName }) 
   const { user } = useAuth()
   const { preferences, setPreference } = usePreferences()
   const navigate = useNavigate()
+  const location = useLocation()
+  const activeTab  = new URLSearchParams(location.search).get('tab') || 'suggestions'
+  const handleTab  = (tab) => {
+    const params = new URLSearchParams(location.search)
+    params.set('tab', tab)
+    navigate(`/dashboard?${params.toString()}`, { replace: true })
+  }
   const [suggestions,          setSuggestions]          = useState(null)
   const [inputs,               setInputs]               = useState(null)
   const [weatherSummary,       setWeatherSummary]       = useState('')
@@ -23,7 +30,6 @@ export default function ActivitySuggestion({ weather, forecast, locationName }) 
   const [dayPlan,              setDayPlan]              = useState(null)
   const [dayPlanLoading,       setDayPlanLoading]       = useState(false)
   const [dayPlanError,         setDayPlanError]         = useState(false)
-  const [activeTab,            setActiveTab]            = useState('suggestions')
   const prevKeyRef = useRef(null)
 
   async function generateDayPlan() {
@@ -160,7 +166,7 @@ export default function ActivitySuggestion({ weather, forecast, locationName }) 
           <button
             key={tab.id}
             className={`cs-sugg-tab${activeTab === tab.id ? ' active' : ''}`}
-            onClick={() => setActiveTab(tab.id)}
+            onClick={() => handleTab(tab.id)}
           >
             <span className="cs-sugg-tab-emoji">{tab.emoji}</span>
             {tab.label}
