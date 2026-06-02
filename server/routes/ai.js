@@ -71,21 +71,21 @@ router.post('/chat', async (req, res) => {
     : null
 
   const cityClause = city
-    ? `The user is in ${city}. When they ask about places, venues, things to do, or where to eat/go, you MUST name specific real places that exist in ${city} — actual restaurants, cafes, parks, landmarks, neighbourhoods, or attractions. Do not ask the user for their location. Do not say you don't know where they are. You know they are in ${city}.`
-    : `The user's location is in the weather context above. When they ask about places or things to do, use that location and name specific real places there. Do not ask the user to confirm their location.`
+    ? `The user is in ${city}. When they ask about places, venues, things to do, or where to eat/go, you MUST name exactly 3 specific real places that exist in ${city} — actual restaurants, cafes, parks, landmarks, or attractions. Format the response as: one short intro sentence, then each place on its own new line as "1. Place Name — brief description", then a final short sentence (e.g. recommending they check Google Maps or Just Eat for hours). Do not ask the user for their location. Do not say you don't know where they are. You know they are in ${city}.`
+    : `The user's location is in the weather context above. When they ask about places or things to do, use that location. Name exactly 3 specific real places, each on its own new line as "1. Place Name — brief description", with one short intro sentence before and one short closing sentence after. Do not ask the user to confirm their location.`
 
   const system =
     `You are ClimaSphere's helpful weather and lifestyle assistant. ` +
     `The user's current local conditions are: ${weatherSummary ?? 'unknown'}. ` +
     `${cityClause} ` +
-    `Keep all replies short and direct — 2 to 4 sentences max unless the user explicitly asks for more detail. ` +
-    `Never use markdown formatting: no asterisks, no bold, no headers, no bullet points. Plain conversational text only. ` +
+    `For non-place questions keep replies short and direct — 2 to 4 sentences max unless the user explicitly asks for more detail. ` +
+    `Never use markdown formatting: no asterisks, no bold, no headers. Numbered lists (1. 2. 3.) are allowed when listing places. Plain conversational text otherwise. ` +
     `Only decline if a question is completely unrelated to weather, travel, activities, or lifestyle.`
 
   try {
     const message = await getClient().messages.create({
       model:      'claude-haiku-4-5-20251001',
-      max_tokens: 200,
+      max_tokens: 350,
       system,
       messages,
     })

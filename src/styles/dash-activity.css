@@ -662,6 +662,7 @@
   border-radius: 16px;
   font-size: 13px;
   line-height: 1.55;
+  white-space: pre-wrap;
 }
 .cs-chat-msg--assistant .cs-chat-bubble {
   background: rgba(139,92,246,0.1);
