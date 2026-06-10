@@ -24,7 +24,13 @@ export default function SavedLocationsCard() {
         </p>
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: "0.75rem" }}>
-          {locations.map(loc => (
+          {[...locations]
+            .sort((a, b) => {
+              if (a.isHome) return -1
+              if (b.isHome) return 1
+              return a.name.localeCompare(b.name)
+            })
+            .map(loc => (
             <div key={loc.id} style={{
               display: "flex", alignItems: "center", gap: 10,
               background: loc.isHome ? "rgba(90,124,255,0.12)" : "rgba(255,255,255,0.07)",

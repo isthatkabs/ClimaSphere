@@ -141,7 +141,13 @@ export default function ManageLocations({ onSwitch }) {
                 </span>
               </div>
             ) : (
-              [...locations].sort((a, b) => (b.isHome ? 1 : 0) - (a.isHome ? 1 : 0)).map(loc => (
+              [...locations]
+                .sort((a, b) => {
+                  if (a.isHome) return -1
+                  if (b.isHome) return 1
+                  return countryName(a.country).localeCompare(countryName(b.country))
+                })
+                .map(loc => (
                 <div key={loc.id} className={`ml-loc-row${loc.isHome ? ' home' : ''}`}>
                   <button className="ml-loc-main" onClick={() => handleSwitch(loc)}>
                     <span className="ml-loc-flag">{countryFlag(loc.country)}</span>
