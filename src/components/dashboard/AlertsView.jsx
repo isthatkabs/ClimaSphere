@@ -168,7 +168,7 @@ function getDesc(alert, settings) {
 function AlertCard({ alert, settings, showTips }) {
   const window = getTimeWindow(alert.first, alert.last, settings.timeFormat)
   const desc   = getDesc(alert, settings)
-  const pct    = Math.min(100, Math.round((alert.count / 24) * 100))
+  const pct    = Math.min(100, Math.round((alert.count / 48) * 100))
   const tips   = ALERT_TIPS[alert.id]
 
   return (
@@ -196,7 +196,7 @@ function AlertCard({ alert, settings, showTips }) {
 
       <div className="cs-alert-card-footer">
         <span className="cs-alert-footer-left">
-          {alert.count} hr{alert.count !== 1 ? 's' : ''} to be affected of the next 24 hrs
+          {alert.count} hr{alert.count !== 1 ? 's' : ''} to be affected in the next 48 hrs
         </span>
         <span className="cs-alert-footer-right" style={{ color: alert.color }}>
           {desc}
@@ -275,7 +275,7 @@ export default function AlertsView({ forecast, weather }) {
       ) : (
         <div className="cs-alerts-grid">
           {alerts.map(alert => (
-            <AlertCard key={alert.id} alert={alert} settings={settings} showTips={settings.alertSuggestions} />
+            <AlertCard key={alert.id} alert={alert} settings={settings} showTips={settings.alertSuggestions && settings.interests?.length > 0} />
           ))}
         </div>
       )}
