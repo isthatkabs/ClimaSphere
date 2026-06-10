@@ -8,6 +8,7 @@ import SavedLocationsCard from "./SavedLocationsCard";
 import PreferencesCard    from "./PreferencesCard";
 import NearbyPlacesCard   from "./NearbyPlacesCard"
 import InterestsCard      from "./InterestsCard";
+import GreetingCard       from "./GreetingCard";
 import ProfileBackground  from "../components/ProfileBackground";
 import { profileStyles as s } from "../styles/profileStyles";
 
@@ -50,6 +51,8 @@ export default function ProfilePage() {
           <InterestsCard />
           <NearbyPlacesCard />
         </div>
+
+        <GreetingCard />
 
         <div style={s.twoCol}>
           <ChangePasswordCard />

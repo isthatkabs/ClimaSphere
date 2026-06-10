@@ -134,7 +134,7 @@ export default function DashHeader({ onSearch, onReset, forecast, onNav }) {
     <header className="dash-header">
       <div className="dash-header-left">
         <div className="dash-greeting">
-          {user ? getGreeting(user) : 'Welcome to ClimaSphere 🌐'}
+          {user ? getGreeting(user, settings.greetingStyle) : 'Welcome to ClimaSphere 🌐'}
         </div>
         <div className="dash-date">{getNow()}</div>
       </div>

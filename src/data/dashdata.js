@@ -66,33 +66,31 @@ export function getNow() {
   }
 }
 
-export function getGreeting(user) {
+export function getGreeting(user, style = 'timeOfDay') {
   try {
-    const h = new Date().getHours()
     let name = 'there'
 
-    if (!user) {
-      const part = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening'
-      return `${part} 👋`
+    if (user?.displayName && typeof user.displayName === 'string' && user.displayName.trim()) {
+      name = user.displayName
+    } else if (user?.email && typeof user.email === 'string' && user.email.includes('@')) {
+      const part = user.email.split('@')[0]
+      if (part) name = part
     }
 
-    if (user.displayName) {
-      if (typeof user.displayName === 'string' && user.displayName.trim()) {
-        name = user.displayName
-      }
-    } else if (user.email) {
-      if (typeof user.email === 'string' && user.email.includes('@')) {
-        const emailParts = user.email.split('@')
-        if (emailParts[0]) {
-          name = emailParts[0]
-        }
+    const withName = !!user
+
+    switch (style) {
+      case 'hey':     return withName ? `Hey, ${name} 👋` : 'Hey there 👋'
+      case 'hi':      return withName ? `Hi, ${name} 👋` : 'Hi there 👋'
+      case 'welcome': return withName ? `Welcome back, ${name} 👋` : 'Welcome back 👋'
+      default: {
+        const h    = new Date().getHours()
+        const part = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening'
+        return withName ? `${part}, ${name} 👋` : `${part} 👋`
       }
     }
-
-    const part = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening'
-    return `${part}, ${name} 👋`
-  } catch (e) {
-    const h = new Date().getHours()
+  } catch {
+    const h    = new Date().getHours()
     const part = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening'
     return `${part} 👋`
   }
