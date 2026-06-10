@@ -233,14 +233,24 @@ export default function Analytics({ weather, forecast, locationName }) {
   }, [hours])
 
   const comfortBlocks = useMemo(() => {
+    if (!forecast?.hourly) return []
+    const h = forecast.hourly
+    const now = new Date()
+    const startIdx = h.time.findIndex(t => new Date(t) >= now)
+    const from = startIdx === -1 ? 0 : startIdx
     const blocks = []
-    for (let i = 0; i < Math.min(24, hours.length); i += 3) {
-      const group = hours.slice(i, i + 3)
-      const score = Math.round(group.reduce((s, h) => s + comfortScore(h), 0) / group.length)
+    for (let i = from; i < Math.min(from + 24, h.time.length); i += 3) {
+      const group = Array.from({ length: Math.min(3, h.time.length - i) }, (_, j) => ({
+        time:   new Date(h.time[i + j]),
+        temp:   h.temperature_2m[i + j]            ?? 0,
+        precip: h.precipitation_probability[i + j] ?? 0,
+        wind:   h.windspeed_10m[i + j]             ?? 0,
+      }))
+      const score = Math.round(group.reduce((s, hh) => s + comfortScore(hh), 0) / group.length)
       blocks.push({ time: group[0]?.time, score, meta: comfortMeta(score) })
     }
     return blocks
-  }, [hours])
+  }, [forecast])
 
   const allDayTemps = daily.flatMap(d => [d.low, d.high])
   const dayMinAll   = allDayTemps.length ? Math.min(...allDayTemps) : 0
