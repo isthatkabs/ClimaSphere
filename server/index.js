@@ -18,7 +18,7 @@ app.use(cors({
 app.use(express.json())
 
 app.use(session({
-  secret:            process.env.SESSION_SECRET,
+  secret:            process.env.SESSION_SECRET || 'climasphere-dev-secret',
   resave:            false,
   saveUninitialized: false,
   name:              'cs.sid',
@@ -37,6 +37,15 @@ app.use('/api/places',  placesRoutes)
 
 app.get('/health', (_req, res) => res.json({ status: 'ok', ts: new Date() }))
 
-app.listen(PORT, () =>
+app.listen(PORT, () => {
   console.log(`✅  ClimaSphere server running → http://localhost:${PORT}`)
-)
+  const key = process.env.WEATHER_API_KEY
+  if (!key || key.startsWith('replace_')) {
+    console.warn('⚠️  WEATHER_API_KEY is not set — weather endpoints will fail')
+  } else {
+    console.log(`✅  WEATHER_API_KEY loaded: ${key.slice(0, 4)}...${key.slice(-4)} (${key.length} chars)`)
+  }
+  if (!process.env.SESSION_SECRET) {
+    console.warn('⚠️  SESSION_SECRET missing from .env — using insecure fallback')
+  }
+})

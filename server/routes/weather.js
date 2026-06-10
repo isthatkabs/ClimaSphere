@@ -13,6 +13,10 @@ async function proxy(res, url) {
   try {
     const upstream = await fetch(url)
     const data     = await upstream.json()
+    if (upstream.status === 401 || upstream.status === 403) {
+      console.error('Weather API key error:', upstream.status, data?.message)
+      return res.status(502).json({ error: 'Weather service configuration error' })
+    }
     return res.status(upstream.status).json(data)
   } catch (err) {
     console.error('Upstream fetch error:', err.message)
