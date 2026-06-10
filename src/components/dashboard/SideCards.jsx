@@ -59,7 +59,8 @@ function getMoonPhase() {
 
 // ── Component ─────────────────────────────────────────────────
 export default function SideCards({ weather }) {
-  const [aqi, setAqi] = useState(null)
+  const [aqi, setAqi]             = useState(null)
+  const [moonPrompt, setMoonPrompt] = useState(false)
 
   // Fetch AQI using the lat/lon from the weather response
   useEffect(() => {
@@ -146,9 +147,72 @@ export default function SideCards({ weather }) {
             <div className="dash-moon-phase">{moon.name}</div>
             <div className="dash-moon-sub">{moon.illumination}% illuminated</div>
           </div>
-          <div className="dash-moon-icon">{moon.emoji}</div>
+          <div
+            className="dash-moon-icon"
+            onClick={() => setMoonPrompt(true)}
+            style={{ cursor: 'pointer' }}
+            title="Learn more about moon phases"
+          >
+            {moon.emoji}
+          </div>
         </div>
       </div>
+
+      {/* Moon phase external link prompt */}
+      {moonPrompt && (
+        <div
+          onClick={() => setMoonPrompt(false)}
+          style={{
+            position: 'fixed', inset: 0, zIndex: 9999,
+            background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(4px)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{
+              background: 'rgba(18,22,36,0.97)',
+              border: '1px solid rgba(255,255,255,0.12)',
+              borderRadius: 16, padding: '28px 28px 24px',
+              maxWidth: 340, width: '90%', textAlign: 'center',
+              boxShadow: '0 24px 60px rgba(0,0,0,0.5)',
+            }}
+          >
+            <div style={{ fontSize: 42, marginBottom: 12 }}>{moon.emoji}</div>
+            <div style={{ color: '#e2eafc', fontSize: 16, fontWeight: 700, marginBottom: 8 }}>
+              Want to learn more?
+            </div>
+            <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 13, lineHeight: 1.6, marginBottom: 24 }}>
+              You'll be taken to <strong style={{ color: 'rgba(255,255,255,0.75)' }}>moonphases.co.uk</strong> for
+              detailed information about the current moon phase and lunar calendar.
+            </div>
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button
+                onClick={() => setMoonPrompt(false)}
+                style={{
+                  flex: 1, padding: '10px', borderRadius: 10, cursor: 'pointer',
+                  background: 'rgba(255,255,255,0.07)',
+                  border: '1px solid rgba(255,255,255,0.12)',
+                  color: 'rgba(255,255,255,0.6)', fontSize: 13, fontWeight: 600,
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => { window.open('https://moonphases.co.uk/', '_blank', 'noopener,noreferrer'); setMoonPrompt(false) }}
+                style={{
+                  flex: 1, padding: '10px', borderRadius: 10, cursor: 'pointer',
+                  background: 'rgba(90,124,255,0.25)',
+                  border: '1px solid rgba(90,124,255,0.5)',
+                  color: '#a78bfa', fontSize: 13, fontWeight: 700,
+                }}
+              >
+                Take me there →
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   )
