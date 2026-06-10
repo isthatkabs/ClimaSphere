@@ -115,6 +115,46 @@ export default function ActivitySuggestion({ weather, forecast, locationName }) 
     )
   }
 
+  if (!settings.interests || settings.interests.length === 0) {
+    return (
+      <div className="cs-activity">
+        <div className="cs-activity-header">
+          <div>
+            <div className="cs-activity-title">Suggestions</div>
+            <div className="cs-activity-sub">
+              You haven't selected any interests yet — no suggestions can be generated without them.
+            </div>
+          </div>
+        </div>
+        <div style={{ padding: '32px 24px', textAlign: 'center' }}>
+          <div style={{ fontSize: 40, marginBottom: 12 }}>🎯</div>
+          <div style={{ color: '#e2eafc', fontSize: 15, fontWeight: 600, marginBottom: 8 }}>
+            Pick your interests to get started
+          </div>
+          <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: 13, marginBottom: 24, lineHeight: 1.6 }}>
+            Tell us what you enjoy and we'll tailor activity suggestions,<br />
+            clothing tips, and place recommendations to match.
+          </div>
+          <button
+            onClick={() => navigate('/profile')}
+            style={{
+              background: 'rgba(90,124,255,0.2)',
+              border: '1px solid rgba(90,124,255,0.5)',
+              borderRadius: 10,
+              color: '#a78bfa',
+              cursor: 'pointer',
+              fontSize: 13,
+              fontWeight: 600,
+              padding: '10px 24px',
+            }}
+          >
+            Go to Profile → My Interests
+          </button>
+        </div>
+      </div>
+    )
+  }
+
   if (!suggestions || !inputs) {
     return (
       <div className="cs-activity">
