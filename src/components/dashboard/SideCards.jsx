@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { getAQI } from '../../services/weather'
 
 // ── Sun helpers ───────────────────────────────────────────────
@@ -158,8 +159,8 @@ export default function SideCards({ weather }) {
         </div>
       </div>
 
-      {/* Moon phase external link prompt */}
-      {moonPrompt && (
+      {/* Moon phase external link prompt — rendered via portal to escape transformed ancestors */}
+      {moonPrompt && createPortal(
         <div
           onClick={() => setMoonPrompt(false)}
           style={{
@@ -198,20 +199,26 @@ export default function SideCards({ weather }) {
               >
                 Cancel
               </button>
-              <button
-                onClick={() => { window.open('https://moonphases.co.uk/', '_blank', 'noopener,noreferrer'); setMoonPrompt(false) }}
+              <a
+                href="https://moonphases.co.uk/"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setMoonPrompt(false)}
                 style={{
                   flex: 1, padding: '10px', borderRadius: 10, cursor: 'pointer',
                   background: 'rgba(90,124,255,0.25)',
                   border: '1px solid rgba(90,124,255,0.5)',
                   color: '#a78bfa', fontSize: 13, fontWeight: 700,
+                  textDecoration: 'none', display: 'flex',
+                  alignItems: 'center', justifyContent: 'center',
                 }}
               >
                 Take me there →
-              </button>
+              </a>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
     </div>
