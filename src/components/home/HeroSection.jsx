@@ -2,7 +2,9 @@ import { styles } from '../../styles/homeStyles'
 import { stats } from '../../data/homeData'
 import WeatherCard from './WeatherCard'
 
-export default function HeroSection({ activeCity, setActiveCity, time }) {
+const btnReset = { border: 'none', cursor: 'pointer', fontFamily: 'inherit', padding: 0 }
+
+export default function HeroSection({ activeCity, setActiveCity, time, onNavigate }) {
   return (
     <section style={styles.hero}>
       <div style={styles.heroLeft}>
@@ -23,10 +25,11 @@ export default function HeroSection({ activeCity, setActiveCity, time }) {
         </p>
 
         <div style={styles.heroActions}>
-          <a href="/auth" style={styles.ctaBtn}>
+          <button onClick={() => onNavigate('/auth')}
+            style={{ ...btnReset, ...styles.ctaBtn }}>
             Start Tracking
             <span style={styles.ctaArrow}>→</span>
-          </a>
+          </button>
           <a href="#features" style={styles.ghostBtn}>
             See Features
           </a>

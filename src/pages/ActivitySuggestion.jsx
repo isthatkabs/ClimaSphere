@@ -245,7 +245,7 @@ export default function ActivitySuggestion({ weather, forecast, locationName }) 
               )}
               {!aiLoading && aiError && (
                 <div className="cs-activity-insight-error">
-                  AI insight unavailable — recommendations below are still accurate.
+                  AI insight currently unavailable, never fear! As the recommendations below are still accurate.
                 </div>
               )}
             </div>

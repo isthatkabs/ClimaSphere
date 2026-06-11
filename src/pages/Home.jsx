@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { styles, globalStyles } from '../styles/homeStyles'
 import { weatherData } from '../data/homeData'
 
@@ -9,9 +10,16 @@ import CtaBand        from '../components/home/CtaBand'
 import HomeFooter     from '../components/home/HomeFooter'
 
 export default function Home() {
+  const navigate = useNavigate()
   const [activeCity, setActiveCity] = useState(0)
   const [time, setTime] = useState(new Date())
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
+  const [leaving, setLeaving] = useState(false)
+
+  const handleNavigate = (to) => {
+    setLeaving(true)
+    setTimeout(() => navigate(to), 240)
+  }
 
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000)
@@ -38,7 +46,7 @@ export default function Home() {
   const gradY = 40 + mousePos.y * 20
 
   return (
-    <div style={styles.root}>
+    <div style={styles.root} className={`home-page${leaving ? ' home-page--leaving' : ''}`}>
       <style>{globalStyles}</style>
 
       {/* Animated background */}
@@ -57,16 +65,17 @@ export default function Home() {
       {/* Grid overlay */}
       <div style={styles.grid} />
 
-      <HomeNav />
+      <HomeNav onNavigate={handleNavigate} />
 
       <HeroSection
         activeCity={activeCity}
         setActiveCity={setActiveCity}
         time={time}
+        onNavigate={handleNavigate}
       />
 
       <FeaturesSection />
-      <CtaBand />
+      <CtaBand onNavigate={handleNavigate} />
       <HomeFooter />
     </div>
   )

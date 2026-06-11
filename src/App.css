@@ -6,6 +6,23 @@ body {
   margin: 0;
 }
  
+/* ── Home page transitions ── */
+@keyframes homeEnter {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes homeLeave {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-16px); }
+}
+
+.home-page {
+  animation: homeEnter 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.home-page--leaving {
+  animation: homeLeave 0.24s ease-in both;
+}
+
 /* ── Profile page transitions ── */
 @keyframes profileEnter {
   from { opacity: 0; transform: translateX(50px); }
